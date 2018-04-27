@@ -117,8 +117,7 @@
         <File filePath="config/fglprofile"/>
       </Library>
       <Library binaryName="Database" id="455109296" label="Database">
-        <File filePath="database/mob_database.4db"/>
-        <File filePath="database/mob_database.db"/>
+        <File filePath="../../../../../opt/fourjs/all/my_github/mob_framework/database/njm_demo310.4db"/>
       </Library>
       <Application binaryName="mob_framework" dependencies="159917928,212784684,362164715,455109296,-994061721,1065793016" environment="dirlist:FGLIMAGEPATH=$(ProjectDir)/images;$(FGLDIR)/lib/image2font.txt;$(ProjectDir)/webcomponents;$(FGLIMAGEPATH)" id="400358049" label="mob_framework">
         <VirtualFolder label="forms">
@@ -139,7 +138,7 @@
       <Library binaryName="gas" excludeFromBuild="true" id="-1451902566" label="gas">
         <File filePath="gas/ws_mob_backend.xcf"/>
       </Library>
-      <Application binaryName="ws_mob_backend" dependencies="-994061721" id="991859968" label="ws_mob_backend">
+      <Application binaryName="ws_mob_backend" dependencies="-994061721,455109296" id="991859968" label="ws_mob_backend">
         <File filePath="src_server/gl_lib_restful.4gl"/>
         <File filePath="src_server/ws_mob_backend_db.4gl"/>
         <File filePath="src_server/ws_mob_backend.4gl"/>

@@ -6,6 +6,8 @@ IMPORT util
 IMPORT FGL gl_lib
 IMPORT FGL lib_secure
 
+SCHEMA njm_demo310
+
 --------------------------------------------------------------------------------
 FUNCTION db_connect()
 	DEFINE l_dbname STRING
@@ -122,6 +124,7 @@ DEFINE l_list1 DYNAMIC ARRAY OF RECORD
 		line1 CHAR(50),
 		line2 CHAR(50)
 	END RECORD
+{
 	DEFINE x SMALLINT
 
 	FOR x = 1 TO 5
@@ -139,6 +142,18 @@ DEFINE l_list1 DYNAMIC ARRAY OF RECORD
 						LET l_list1[x].line2 = "10 Bloggs rd"
 		END CASE
 	END FOR
+}
+
+	DECLARE cust_list_cur CURSOR FOR SELECT customer_code, customer_name, contact_name
+		FROM customer ORDER BY customer_name
+	FOREACH cust_list_cur 
+			INTO l_list1[ l_list1.getLength() + 1].key,
+					 l_list1[ l_list1.getLength()].line1,
+ 					 l_list1[ l_list1.getLength()].line2
+	END FOREACH
+	CALL l_list1.deleteElement( l_list1.getLength() )
+	CALL gl_lib.gl_logIt(SFMT("Found %1 Customers",l_list1.getLength()))
+
 	RETURN util.JSON.stringify(l_list1)
 END FUNCTION
 --------------------------------------------------------------------------------
@@ -147,11 +162,12 @@ END FUNCTION
 -- @params l_key Customer account no
 -- @returns json string of the data
 FUNCTION db_get_custDets(l_key STRING)
-	DEFINE l_custDets RECORD
-		extra_data STRING
-	END RECORD
+	DEFINE l_custDets RECORD LIKE customer.*
 
-	LET l_custDets.extra_data = "Customer details for acc: ",l_key
+	SELECT * INTO l_custDets.* FROM customer WHERE customer_Code = l_key
+	IF STATUS = NOTFOUND THEN
+		LET l_custDets.customer_name = "Not Found!"
+	END IF
 
 	RETURN util.JSON.stringify(l_custDets)
 END FUNCTION

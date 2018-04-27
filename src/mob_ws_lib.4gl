@@ -80,6 +80,7 @@ PRIVATE FUNCTION doRestRequest(l_param STRING) RETURNS BOOLEAN
       CALL util.JSON.parse( l_resp.getTextResponse(), m_ret )
     ELSE
 			LET m_ret.reply = SFMT("WS Call #1 Failed!\n%1-%2",l_stat, l_resp.getStatusDescription())
+			LET m_ret.stat = l_stat
     END IF
   CATCH
     LET l_stat = STATUS
@@ -117,6 +118,7 @@ PRIVATE FUNCTION doRestRequestPhoto(l_param STRING, l_photo_file STRING) RETURNS
       CALL util.JSON.parse( l_resp.getTextResponse(), m_ret )
     ELSE
 			LET m_ret.reply = SFMT("WS Call #2 Failed!\n%1-%2",l_stat, l_resp.getStatusDescription())
+			LET m_ret.stat = l_stat
     END IF
   CATCH
     LET l_stat = STATUS
@@ -153,6 +155,7 @@ FUNCTION doRestRequestData(l_param STRING, l_data STRING)
       CALL util.JSON.parse( l_resp.getTextResponse(), m_ret )
     ELSE
 			LET m_ret.reply = SFMT("WS Call #3 Failed!\n%1-%2",l_stat, l_resp.getStatusDescription())
+			LET m_ret.stat = l_stat
     END IF
   CATCH
     LET l_stat = STATUS

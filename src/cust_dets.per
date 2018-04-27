@@ -1,31 +1,54 @@
+
+SCHEMA njm_demo310
+
 LAYOUT ( TEXT="Details" )
 GRID
 {
-[info                        ]
-[acc   |f001       ]
-[nam   |f002                 ]
-[add1  |f003                 ]
-[add2  |f004                 ]
-[extr  |f005                 ]
-       [                     ]
+[l01   |f001      ]
+[l02   |f002                  ]
+[l03   |f003                  ]
+[l04   |f004                      ]
+[l05   |f005      ]
+[l06   |f006      ]
+[l07   |f007      ]
+[l08   |f008      ]
+[l09   |f009      ]
+[l10   |f010      ]
+[l11   |f011      ]
 ------------------------------
 [upd   |d001                 ]
 }
 END -- GRID
 
+TABLES
+customer
+
 ATTRIBUTES
 
-LABEL info = FORMONLY.f_info;
+LABEL l01 : l01, TEXT=%"customer_code:",JUSTIFY=RIGHT;
+LABEL l02 : l02, TEXT=%"customer_name:",JUSTIFY=RIGHT;
+LABEL l03 : l03, TEXT=%"contact_name:",JUSTIFY=RIGHT;
+LABEL l04 : l04, TEXT=%"email:",JUSTIFY=RIGHT;
+LABEL l05 : l05, TEXT=%"web_passwd:",JUSTIFY=RIGHT;
+LABEL l06 : l06, TEXT=%"del_addr:",JUSTIFY=RIGHT;
+LABEL l07 : l07, TEXT=%"inv_addr:",JUSTIFY=RIGHT;
+LABEL l08 : l08, TEXT=%"disc_code:",JUSTIFY=RIGHT;
+LABEL l09 : l09, TEXT=%"credit_limit:",JUSTIFY=RIGHT;
+LABEL l10 : l10, TEXT=%"total_invoices:",JUSTIFY=RIGHT;
+LABEL l11 : l11, TEXT=%"outstanding_amount:",JUSTIFY=RIGHT;
 
-LABEL acc : acc,TEXT=%"Account:",JUSTIFY=RIGHT;
-LABEL nam : nam,TEXT=%"Name:",JUSTIFY=RIGHT;
-LABEL add1 : add1,TEXT=%"Address1:",JUSTIFY=RIGHT;
-LABEL add2 : add2,TEXT=%"Address2:",JUSTIFY=RIGHT;
-LABEL extr : extr,TEXT=%"Extra:",JUSTIFY=RIGHT;
 LABEL upd  : upd,TEXT=%"As Of:",JUSTIFY=RIGHT;
-f001 = FORMONLY.key, STYLE="bold blue";
-f002 = FORMONLY.cust_name, STYLE="bold red";
-f003 = FORMONLY.add1, STYLE="bold";
-f004 = FORMONLY.add2, STYLE="bold";
-TEXTEDIT f005 = FORMONLY.extra_data;
+
+f001 = customer.customer_code;
+f002 = customer.customer_name;
+f003 = customer.contact_name;
+f004 = customer.email;
+f005 = customer.web_passwd;
+f006 = customer.del_addr;
+f007 = customer.inv_addr;
+f008 = customer.disc_code;
+f009 = customer.credit_limit;
+f010 = customer.total_invoices;
+f011 = customer.outstanding_amount;
+
 d001 = FORMONLY.updated_date;

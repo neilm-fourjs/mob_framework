@@ -24,9 +24,18 @@ PUBLIC DEFINE m_sel_list2 DYNAMIC ARRAY OF RECORD
 	END RECORD
 
 PUBLIC DEFINE m_dets1 RECORD
-		key CHAR(12),
-		extra_data CHAR(60),
-		updated_date DATETIME YEAR TO SECOND
+		customer_code					char(8),
+		customer_name					varchar(30,0),
+		contact_name					varchar(30,0),
+		email									varchar(100,0),
+		web_passwd						char(10),
+		del_addr							integer,
+		inv_addr							integer,
+		disc_code							char(2),
+		credit_limit					integer,
+		total_invoices				decimal(12,2),
+		outstanding_amount		decimal(12,2),
+		updated_date 					DATETIME YEAR TO SECOND
 	END RECORD
 
 PUBLIC DEFINE m_list1_date, m_list2_date DATETIME YEAR TO SECOND
@@ -106,8 +115,17 @@ FUNCTION init_db() RETURNS BOOLEAN
 	CATCH
 	END TRY
 	CREATE TABLE dets1 (
-		key CHAR(12),
-		extra CHAR(60),
+		customer_code        char(8),
+		customer_name        varchar(30,0),
+		contact_name         varchar(30,0),
+		email                varchar(100,0),
+		web_passwd           char(10),
+		del_addr             integer,
+		inv_addr             integer,
+		disc_code            char(2),
+		credit_limit         integer,
+		total_invoices       decimal(12,2),
+		outstanding_amount   decimal(12,2),
 		updated_date DATETIME YEAR TO SECOND
 	)
 
@@ -309,7 +327,7 @@ FUNCTION get_dets1(l_key STRING) RETURNS BOOLEAN
 	DEFINE l_json STRING
 	DEFINE l_now DATETIME YEAR TO SECOND
 
-	SELECT * INTO m_dets1.* FROM dets1 WHERE key = l_key
+	SELECT * INTO m_dets1.* FROM dets1 WHERE customer_code = l_key
 
 	LET l_now = CURRENT
 	IF m_dets1.updated_date IS NOT NULL
@@ -327,7 +345,7 @@ FUNCTION get_dets1(l_key STRING) RETURNS BOOLEAN
 
 	CALL util.JSON.parse(l_json, m_dets1)
 	LET m_dets1.updated_date = l_now
-	DELETE FROM dets1 WHERE key = l_key
+	DELETE FROM dets1 WHERE customer_code = l_key
 	INSERT INTO dets1 VALUES(m_dets1.*)
 	RETURN TRUE
 END FUNCTION

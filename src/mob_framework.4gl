@@ -68,7 +68,6 @@ FUNCTION show_cust(l_key STRING)
 
 	OPEN WINDOW cust_det WITH FORM "cust_dets"
 
-	DISPLAY "Data as of: "||mob_lib.m_dets1.updated_date TO f_info
 	DISPLAY BY NAME mob_lib.m_Dets1.*
 
 	MENU

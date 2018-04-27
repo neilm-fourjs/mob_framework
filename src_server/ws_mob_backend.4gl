@@ -27,6 +27,8 @@ MAIN
 
   DEFER INTERRUPT
 
+	CALL STARTLOG( base.Application.getProgramName()||".err" )
+
 	LET m_ret.ver = WS_VER
 
 	CALL ws_mob_backend_db.db_connect()
@@ -166,6 +168,7 @@ FUNCTION getList1()
 	CALL gl_lib.gl_logIt(%"Return customer list for user:"||NVL(m_user,"NULL"))
 
 	LET l_data = ws_mob_backend_db.db_get_custs()
+	CALL gl_lib.gl_logIt(SFMT(%"Data size is %1", l_data.getLength()))
 
 	CALL setReply(200,%"OK",l_data)
 END FUNCTION
