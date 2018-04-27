@@ -1,0 +1,23 @@
+LAYOUT ( TEXT="Photo" )
+GRID
+{
+[lpth                        ]
+[                            ]
+[                            ]
+[pic                         ]
+File Size:[siz               ]
+[img                         ]
+[                            ]
+[                            ]
+[                            ]
+[                            ]
+[                            ]
+[                            ]
+}
+END -- GRID
+
+ATTRIBUTES
+TEXTEDIT lpth = FORMONLY.f_lpath;
+pic = FORMONLY.f_path;
+siz = FORMONLY.f_size;
+IMAGE img = FORMONLY.f_photo, AUTOSCALE, SIZEPOLICY=DYNAMIC;

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<APPLICATION Parent="ws.default"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:noNamespaceSchemaLocation="http://www.4js.com/ns/gas/3.10/cfextwa.xsd">
+	<!-- fails to load xcf? DESCRIPTION>
+		<LONG>SOAP WEB SERVICE EXAMPLE</LONG>
+	</DESCRIPTION-->
+	<RESOURCE Id="res.app.path" Source="INTERNAL">$(res.deployment.path)</RESOURCE>
+	<EXECUTION>
+    <ENVIRONMENT_VARIABLE Id="DBNAME">njm_demo310</ENVIRONMENT_VARIABLE>
+		<PATH>$(res.app.path)</PATH>
+		<MODULE>ws_mob_backend.42r</MODULE>
+	</EXECUTION>
+</APPLICATION>

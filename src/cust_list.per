@@ -1,0 +1,14 @@
+LAYOUT ( TEXT="Customers" )
+TABLE (DOUBLECLICK=select)
+{
+[f001    |f002      ]
+}
+END -- TABLE
+
+ATTRIBUTES
+PHANTOM FORMONLY.key;
+f001 = FORMONLY.line1;
+f002 = FORMONLY.line2;
+
+INSTRUCTIONS
+SCREEN RECORD scr_arr ( FORMONLY.* )

@@ -1,0 +1,31 @@
+LAYOUT ( TEXT="Details" )
+GRID
+{
+[info                        ]
+[acc   |f001       ]
+[nam   |f002                 ]
+[add1  |f003                 ]
+[add2  |f004                 ]
+[extr  |f005                 ]
+       [                     ]
+------------------------------
+[upd   |d001                 ]
+}
+END -- GRID
+
+ATTRIBUTES
+
+LABEL info = FORMONLY.f_info;
+
+LABEL acc : acc,TEXT=%"Account:",JUSTIFY=RIGHT;
+LABEL nam : nam,TEXT=%"Name:",JUSTIFY=RIGHT;
+LABEL add1 : add1,TEXT=%"Address1:",JUSTIFY=RIGHT;
+LABEL add2 : add2,TEXT=%"Address2:",JUSTIFY=RIGHT;
+LABEL extr : extr,TEXT=%"Extra:",JUSTIFY=RIGHT;
+LABEL upd  : upd,TEXT=%"As Of:",JUSTIFY=RIGHT;
+f001 = FORMONLY.key, STYLE="bold blue";
+f002 = FORMONLY.cust_name, STYLE="bold red";
+f003 = FORMONLY.add1, STYLE="bold";
+f004 = FORMONLY.add2, STYLE="bold";
+TEXTEDIT f005 = FORMONLY.extra_data;
+d001 = FORMONLY.updated_date;
