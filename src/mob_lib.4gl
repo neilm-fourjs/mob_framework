@@ -299,6 +299,7 @@ FUNCTION get_list1() RETURNS BOOLEAN
 	END IF
 
 	IF l_user_local THEN
+		CALL m_sel_list1.clear()
 		DECLARE cust_cur CURSOR FOR SELECT * FROM sel_list1
 		FOREACH cust_cur INTO m_sel_list1[ m_sel_list1.getLength() + 1].*
 		END FOREACH
@@ -327,6 +328,7 @@ FUNCTION get_dets1(l_key STRING) RETURNS BOOLEAN
 	DEFINE l_json STRING
 	DEFINE l_now DATETIME YEAR TO SECOND
 
+	INITIALIZE m_dets1.* TO NULL
 	SELECT * INTO m_dets1.* FROM dets1 WHERE customer_code = l_key
 
 	LET l_now = CURRENT

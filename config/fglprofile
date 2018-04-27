@@ -7,10 +7,10 @@ mobile.environment.fglimagepath = "."
 #mob_framework.ws_url = "http://generodemo.hopto.org/g/ws/r/ws_mob_backend/"
 
 #
-#mob_framework.ws_url = "http://uk3.generocloud.net/g/ws/r/ws_mob_backend/"
+mob_framework.ws_url = "http://uk3.generocloud.net/g/ws/r/ws_mob_backend/"
 
 # Local test
 #mob_framework.ws_url = "http://localhost:8090/"
 
 # Local GAS
-mob_framework.ws_url = "http://localhost/g/ws/r/ws_mob_backend/"
+#mob_framework.ws_url = "http://localhost/g/ws/r/ws_mob_backend/"

@@ -150,6 +150,7 @@ DEFINE l_list1 DYNAMIC ARRAY OF RECORD
 			INTO l_list1[ l_list1.getLength() + 1].key,
 					 l_list1[ l_list1.getLength()].line1,
  					 l_list1[ l_list1.getLength()].line2
+			LET l_list1[ l_list1.getLength()].line1 = l_list1[ l_list1.getLength() ].key CLIPPED||" "||l_list1[ l_list1.getLength()].line1
 	END FOREACH
 	CALL l_list1.deleteElement( l_list1.getLength() )
 	CALL gl_lib.gl_logIt(SFMT("Found %1 Customers",l_list1.getLength()))
