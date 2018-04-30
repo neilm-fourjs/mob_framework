@@ -18,7 +18,7 @@ TYPE t_reqInfoTyp RECORD
 	host			STRING,
 	port			STRING,
 	query			STRING,
-	items	  	WSHelper.WSQueryType
+	items			WSHelper.WSQueryType
 END RECORD
 
 PUBLIC DEFINE m_err t_status
@@ -45,12 +45,12 @@ FUNCTION gl_getReqInfo(l_req com.HTTPServiceRequest)
 	LET m_reqInfo.outformat = "JSON"
 	LET m_reqInfo.method = l_req.getMethod()
 
-	CALL WSHelper.SplitUrl( l_req.getURL() )
-  	RETURNING m_reqInfo.scheme,
-            m_reqInfo.host,
-            m_reqInfo.port,
-            m_reqInfo.path,
-            m_reqInfo.query
+	CALL WSHelper.SplitUrl( l_req.getURL() ) 
+		RETURNING m_reqInfo.scheme,
+							m_reqInfo.host,
+							m_reqInfo.port,
+							m_reqInfo.path,
+							m_reqInfo.query
 
 	LET m_reqInfo.path = os.path.baseName( m_reqInfo.path )
 
@@ -70,7 +70,7 @@ FUNCTION gl_getReqInfo(l_req com.HTTPServiceRequest)
 	END IF
 	
 	CALL l_req.getURLQuery(m_reqInfo.items)
-  
+
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION gl_setError(l_str STRING)

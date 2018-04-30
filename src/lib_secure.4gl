@@ -74,7 +74,7 @@ END FUNCTION
 --------------------------------------------------------------------------------
 #+ Generate a salt string
 #+
-#+ @param  l_hashtype - String -The type of hash to use ( can be NULL for default )
+#+ @param l_hashtype - String -The type of hash to use ( can be NULL for default )
 #+ @returns String - salt value
 FUNCTION glsec_genSalt(l_hashtype STRING) RETURNS STRING
 	DEFINE l_salt STRING
@@ -98,7 +98,7 @@ FUNCTION glsec_genSalt(l_hashtype STRING) RETURNS STRING
 			CALL gl_lib.gl_errPopup(%"Unsupported Encryption Type Requested!")
 			EXIT PROGRAM
 	END CASE
-  CALL gl_logIt( "Salt Generated:"||l_salt||" ("||l_salt.getLength()||")")
+	CALL gl_logIt( "Salt Generated:"||l_salt||" ("||l_salt.getLength()||")")
 	RETURN l_salt
 END FUNCTION
 --------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ END FUNCTION
 #+
 #+ @param l_pass - String - Password
 #+ @param l_salt - String - The salt value ( optional for Genero 3.10 )
-#+ @param  l_hashtype - String -The type of hash to use ( can be NULL for default )
+#+ @param l_hashtype - String -The type of hash to use ( can be NULL for default )
 #+ @return String - An Encrypted string using SHA512 or BCrypt( Genero 3.10 )
 FUNCTION glsec_genPasswordHash(l_pass STRING, l_salt STRING, l_hashtype STRING) RETURNS STRING
 	DEFINE l_hash STRING
@@ -141,9 +141,9 @@ FUNCTION glsec_genPasswordHash(l_pass STRING, l_salt STRING, l_hashtype STRING) 
 				EXIT PROGRAM
 		END CASE
 		CALL gl_logIt( "Hash created:"||l_hash||" ("||l_hash.getLength()||")")
-  CATCH
-    CALL gl_logIt( "ERROR:"||STATUS||":"||SQLCA.SQLERRM)
-  END TRY
+	CATCH
+		CALL gl_logIt( "ERROR:"||STATUS||":"||SQLCA.SQLERRM)
+	END TRY
 
 	RETURN l_hash
 END FUNCTION
@@ -153,13 +153,13 @@ END FUNCTION
 #+ @param l_pass - String - Password
 #+ @param l_passhash - String - Password Hash
 #+ @param l_salt - String - The salt value ( not required for BCRYPT )
-#+ @param  l_hashtype - String -The type of hash to use ( can be NULL for default )
+#+ @param l_hashtype - String -The type of hash to use ( can be NULL for default )
 #+ @return boolean
 FUNCTION glsec_chkPassword(l_pass STRING,l_passhash STRING,l_salt STRING,l_hashtype STRING) RETURNS BOOLEAN
 	DEFINE l_hash STRING
 
 	LET l_pass = l_pass.trim()
-	LET l_passhash  = l_passhash.trim()
+	LET l_passhash = l_passhash.trim()
 	IF l_hashtype IS NULL THEN
 		LET l_hashtype = glsec_getHashType()
 	END IF
@@ -230,7 +230,7 @@ END FUNCTION
 #+
 #+ @param l_typ - String - The type of the data to return, eg: EMAIL / SMS provider creds
 #+ @returns - Strings : username, password
-FUNCTION glsec_getCreds( l_typ STRING)  RETURNS ( STRING, STRING )
+FUNCTION glsec_getCreds( l_typ STRING) RETURNS ( STRING, STRING )
 	DEFINE l_user, l_pwd STRING
 	DEFINE l_node xml.DomNode
 	DEFINE l_enc xml.Encryption
@@ -401,7 +401,7 @@ END FUNCTION
 --------------------------------------------------------------------------------
 #+ decrypted an XML string to creds
 #+
-#+ @param l_xml STRING  xml creds to decrypt
+#+ @param l_xml STRING xml creds to decrypt
 #+ @returns l_user & l_pass - Strings
 FUNCTION glsec_decryptCreds(l_xml STRING) RETURNS (STRING,STRING)
 	DEFINE l_user, l_pass STRING
@@ -463,7 +463,7 @@ FUNCTION glsec_decryptCreds(l_xml STRING) RETURNS (STRING,STRING)
 	RETURN l_user, l_pass
 END FUNCTION
 --------------------------------------------------------------------------------
---  PRIVATE FUNCTIONS
+-- PRIVATE FUNCTIONS
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------

@@ -162,7 +162,7 @@ FUNCTION login() RETURNS BOOLEAN
 
 		LET l_now = CURRENT
 		LET l_salt = NULL
-		SELECT pass_hash, salt, token, token_date  
+		SELECT pass_hash, salt, token, token_date
 			INTO l_pass_hash,l_salt, l_token, l_token_date
 			FROM users WHERE username = l_user
 		IF STATUS != NOTFOUND THEN
@@ -176,7 +176,7 @@ FUNCTION login() RETURNS BOOLEAN
 -- encrypt the username and password attempt
 		LET l_xml_creds = lib_secure.glsec_encryptCreds(l_user, l_pass)
 		IF l_xml_creds IS NULL THEN RETURN FALSE END IF
-		LET l_token =  ws_getSecurityToken( l_xml_creds ) 
+		LET l_token = ws_getSecurityToken( l_xml_creds ) 
 		IF l_token IS NULL THEN RETURN FALSE END IF
 		IF l_salt IS NULL THEN
 			LET l_salt = lib_secure.glsec_genSalt( NULL )
@@ -213,7 +213,7 @@ END FUNCTION
 --------------------------------------------------------------------------------
 -- Take / Choose a Photo and send to the server
 FUNCTION photo(l_take BOOLEAN)
-  DEFINE l_photo_file, l_local_file, l_ret STRING
+	DEFINE l_photo_file, l_local_file, l_ret STRING
 	DEFINE l_image BYTE
 
 	OPEN WINDOW show_photo WITH FORM "show_photo"
@@ -286,7 +286,7 @@ FUNCTION get_list1() RETURNS BOOLEAN
 		LET l_user_local = TRUE
 	END IF
 
-	IF NOT check_network() THEN  -- no connection
+	IF NOT check_network() THEN -- no connection
 		IF NOT l_user_local AND l_updated_date IS NOT NULL THEN -- stale data
 			CALL gl_lib.gl_winMessage("Warning",SFMT("Data is from %1\nYou are not connected to a network",l_updated_date),"exclamation")
 			LET l_user_local = TRUE

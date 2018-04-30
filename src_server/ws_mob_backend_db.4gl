@@ -15,7 +15,7 @@ FUNCTION db_connect()
 	IF l_dbname.getLength() < 2 THEN LET l_dbname = "njm_demo310" END IF
 
 	TRY
-  	CONNECT TO l_dbname
+		CONNECT TO l_dbname
 		CALL gl_lib.gl_logIt(SFMT(%"Connected to %1",l_dbname))
 	CATCH
 		CALL gl_lib.gl_logIt(SFMT(%"ERROR: Failed to connect to %1",l_dbname))
@@ -46,7 +46,7 @@ FUNCTION db_check_user( l_user CHAR(30), l_pass CHAR(30) ) RETURNS STRING
 	DEFINE l_salt, l_pass_hash STRING
 	DEFINE l_token_date, l_now DATETIME YEAR TO SECOND
 	LET l_now = CURRENT
-	SELECT pass_hash, salt, token, token_date  
+	SELECT pass_hash, salt, token, token_date
 		INTO l_pass_hash, l_salt, l_token, l_token_date
 		FROM ws_users WHERE username = l_user
 	IF STATUS = NOTFOUND THEN
@@ -84,7 +84,7 @@ FUNCTION db_register_user( l_user CHAR(30), l_pass CHAR(30)) RETURNS STRING
 	LET l_token = security.RandomGenerator.CreateUUIDString()
 	LET l_salt = lib_secure.glsec_genSalt( NULL )
 	LET l_pass_hash = lib_secure.glsec_genPasswordHash(l_pass, l_salt, NULL)
-  INSERT INTO ws_users VALUES( l_user, l_pass_hash, l_salt, l_token, l_now )
+	INSERT INTO ws_users VALUES( l_user, l_pass_hash, l_salt, l_token, l_now )
 	RETURN l_token
 END FUNCTION
 --------------------------------------------------------------------------------

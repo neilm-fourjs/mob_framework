@@ -13,7 +13,7 @@ PUBLIC DEFINE m_ret RECORD
 		ver SMALLINT,
 		stat SMALLINT,
 		type STRING,
-  	reply STRING
+		reply STRING
 	END RECORD
 --------------------------------------------------------------------------------
 FUNCTION ws_getSecurityToken( l_xml_creds STRING )
@@ -60,32 +60,32 @@ END FUNCTION
 -- Do the web service REST call to check for a new GDC
 PRIVATE FUNCTION doRestRequest(l_param STRING) RETURNS BOOLEAN
 	DEFINE l_url STRING
-  DEFINE l_req com.HttpRequest
-  DEFINE l_resp com.HttpResponse
-  DEFINE l_stat SMALLINT
+	DEFINE l_req com.HttpRequest
+	DEFINE l_resp com.HttpResponse
+	DEFINE l_stat SMALLINT
 
 	LET l_url = fgl_getResource("mob_framework.ws_url")||l_param
 	CALL gl_lib.gl_logIt("doRestRequest URL:"||NVL(l_url,"NULL"))
 
--- Do Rest call
-  TRY
-    LET l_req = com.HttpRequest.Create(l_url)
-    CALL l_req.setMethod("GET")
-    CALL l_req.setHeader("Content-Type", "application/json")
-    CALL l_req.setHeader("Accept", "application/json")
-    CALL l_req.doRequest()
-    LET l_resp = l_req.getResponse()
-    LET l_stat = l_resp.getStatusCode()
-    IF l_stat = 200 THEN
-      CALL util.JSON.parse( l_resp.getTextResponse(), m_ret )
-    ELSE
-			LET m_ret.reply = SFMT("WS Call #1 Failed!\n%1-%2",l_stat, l_resp.getStatusDescription())
-			LET m_ret.stat = l_stat
-    END IF
-  CATCH
-    LET l_stat = STATUS
-    LET m_ret.reply = ERR_GET( l_stat )
-  END TRY
+	-- Do Rest call
+	TRY
+		LET l_req = com.HttpRequest.Create(l_url)
+		CALL l_req.setMethod("GET")
+		CALL l_req.setHeader("Content-Type", "application/json")
+		CALL l_req.setHeader("Accept", "application/json")
+		CALL l_req.doRequest()
+		LET l_resp = l_req.getResponse()
+		LET l_stat = l_resp.getStatusCode()
+		IF l_stat = 200 THEN
+		CALL util.JSON.parse( l_resp.getTextResponse(), m_ret )
+		ELSE
+		LET m_ret.reply = SFMT("WS Call #1 Failed!\n%1-%2",l_stat, l_resp.getStatusDescription())
+		LET m_ret.stat = l_stat
+		END IF
+	CATCH
+		LET l_stat = STATUS
+		LET m_ret.reply = ERR_GET( l_stat )
+	END TRY
 	CALL gl_lib.gl_logIt("m_ret reply:"||NVL(m_ret.reply,"NULL"))
 	IF m_ret.stat != 200 THEN
 		CALL gl_lib.gl_winMessage("WS Error", m_ret.reply,"exclamation")
@@ -97,33 +97,33 @@ END FUNCTION
 -- Do the web service REST call to POST a Photo
 PRIVATE FUNCTION doRestRequestPhoto(l_param STRING, l_photo_file STRING) RETURNS BOOLEAN
 	DEFINE l_url STRING
-  DEFINE l_req com.HttpRequest
-  DEFINE l_resp com.HttpResponse
-  DEFINE l_stat SMALLINT
+	DEFINE l_req com.HttpRequest
+	DEFINE l_resp com.HttpResponse
+	DEFINE l_stat SMALLINT
 
 	LET l_url = fgl_getResource("mob_framework.ws_url")||l_param
 	CALL gl_lib.gl_logIt("doRestRequest URL:"||NVL(l_url,"NULL"))
 
 	DISPLAY "Photo:",l_photo_file
-  TRY
-    LET l_req = com.HttpRequest.Create(l_url)
-    CALL l_req.setMethod("POST")
-    CALL l_req.setHeader("Content-Type", "image/jpg")
-    CALL l_req.setHeader("Accept", "application/json")
+	TRY
+		LET l_req = com.HttpRequest.Create(l_url)
+		CALL l_req.setMethod("POST")
+		CALL l_req.setHeader("Content-Type", "image/jpg")
+		CALL l_req.setHeader("Accept", "application/json")
 		CALL l_req.setVersion("1.0")
 		CALL l_req.doFileRequest(l_photo_file)
-    LET l_resp = l_req.getResponse()
-    LET l_stat = l_resp.getStatusCode()
-    IF l_stat = 200 THEN
-      CALL util.JSON.parse( l_resp.getTextResponse(), m_ret )
-    ELSE
+		LET l_resp = l_req.getResponse()
+		LET l_stat = l_resp.getStatusCode()
+		IF l_stat = 200 THEN
+			CALL util.JSON.parse( l_resp.getTextResponse(), m_ret )
+		ELSE
 			LET m_ret.reply = SFMT("WS Call #2 Failed!\n%1-%2",l_stat, l_resp.getStatusDescription())
 			LET m_ret.stat = l_stat
-    END IF
-  CATCH
-    LET l_stat = STATUS
-    LET m_ret.reply = ERR_GET( l_stat )
-  END TRY
+		END IF
+	CATCH
+		LET l_stat = STATUS
+		LET m_ret.reply = ERR_GET( l_stat )
+	END TRY
 	CALL gl_lib.gl_logIt("m_ret reply:"||NVL(m_ret.reply,"NULL"))
 	IF m_ret.stat != 200 THEN
 		CALL gl_lib.gl_winMessage("WS Error", m_ret.reply,"exclamation")
@@ -135,32 +135,32 @@ END FUNCTION
 -- Do the web service REST call to POST some Data
 FUNCTION doRestRequestData(l_param STRING, l_data STRING)
 	DEFINE l_url STRING
-  DEFINE l_req com.HttpRequest
-  DEFINE l_resp com.HttpResponse
-  DEFINE l_stat SMALLINT
+	DEFINE l_req com.HttpRequest
+	DEFINE l_resp com.HttpResponse
+	DEFINE l_stat SMALLINT
 
 	LET l_url = fgl_getResource("mob_framework.ws_url")||l_param
 	CALL gl_lib.gl_logIt("doRestRequestData URL:"||NVL(l_url,"NULL"))
 
-  TRY
-    LET l_req = com.HttpRequest.Create(l_url)
-    CALL l_req.setMethod("POST")
-    CALL l_req.setHeader("Content-Type", "application/json")
-    CALL l_req.setHeader("Accept", "application/json")
+	TRY
+		LET l_req = com.HttpRequest.Create(l_url)
+		CALL l_req.setMethod("POST")
+		CALL l_req.setHeader("Content-Type", "application/json")
+		CALL l_req.setHeader("Accept", "application/json")
 		CALL l_req.setVersion("1.0")
 		CALL l_req.doTextRequest(l_data)
-    LET l_resp = l_req.getResponse()
-    LET l_stat = l_resp.getStatusCode()
-    IF l_stat = 200 THEN
-      CALL util.JSON.parse( l_resp.getTextResponse(), m_ret )
-    ELSE
+		LET l_resp = l_req.getResponse()
+		LET l_stat = l_resp.getStatusCode()
+		IF l_stat = 200 THEN
+			CALL util.JSON.parse( l_resp.getTextResponse(), m_ret )
+		ELSE
 			LET m_ret.reply = SFMT("WS Call #3 Failed!\n%1-%2",l_stat, l_resp.getStatusDescription())
 			LET m_ret.stat = l_stat
-    END IF
-  CATCH
-    LET l_stat = STATUS
-    LET m_ret.reply = ERR_GET( l_stat )
-  END TRY
+		END IF
+	CATCH
+		LET l_stat = STATUS
+		LET m_ret.reply = ERR_GET( l_stat )
+	END TRY
 	CALL gl_lib.gl_logIt("m_ret reply:"||NVL(m_ret.reply,"NULL"))
 	IF m_ret.stat != 200 THEN
 		CALL gl_lib.gl_winMessage("WS Error", m_ret.reply,"exclamation")

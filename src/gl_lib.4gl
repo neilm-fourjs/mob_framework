@@ -23,14 +23,14 @@ IMPORT util
 
 &include "genero_lib.inc"
 
-PUBLIC DEFINE gl_dbgLev SMALLINT  -- debug level: 0=None, 1=General, 2=All
+PUBLIC DEFINE gl_dbgLev SMALLINT -- debug level: 0=None, 1=General, 2=All
 PUBLIC DEFINE gl_version STRING
 PUBLIC DEFINE gl_progIcon STRING
 PUBLIC DEFINE gl_progName STRING -- base.application.getProgramName
 PUBLIC DEFINE gl_progDesc STRING
 PUBLIC DEFINE gl_progAuth STRING
 PUBLIC DEFINE gl_splash STRING
-PUBLIC DEFINE gl_toolbar,  gl_topmenu STRING
+PUBLIC DEFINE gl_toolbar, gl_topmenu STRING
 PUBLIC DEFINE gl_os STRING
 PUBLIC DEFINE gl_cli_os STRING
 PUBLIC DEFINE gl_cli_osver STRING
@@ -311,7 +311,7 @@ FUNCTION gl_formInit(l_fm ui.Form) --{{{
 	IF l_styl != "splash" 
 	AND l_styl != "dialog" 	AND l_styl != "dialog2" 	AND l_styl != "dialog3" 
 	AND l_styl != "menu"
-	AND l_styl != "lookup" AND l_styl != "naked" AND l_styl != "about"  AND l_styl != "viewer"
+	AND l_styl != "lookup" AND l_styl != "naked" AND l_styl != "about" AND l_styl != "viewer"
 	AND l_styl != "wizard" THEN
 		LET l_nl = l_fn.selectByTagName("ToolBar")
 		IF NOT gl_noToolBar AND l_nl.getlength() < 1 THEN
@@ -353,7 +353,7 @@ FUNCTION gl_winImage( l_img STRING ) --{{{
 		RETURN
 	END IF
 	GL_DBGMSG(3, "gl_winImage: Image set to "||l_img)
-    
+
 	CALL ui.interface.setImage( l_img )
 	CALL l_win.setImage( l_img )
 END FUNCTION --}}}
@@ -474,14 +474,14 @@ END FUNCTION --}}}
 --------------------------------------------------------------------------------
 #+ Generic message in statusbar.
 #+
-#+ @param l_mess   = String: Message text
+#+ @param l_mess = String: Message text
 #+ @return none
 FUNCTION gl_message(l_mess STRING) --{{{
 	MESSAGE l_mess.trim()
 	CALL ui.interface.refresh()
 END FUNCTION --}}}
 --------------------------------------------------------------------------------
-#+ Generic Windows message Dialog.  NOTE: This handles messages when there is 
+#+ Generic Windows message Dialog. NOTE: This handles messages when there is 
 #+ no window!
 #+
 #+ @param l_title     = Window Title
@@ -575,40 +575,40 @@ END FUNCTION --}}}
 #+
 #+ @return Nothing.
 FUNCTION gl_error() --{{{
-  DEFINE l_err,l_mod STRING
-  DEFINE l_stat INTEGER
-  DEFINE x,y SMALLINT
+	DEFINE l_err,l_mod STRING
+	DEFINE l_stat INTEGER
+	DEFINE x,y SMALLINT
 
-  LET l_stat = STATUS
+	LET l_stat = STATUS
 
-  LET l_mod = base.Application.getStackTrace()
-  LET x = l_mod.getIndexOf("#",2) + 3
-  LET y = l_mod.getIndexOf("#",x+1) - 1
-  LET l_mod = l_mod.subString(x,y)
-  IF y < 1 THEN LET y = l_mod.getLength() END IF
-  LET l_mod = l_mod.subString(x,y)
-  IF l_mod IS NULL THEN LET l_mod = "(null)" END IF
+	LET l_mod = base.Application.getStackTrace()
+	LET x = l_mod.getIndexOf("#",2) + 3
+	LET y = l_mod.getIndexOf("#",x+1) - 1
+	LET l_mod = l_mod.subString(x,y)
+	IF y < 1 THEN LET y = l_mod.getLength() END IF
+	LET l_mod = l_mod.subString(x,y)
+	IF l_mod IS NULL THEN LET l_mod = "(null)" END IF
 
-  LET l_err = SQLERRMESSAGE
-  IF l_err IS NULL THEN LET l_err = ERR_GET(l_stat) END IF
-  IF l_err IS NULL THEN LET l_err = "Unknown!" END IF
-  LET l_err = l_stat||":"||l_err||"\n"||l_mod
---  CALL gl_logIt("Error:"||l_err)
-  CALL gl_errPopup(l_err)
+	LET l_err = SQLERRMESSAGE
+	IF l_err IS NULL THEN LET l_err = ERR_GET(l_stat) END IF
+	IF l_err IS NULL THEN LET l_err = "Unknown!" END IF
+	LET l_err = l_stat||":"||l_err||"\n"||l_mod
+--	CALL gl_logIt("Error:"||l_err)
+	CALL gl_errPopup(l_err)
 END FUNCTION --}}}
 --------------------------------------------------------------------------------
 #+ Simple error message
 #+
 #+ @return Nothing.
 FUNCTION gl_warnPopup(l_msg STRING) --{{{
-  CALL gl_winMessage(%"Warning!",l_msg,"exclamation")
+	CALL gl_winMessage(%"Warning!",l_msg,"exclamation")
 END FUNCTION --}}}
 --------------------------------------------------------------------------------
 #+ Simple error message
 #+
 #+ @return Nothing.
 FUNCTION gl_errPopup(l_msg STRING) --{{{
-  CALL gl_winMessage(%"Error!",l_msg,"exclamation")
+	CALL gl_winMessage(%"Error!",l_msg,"exclamation")
 END FUNCTION --}}}
 --------------------------------------------------------------------------------
 #+ Display an error message in a window, console & logfile.
@@ -779,7 +779,7 @@ FUNCTION gl_getLogDir() RETURNS STRING
 			CALL gl_errPopup(SFMT(%"Failed to make logdir '%1.\nProgram aborting",m_logDir))
 			CALL gl_exitProgram(200,"log dir issues")
 		ELSE
-			IF NOT os.path.chrwx( m_logDir,  ( (7 *64) + (7 * 8) + 5 )  ) THEN
+			IF NOT os.path.chrwx( m_logDir, ( (7 *64) + (7 * 8) + 5 ) ) THEN
 				CALL gl_errPopup(SFMT(%"Failed set permissions on logdir '%1'",m_logDir))
 				CALL gl_exitProgram(201,"log permissions")
 			END IF

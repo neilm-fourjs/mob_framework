@@ -9,7 +9,7 @@ DEFINE m_gl_winInfo BOOLEAN
 #+
 #+ @param l_nam The name of window, if null current window node is returned.
 #+ @return ui.Window.
-FUNCTION gl_getWinNode( l_nam STRING ) RETURNS om.DomNode  --{{{
+FUNCTION gl_getWinNode( l_nam STRING ) RETURNS om.DomNode --{{{
 	DEFINE l_win ui.Window
 	DEFINE l_ret om.DomNode
 	IF l_nam IS NULL THEN
@@ -85,7 +85,7 @@ END FUNCTION --}}}
 --------------------------------------------------------------------------------
 #+ Generic Window notify message.
 #+
-#+ @param msg   = String: Message text
+#+ @param msg = String: Message text
 #+ @return none
 FUNCTION gl_notify( l_msg STRING) --{{{
 	DEFINE frm,g om.domNode
@@ -319,11 +319,11 @@ END FUNCTION --}}}
 #+ Progressbar Routine.
 #+ Example call:
 #+ @code 
-#+ CALL gl_progBar(1,10,"Processing, please wait ...")   Open window and set max = 10
+#+ CALL gl_progBar(1,10,"Processing, please wait ...") Open window and set max = 10
 #+ FOR x = 1 TO 10
-#+ 	CALL gl_progBar(2,x,NULL)  Move the bar to x position
+#+ 	CALL gl_progBar(2,x,NULL) Move the bar to x position
 #+ END FOR
-#+ CALL gl_progBar(3,0,NULL)   Close the window
+#+ CALL gl_progBar(3,0,NULL) Close the window
 #+
 #+ @param l_meth 1=Open Window / 2=Update bar / 3=Close Window
 #+ @param l_curval 1=Max value for Bar / 2=Current value position for Bar / 3=Ignored.

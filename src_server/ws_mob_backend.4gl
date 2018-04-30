@@ -15,17 +15,17 @@ DEFINE m_ret RECORD
 		ver SMALLINT,
 		stat SMALLINT,
 		type STRING,
-  	reply STRING
+		reply STRING
 	END RECORD
 DEFINE m_user STRING
 
 MAIN
-  DEFINE l_ret INTEGER
-  DEFINE l_req com.HTTPServiceRequest
+	DEFINE l_ret INTEGER
+	DEFINE l_req com.HTTPServiceRequest
 	DEFINE l_str STRING
 	DEFINE l_quit BOOLEAN
 
-  DEFER INTERRUPT
+	DEFER INTERRUPT
 
 	CALL STARTLOG( base.Application.getProgramName()||".err" )
 
@@ -33,29 +33,29 @@ MAIN
 
 	CALL ws_mob_backend_db.db_connect()
 
-  CALL gl_lib.gl_logIt(SFMT(%"Starting server, FGLAPPSERVER=%1 ...",fgl_getEnv("FGLAPPSERVER")))
-  #
-  # Starts the server on the port number specified by the FGLAPPSERVER environment variable
-  #  (EX: FGLAPPSERVER=8090)
-  # 
+	CALL gl_lib.gl_logIt(SFMT(%"Starting server, FGLAPPSERVER=%1 ...",fgl_getEnv("FGLAPPSERVER")))
+	#
+	# Starts the server on the port number specified by the FGLAPPSERVER environment variable
+	# (EX: FGLAPPSERVER=8090)
+	# 
 	TRY
-  	CALL com.WebServiceEngine.Start()
-  	CALL gl_lib.gl_logIt(%"The server is listening.")
+		CALL com.WebServiceEngine.Start()
+		CALL gl_lib.gl_logIt(%"The server is listening.")
 	CATCH
 		CALL gl_lib.gl_logIt( SFMT("%1:%2",STATUS,ERR_GET(STATUS)) )
 		EXIT PROGRAM
 	END TRY
 
-  WHILE NOT l_quit
-	  TRY
-  		# create the server
-		  LET l_req = com.WebServiceEngine.getHTTPServiceRequest(-1)
-		  CALL gl_lib_restful.gl_getReqInfo(l_req)
+	WHILE NOT l_quit
+		TRY
+			# create the server
+			LET l_req = com.WebServiceEngine.getHTTPServiceRequest(-1)
+			CALL gl_lib_restful.gl_getReqInfo(l_req)
 
-  		CALL gl_lib.gl_logIt(SFMT(%"Processing request, Method:%1 Path:%2 Format:%3", gl_lib_restful.m_reqInfo.method, gl_lib_restful.m_reqInfo.path, gl_lib_restful.m_reqInfo.outformat))
-		  -- parse the url, retrieve the operation and the operand
-		  CASE gl_lib_restful.m_reqInfo.method
-			  WHEN "GET"
+			CALL gl_lib.gl_logIt(SFMT(%"Processing request, Method:%1 Path:%2 Format:%3", gl_lib_restful.m_reqInfo.method, gl_lib_restful.m_reqInfo.path, gl_lib_restful.m_reqInfo.outformat))
+			-- parse the url, retrieve the operation and the operand
+			CASE gl_lib_restful.m_reqInfo.method
+				WHEN "GET"
 					CASE
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("getToken") 
 							CALL getToken()
@@ -71,7 +71,7 @@ MAIN
 							CALL setReply(201,%"ERR",SFMT(%"Operation '%1' not found",gl_lib_restful.m_reqInfo.path))
 					END CASE
 					LET l_str = util.JSON.stringify(m_ret)
-			  WHEN "POST"
+				WHEN "POST"
 					CASE
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("putPhoto") 
 							CALL getPhoto(l_req)
@@ -81,17 +81,17 @@ MAIN
 							CALL setReply(201,%"ERR",SFMT(%"Operation '%1' not found",gl_lib_restful.m_reqInfo.path))
 					END CASE
 					LET l_str = util.JSON.stringify(m_ret)
-			  OTHERWISE
+				OTHERWISE
 					CALL gl_lib_restful.gl_setError("Unknown request:\n"||m_reqInfo.path||"\n"||m_reqInfo.method)
 					LET gl_lib_restful.m_err.code = -3
 					LET gl_lib_restful.m_err.desc = SFMT(%"Method '%' not supported",gl_lib_restful.m_reqInfo.method)
 					LET l_str = util.JSON.stringify(m_err)
-		  END CASE
+			END CASE
 			-- send back the response.
 			CALL l_req.setResponseHeader("Content-Type","application/json")
 			CALL gl_lib.gl_logIt(%"Replying:"||NVL(l_str,"NULL"))
 			CALL l_req.sendTextResponse(200, "Ok!", l_str)
-		  IF int_flag != 0 THEN LET int_flag=0 EXIT WHILE END IF
+			IF int_flag != 0 THEN LET int_flag=0 EXIT WHILE END IF
 		CATCH
 			LET l_ret = STATUS
 			CASE l_ret
@@ -111,7 +111,7 @@ FUNCTION setReply(l_stat SMALLINT, l_typ STRING, l_msg STRING)
 	LET m_ret.stat = l_stat
 	LET m_ret.type = l_typ
 	LET m_ret.reply = l_msg
-  CALL gl_lib.gl_logIt(SFMT(%"setReply, Stat:%1 Type:%2 Reply:%3", l_stat, l_typ, l_msg))
+	CALL gl_lib.gl_logIt(SFMT(%"setReply, Stat:%1 Type:%2 Reply:%3", l_stat, l_typ, l_msg))
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION getToken()
