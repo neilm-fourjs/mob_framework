@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="ANSI_X3.4-1968"?>
 <StyleList>
+  <Style name=".small">
+     <StyleAttribute name="fontSize" value=".8em" />
+  </Style>
   <Style name=".bold">
      <StyleAttribute name="fontWeight" value="bold" />
   </Style>
   <Style name=".blue">
      <StyleAttribute name="textColor" value="darkblue" />
+  </Style>
+  <Style name="Edit">
+     <StyleAttribute name="textColor" value="darkblue" />
+  </Style>
+  <Style name="Label">
+     <StyleAttribute name="fontWeight" value="bold" />
   </Style>
   <Style name=".red">
      <StyleAttribute name="textColor" value="darkred" />

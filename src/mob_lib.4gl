@@ -212,40 +212,54 @@ FUNCTION check_network() RETURNS BOOLEAN
 END FUNCTION
 --------------------------------------------------------------------------------
 -- Take / Choose a Photo and send to the server
-FUNCTION photo(l_take BOOLEAN)
-	DEFINE l_photo_file, l_local_file, l_ret STRING
+FUNCTION photo_vid(l_take BOOLEAN, l_vid BOOLEAN)
+	DEFINE l_media_file, l_local_file, l_ret STRING
 	DEFINE l_image BYTE
 
-	OPEN WINDOW show_photo WITH FORM "show_photo"
-
-	IF l_take THEN
-		CALL ui.Interface.frontCall("mobile","takePhoto",[],[l_photo_file])
+	IF l_vid THEN
+		IF l_take THEN
+			CALL ui.Interface.frontCall("mobile","takeVideo",[],[l_media_file])
+		ELSE
+			CALL ui.Interface.frontCall("mobile","chooseVideo",[],[l_media_file])
+		END IF
 	ELSE
-		CALL ui.Interface.frontCall("mobile","choosePhoto",[],[l_photo_file])
+		IF l_take THEN
+			CALL ui.Interface.frontCall("mobile","takePhoto",[],[l_media_file])
+		ELSE
+			CALL ui.Interface.frontCall("mobile","choosePhoto",[],[l_media_file])
+		END IF
 	END IF
-	DISPLAY l_photo_file TO f_lpath
-	DISPLAY l_photo_file TO f_photo
+	IF l_media_file IS NULL THEN
+		CALL gl_winMessage("","No Media Taken/Choosen","information")
+		RETURN
+	END IF
 
-	LET l_local_file = util.Datetime.format( CURRENT, "%Y%m%d_%H%M%S.jpg" )
+	OPEN WINDOW show_photo WITH FORM "show_media"
+
+	DISPLAY l_media_file TO f_mpath
+
+	LET l_local_file = util.Datetime.format( CURRENT, "%Y%m%d_%H%M%S"||IIF(l_vid,".mp4",".jpg") )
 	TRY
-		CALL fgl_getfile(l_photo_file,l_local_file)
+		CALL fgl_getfile(l_media_file,l_local_file)
 	CATCH
 		CALL gl_lib.gl_winMessage("Error",ERR_GET( STATUS ),"exclamation")
 	END TRY
-	DISPLAY l_local_file TO f_path
+
 	IF os.path.exists( l_local_file ) THEN
-		DISPLAY "Exists:"||l_local_file TO f_path
+		DISPLAY l_local_file TO f_lpath
+		DISPLAY os.path.size(l_local_file) TO f_size
+		IF NOT l_vid THEN
+			LOCATE l_image IN FILE l_local_file
+			DISPLAY l_image TO f_photo
+		END IF
 	ELSE
-		DISPLAY "Missing:"||l_local_file TO f_path
+		DISPLAY l_local_file||" Missing!" TO f_lpath
 	END IF
-	DISPLAY os.path.size(l_local_file) TO f_size
-	LOCATE l_image IN FILE l_local_file
-	DISPLAY l_image TO f_photo
 
 	MENU
 		ON ACTION send
 			IF check_network() THEN
-				LET l_ret = mob_ws_lib.ws_putPhoto( l_local_file )
+				LET l_ret = mob_ws_lib.ws_putMedia( l_local_file, l_vid )
 				IF l_ret IS NOT NULL THEN
 					CALL gl_lib.gl_winMessage("Info",l_ret,"information")
 				END IF

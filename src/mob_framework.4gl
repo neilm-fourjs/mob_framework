@@ -25,9 +25,13 @@ MAIN
 		ON ACTION list_custs
 			CALL list_custs()
 		ON ACTION take_photo
-			CALL photo(TRUE)
+			CALL photo_vid(TRUE, FALSE)
+		ON ACTION take_video
+			CALL photo_vid(TRUE, TRUE)
 		ON ACTION choose_photo
-			CALL photo(FALSE)
+			CALL photo_vid(FALSE, FALSE)
+		ON ACTION choose_video
+			CALL photo_vid(FALSE, TRUE)
 		ON ACTION send_data
 			CALL send_data("This is some test data!")
 		ON ACTION about

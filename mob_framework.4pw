@@ -78,11 +78,23 @@
         <Directory description="Web Components" destinationDirectory="$(RootDir)/webcomponents" label="Webcomponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
       </Package>
       <Package binaryName="mob_framework12" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin12" label="mob_framework12" platform="Android">
+        <DynamicProperty name="gma-accent-color" value="#5555ff"/>
+        <DynamicProperty name="gma-navigationBarBackground-color" value="#00007f"/>
+        <DynamicProperty name="gma-primary-color" value="#5500ff"/>
+        <DynamicProperty name="gma-primary-dark-color" value="#00007f"/>
+        <DynamicProperty name="icon-hdpi" value="$(ProjectDir)/resources/hdpi.png"/>
+        <DynamicProperty name="icon-ldpi" value="$(ProjectDir)/resources/ldpi.png"/>
+        <DynamicProperty name="icon-mdpi" value="$(ProjectDir)/resources/mdpi.png"/>
+        <DynamicProperty name="icon-xhdpi" value="$(ProjectDir)/resources/xhdpi.png"/>
+        <DynamicProperty name="icon-xxhdpi" value="$(ProjectDir)/resources/xxhdpi.png"/>
         <DynamicProperty name="packageId" value="com.fourjs.mobframework12"/>
         <DynamicProperty name="packageLabel" value="MobFramework12"/>
         <DynamicProperty name="packageVersion" value="100012"/>
         <DynamicProperty name="packageVersionName" value="1000.12"/>
         <DynamicProperty name="permissions" value="ACCESS_NETWORK_STATE;ACCESS_WIFI_STATE;CHANGE_NETWORK_STATE;INSTALL_SHORTCUT;INTERNET;MOUNT_FORMAT_FILESYSTEMS;READ_LOGS;WRITE_EXTERNAL_STORAGE"/>
+        <DynamicProperty name="status-icon-hdpi" value="$(ProjectDir)/resources/ldpi.png"/>
+        <DynamicProperty name="status-icon-mdpi" value="$(ProjectDir)/resources/sdpi.png"/>
+        <DynamicProperty name="status-icon-xhdpi" value="$(ProjectDir)/resources/mdpi.png"/>
         <Directory description="Binaries" excludedFiles="Test.42r" includedFiles="*.42?" label="Binaries" recursive="false" sourceDirectory="$(ProjectDir)/bin"/>
         <Directory description="Binaries" excludedFiles="Test.42r" includedFiles="*.42?" label="Binaries_common" recursive="false" sourceDirectory="$(ProjectDir)/bin_common"/>
         <Directory description="Configuration Files" includedFiles="fglprofile" label="Config" recursive="false" sourceDirectory="$(ProjectDir)/config"/>
@@ -125,7 +137,7 @@
           <File filePath="src/cust_list.per"/>
           <File filePath="src/mob_framework.per"/>
           <File filePath="src/mob_login.per"/>
-          <File filePath="src/show_photo.per"/>
+          <File filePath="src/show_media.per"/>
         </VirtualFolder>
         <File filePath="src/mob_framework.4gl"/>
       </Application>

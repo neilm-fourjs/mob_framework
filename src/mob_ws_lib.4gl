@@ -37,11 +37,13 @@ FUNCTION ws_call(l_func STRING, l_key STRING) RETURNS STRING
 	RETURN m_ret.reply
 END FUNCTION
 --------------------------------------------------------------------------------
-FUNCTION ws_putPhoto(l_photo_file STRING) RETURNS STRING
-	IF NOT doRestRequestPhoto(SFMT("putPhoto?token=%1",m_security_token),l_photo_file) THEN
+FUNCTION ws_putMedia(l_media_file STRING, l_vid BOOLEAN) RETURNS STRING
+	DEFINE l_call STRING
+	LET l_call = IIF(l_vid,"putVideo","putPhoto")
+	IF NOT doRestRequestMedia(SFMT("%1?token=%2", l_call, m_security_token),l_media_file, l_vid) THEN
 		RETURN NULL
 	END IF
-	RETURN "Photo Sent"
+	RETURN IIF(l_vid,"Video Sent","Photo Sent")
 END FUNCTION
 --------------------------------------------------------------------------------
 -- Send some json data back to server
@@ -67,7 +69,6 @@ PRIVATE FUNCTION doRestRequest(l_param STRING) RETURNS BOOLEAN
 	LET l_url = fgl_getResource("mob_framework.ws_url")||l_param
 	CALL gl_lib.gl_logIt("doRestRequest URL:"||NVL(l_url,"NULL"))
 
-	-- Do Rest call
 	TRY
 		LET l_req = com.HttpRequest.Create(l_url)
 		CALL l_req.setMethod("GET")
@@ -95,7 +96,7 @@ PRIVATE FUNCTION doRestRequest(l_param STRING) RETURNS BOOLEAN
 END FUNCTION
 --------------------------------------------------------------------------------
 -- Do the web service REST call to POST a Photo
-PRIVATE FUNCTION doRestRequestPhoto(l_param STRING, l_photo_file STRING) RETURNS BOOLEAN
+PRIVATE FUNCTION doRestRequestMedia(l_param STRING, l_media_file STRING, l_vid BOOLEAN) RETURNS BOOLEAN
 	DEFINE l_url STRING
 	DEFINE l_req com.HttpRequest
 	DEFINE l_resp com.HttpResponse
@@ -104,14 +105,18 @@ PRIVATE FUNCTION doRestRequestPhoto(l_param STRING, l_photo_file STRING) RETURNS
 	LET l_url = fgl_getResource("mob_framework.ws_url")||l_param
 	CALL gl_lib.gl_logIt("doRestRequest URL:"||NVL(l_url,"NULL"))
 
-	DISPLAY "Photo:",l_photo_file
+	DISPLAY "Media File:",l_media_file
 	TRY
 		LET l_req = com.HttpRequest.Create(l_url)
 		CALL l_req.setMethod("POST")
-		CALL l_req.setHeader("Content-Type", "image/jpg")
+		IF l_vid THEN
+			CALL l_req.setHeader("Content-Type", "video/mp4")
+		ELSE
+			CALL l_req.setHeader("Content-Type", "image/jpg")
+		END IF
 		CALL l_req.setHeader("Accept", "application/json")
 		CALL l_req.setVersion("1.0")
-		CALL l_req.doFileRequest(l_photo_file)
+		CALL l_req.doFileRequest(l_media_file)
 		LET l_resp = l_req.getResponse()
 		LET l_stat = l_resp.getStatusCode()
 		IF l_stat = 200 THEN
@@ -133,7 +138,7 @@ PRIVATE FUNCTION doRestRequestPhoto(l_param STRING, l_photo_file STRING) RETURNS
 END FUNCTION
 --------------------------------------------------------------------------------
 -- Do the web service REST call to POST some Data
-FUNCTION doRestRequestData(l_param STRING, l_data STRING)
+PRIVATE FUNCTION doRestRequestData(l_param STRING, l_data STRING)
 	DEFINE l_url STRING
 	DEFINE l_req com.HttpRequest
 	DEFINE l_resp com.HttpResponse

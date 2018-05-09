@@ -4,6 +4,7 @@
 IMPORT com
 IMPORT util
 IMPORT os
+
 IMPORT FGL gl_lib
 IMPORT FGL gl_lib_restful
 IMPORT FGL lib_secure
@@ -68,7 +69,7 @@ MAIN
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("getDets2") 
 							CALL getDets2()
 						OTHERWISE
-							CALL setReply(201,%"ERR",SFMT(%"Operation '%1' not found",gl_lib_restful.m_reqInfo.path))
+							CALL setReply(201,%"ERR",SFMT(%"GET Operation '%1' not found",gl_lib_restful.m_reqInfo.path))
 					END CASE
 					LET l_str = util.JSON.stringify(m_ret)
 				WHEN "POST"
@@ -78,7 +79,7 @@ MAIN
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("sendData")
 							CALL getData(l_req)
 						OTHERWISE
-							CALL setReply(201,%"ERR",SFMT(%"Operation '%1' not found",gl_lib_restful.m_reqInfo.path))
+							CALL setReply(201,%"ERR",SFMT(%"POST Operation '%1' not found",gl_lib_restful.m_reqInfo.path))
 					END CASE
 					LET l_str = util.JSON.stringify(m_ret)
 				OTHERWISE
@@ -99,7 +100,7 @@ MAIN
 					CALL gl_lib.gl_logIt(%"Disconnected from application server.")
 					EXIT WHILE
 				OTHERWISE
-					CALL gl_lib.gl_logIt(%"[ERROR] "||NVL(l_ret,"NULL"))
+					CALL gl_lib.gl_logIt(%"[ERROR] "||NVL(l_ret,"NULL")||" : "||ERR_GET(l_ret))
 					EXIT WHILE
 				END CASE
 		END TRY

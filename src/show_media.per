@@ -1,0 +1,27 @@
+LAYOUT ( TEXT="Media" )
+GRID
+{
+[lb_med    ]
+[mpth                        ]
+[                            ]
+[                            ]
+[lb_pth|lpth                 ]
+[lb_siz|siz                  ]
+[img                               ]
+[                                  ]
+[                                  ]
+[                                  ]
+[                                  ]
+[                                  ]
+[                                  ]
+}
+END -- GRID
+
+ATTRIBUTES
+LABEL lb_med : lb_med, TEXT=%"Media URI:";
+TEXTEDIT mpth = FORMONLY.f_mpath;
+LABEL lb_pth : lb_pth, TEXT=%"New Name:";
+LABEL lb_siz : lb_siz, TEXT=%"File Size:";
+lpth = FORMONLY.f_lpath;
+siz = FORMONLY.f_size, FORMAT="###,###,###", JUSTIFY=LEFT;
+IMAGE img = FORMONLY.f_photo, AUTOSCALE, SIZEPOLICY=FIXED;
