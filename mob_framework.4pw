@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Project defaultApplication="400358049" gstVersion="30a07" version="3.2">
+<Project defaultApplication="-1031729630" gstVersion="30a07" version="3.2">
   <Settings>
     <DynamicProperties version="2">
       <DynamicProperty description="Accent color (Android 5.0 and later)" initialValue="#9575CD" isDefaultInherited="false" isHidden="false" label="Accent color" name="gma-accent-color" readOnly="false" type="COLOR"/>
@@ -104,17 +104,32 @@
         <Directory description="Resources" includedFiles="*.4ad,*.4st,*.4tm,*.4tb,*.4sm,*.42s,*.iem" label="Resources" recursive="false" sourceDirectory="$(ProjectDir)/resources"/>
         <Directory description="Web Components" destinationDirectory="$(RootDir)/webcomponents" label="Webcomponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
       </Package>
-      <Package binaryName="ws_mob_backend" dependencies="991859968,-1451902566,-994061721" label="ws_mob_backend" platform="Genero Application Server">
-        <DynamicProperty name="packageId" value="ws_mob_backend"/>
-        <DynamicProperty name="packageLabel" value="ws_mob_backend"/>
+      <Package binaryName="mob_ui_backend" label="mob_ui_backend" platform="Genero Application Server">
+        <DynamicProperty name="packageId" value="mob_ui_backend"/>
+        <DynamicProperty name="packageLabel" value="mob_ui_backend"/>
         <DynamicProperty name="packageVersion" value="1000"/>
-        <DynamicProperty name="packageVersionName" value="10000"/>
-        <Directory label="Binaries" sourceDirectory="$(ProjectDir)/bin_server"/>
+        <DynamicProperty name="packageVersionName" value="1000"/>
+        <Directory label="Binaries" sourceDirectory="$(ProjectDir)/bin_srv_ui"/>
         <Directory label="Binaries_common" sourceDirectory="$(ProjectDir)/bin_common"/>
-        <Directory label="Gas" sourceDirectory="$(ProjectDir)/gas"/>
+        <Directory includedFiles="mob_ui_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas"/>
+      </Package>
+      <Package binaryName="mob_ws_backend" dependencies="991859968,-1451902566,-994061721" label="mob_ws_backend" platform="Genero Application Server">
+        <DynamicProperty name="packageId" value="mob_ws_backend"/>
+        <DynamicProperty name="packageLabel" value="mob_ws_backend"/>
+        <DynamicProperty name="packageVersion" value="1000"/>
+        <DynamicProperty name="packageVersionName" value="1000"/>
+        <Directory label="Binaries" sourceDirectory="$(ProjectDir)/bin_srv_ws"/>
+        <Directory label="Binaries_common" sourceDirectory="$(ProjectDir)/bin_common"/>
+        <Directory includedFiles="mob_ws_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas"/>
       </Package>
     </Group>
     <Group label="Common" targetDirectory="$(ProjectDir)/bin_common">
+      <Library binaryName="Database" id="455109296" label="Database">
+        <File filePath="../../../../../opt/fourjs/all/my_github/mob_framework/database/njm_demo310.4db"/>
+      </Library>
+      <Library binaryName="db_backend" dependencies="-994061721,455109296" id="1553065829" label="db_backend">
+        <File filePath="src_server/mob_db_backend.4gl"/>
+      </Library>
       <Library binaryName="gl_lib" id="-994061721" label="gl_lib">
         <File filePath="src/genero_lib.inc"/>
         <File filePath="src/gl_lib.4gl"/>
@@ -127,9 +142,6 @@
         <File filePath="resources/default.4ad"/>
         <File filePath="resources/default.4st"/>
         <File filePath="config/fglprofile"/>
-      </Library>
-      <Library binaryName="Database" id="455109296" label="Database">
-        <File filePath="../../../../../opt/fourjs/all/my_github/mob_framework/database/njm_demo310.4db"/>
       </Library>
       <Application binaryName="mob_framework" dependencies="159917928,212784684,362164715,455109296,-994061721,1065793016" environment="dirlist:FGLIMAGEPATH=$(ProjectDir)/images;$(FGLDIR)/lib/image2font.txt;$(ProjectDir)/webcomponents;$(FGLIMAGEPATH)" id="400358049" label="mob_framework">
         <VirtualFolder label="forms">
@@ -146,14 +158,21 @@
         <File filePath="src/mob_ws_lib.4gl"/>
       </Library>
     </Group>
-    <Group label="srv_njmdemo" language="Genero" targetDirectory="$(ProjectDir)/bin_server">
-      <Library binaryName="gas" excludeFromBuild="true" id="-1451902566" label="gas">
-        <File filePath="gas/ws_mob_backend.xcf"/>
+    <Group label="mob_ui_backend" targetDirectory="$(ProjectDir)/bin_srv_ui">
+      <Library binaryName="gas" id="1011122750" label="gas">
+        <File filePath="gas/mob_ui_backend.xcf"/>
       </Library>
-      <Application binaryName="ws_mob_backend" dependencies="-994061721,455109296" id="991859968" label="ws_mob_backend">
+      <Application binaryName="mob_ui_backend" dependencies="-994061721,455109296,1553065829,1011122750" id="-1031729630" label="mob_ui_backend">
+        <File filePath="src_server/mob_ui_backend.4gl"/>
+      </Application>
+    </Group>
+    <Group label="mob_ws_backend" language="Genero" targetDirectory="$(ProjectDir)/bin_srv_ws">
+      <Library binaryName="gas" excludeFromBuild="true" id="-1451902566" label="gas">
+        <File filePath="gas/mob_ws_backend.xcf"/>
+      </Library>
+      <Application binaryName="mob_ws_backend" dependencies="-994061721,455109296,-1850712431,-1451902566,1553065829" id="991859968" label="mob_ws_backend">
         <File filePath="src_server/gl_lib_restful.4gl"/>
-        <File filePath="src_server/ws_mob_backend_db.4gl"/>
-        <File filePath="src_server/ws_mob_backend.4gl"/>
+        <File filePath="src_server/mob_ws_backend.4gl"/>
       </Application>
     </Group>
   </Group>

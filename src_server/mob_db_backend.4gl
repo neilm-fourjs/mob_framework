@@ -33,8 +33,59 @@ FUNCTION db_connect()
 	CATCH
 	END TRY
 
+	TRY
+		CREATE TABLE ws_log_access (
+			username CHAR(30),
+			request VARCHAR(250),
+			access_date DATETIME YEAR TO SECOND
+		)
+	CATCH
+	END TRY
+
+	TRY
+		CREATE TABLE ws_log_media (
+			username CHAR(30),
+			media_type CHAR(1),
+			filepath VARCHAR(250),
+			access_date DATETIME YEAR TO SECOND
+		)
+	CATCH
+	END TRY
+
 END FUNCTION
 
+--------------------------------------------------------------------------------
+-- Log the access to the service
+-- 
+-- @params l_user User
+-- @params l_pass Password
+-- @returns the auth token or NULL if fails
+FUNCTION db_log_access(l_user STRING, l_request STRING)
+	DEFINE l_ts DATETIME YEAR TO SECOND
+
+	LET l_ts = CURRENT
+	LET l_user = l_user.trim()
+	LET l_request = l_request.trim()
+	CALL gl_lib.gl_logIt(SFMT("db_log_access:%1:%2",l_user,l_request))
+	INSERT INTO ws_log_access VALUES(l_user, l_request, l_ts)
+
+END FUNCTION
+--------------------------------------------------------------------------------
+-- Log the media files received
+-- 
+-- @params l_user User
+-- @params l_path File path
+-- @returns the auth token or NULL if fails
+FUNCTION db_log_media(l_user STRING, l_type CHAR(1), l_path STRING)
+	DEFINE l_ts DATETIME YEAR TO SECOND
+
+	LET l_ts = CURRENT
+	LET l_user = l_user.trim()
+	LET l_path = l_path.trim()
+	CALL gl_lib.gl_logIt(SFMT("db_log_media:%1:%2:%3",l_user,l_type,l_path))
+	INSERT INTO ws_log_media VALUES(l_user, l_type, l_path, l_ts)
+
+END FUNCTION
 --------------------------------------------------------------------------------
 -- Check the user is registered with that password or register new user
 -- 
@@ -50,9 +101,13 @@ FUNCTION db_check_user( l_user CHAR(30), l_pass CHAR(30) ) RETURNS STRING
 		INTO l_pass_hash, l_salt, l_token, l_token_date
 		FROM ws_users WHERE username = l_user
 	IF STATUS = NOTFOUND THEN
-		LET l_token = db_register_user(l_user,l_pass)
-		CALL gl_lib.gl_logIt(SFMT(%"Registered user '%1' with token '%2'", l_user CLIPPED,l_token))
-		RETURN l_token.trim()
+		IF fgl_getEnv("NEWUSERS") = 1 THEN -- do we allow new users to be created ?
+			LET l_token = db_register_user(l_user,l_pass)
+			CALL gl_lib.gl_logIt(SFMT(%"Registered user '%1' with token '%2'", l_user CLIPPED,l_token))
+			RETURN l_token.trim()
+		ELSE
+			RETURN NULL
+		END IF
 	END IF
 	IF NOT lib_secure.glsec_chkPassword(l_pass ,l_pass_hash ,l_salt, NULL ) THEN
 		CALL gl_lib.gl_logIt(SFMT(%"User '%1' password mismatch!", l_user CLIPPED))
@@ -85,6 +140,7 @@ FUNCTION db_register_user( l_user CHAR(30), l_pass CHAR(30)) RETURNS STRING
 	LET l_salt = lib_secure.glsec_genSalt( NULL )
 	LET l_pass_hash = lib_secure.glsec_genPasswordHash(l_pass, l_salt, NULL)
 	INSERT INTO ws_users VALUES( l_user, l_pass_hash, l_salt, l_token, l_now )
+	CALL db_log_access(l_user,"created")
 	RETURN l_token
 END FUNCTION
 --------------------------------------------------------------------------------

@@ -8,7 +8,7 @@ IMPORT os
 IMPORT FGL gl_lib
 IMPORT FGL gl_lib_restful
 IMPORT FGL lib_secure
-IMPORT FGL ws_mob_backend_db
+IMPORT FGL mob_db_backend
 
 CONSTANT WS_VER = 1
 
@@ -32,7 +32,7 @@ MAIN
 
 	LET m_ret.ver = WS_VER
 
-	CALL ws_mob_backend_db.db_connect()
+	CALL mob_db_backend.db_connect()
 
 	CALL gl_lib.gl_logIt(SFMT(%"Starting server, FGLAPPSERVER=%1 ...",fgl_getEnv("FGLAPPSERVER")))
 	#
@@ -75,7 +75,9 @@ MAIN
 				WHEN "POST"
 					CASE
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("putPhoto") 
-							CALL getPhoto(l_req)
+							CALL getMedia(l_req, FALSE)
+						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("putVideo") 
+							CALL getMedia(l_req, TRUE)
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("sendData")
 							CALL getData(l_req)
 						OTHERWISE
@@ -133,7 +135,7 @@ FUNCTION getToken()
 
 	CALL lib_secure.glsec_decryptCreds( l_xml ) RETURNING l_user, l_pass
 
-	LET l_token = ws_mob_backend_db.db_check_user( l_user, l_pass )
+	LET l_token = mob_db_backend.db_check_user( l_user, l_pass )
 	IF l_token IS NULL THEN
 		CALL setReply(202,%"ERR",%"Login Invalid!")
 		RETURN
@@ -152,12 +154,13 @@ FUNCTION check_token(l_func STRING) RETURNS BOOLEAN
 		RETURN FALSE
 	END IF
 	LET l_token = gl_lib_restful.gl_getParameterValue(x)
-	LET l_res = ws_mob_backend_db.db_check_token( l_token )
+	LET l_res = mob_db_backend.db_check_token( l_token )
 	IF l_res.subString(1,5) = "ERROR" THEN
 		CALL setReply(201,%"ERR",l_res)
 		RETURN FALSE
 	END IF
 	LET m_user = l_res
+	CALL mob_db_backend.db_log_access(m_user,SFMT("%1?%2",gl_lib_restful.m_reqInfo.path,gl_lib_restful.m_reqInfo.query))
 	RETURN TRUE
 END FUNCTION
 --------------------------------------------------------------------------------
@@ -168,7 +171,7 @@ FUNCTION getList1()
 
 	CALL gl_lib.gl_logIt(%"Return customer list for user:"||NVL(m_user,"NULL"))
 
-	LET l_data = ws_mob_backend_db.db_get_custs()
+	LET l_data = mob_db_backend.db_get_custs()
 	CALL gl_lib.gl_logIt(SFMT(%"Data size is %1", l_data.getLength()))
 
 	CALL setReply(200,%"OK",l_data)
@@ -192,7 +195,7 @@ FUNCTION getList2()
 	END IF
 	CALL gl_lib.gl_logIt(%"Return order list for customer:"||NVL(l_key,"NULL"))
 
-	LET l_data = ws_mob_backend_db.db_get_orders(l_key)
+	LET l_data = mob_db_backend.db_get_orders(l_key)
 
 	CALL setReply(200,%"OK",l_data)
 END FUNCTION
@@ -216,7 +219,7 @@ FUNCTION getDets1()
 
 	CALL gl_lib.gl_logIt(%"Return details for customer:"||NVL(l_key,"NULL"))
 
-	LET l_data = ws_mob_backend_db.db_get_custDets(l_key)
+	LET l_data = mob_db_backend.db_get_custDets(l_key)
 
 	CALL setReply(200,%"OK",l_data)
 END FUNCTION
@@ -240,31 +243,55 @@ FUNCTION getDets2()
 
 	CALL gl_lib.gl_logIt(%"Return details for order:"||NVL(l_key,"NULL"))
 
-	LET l_data = ws_mob_backend_db.db_get_orderDets(l_key)
+	LET l_data = mob_db_backend.db_get_orderDets(l_key)
 
 	CALL setReply(200,%"OK",l_data)
 END FUNCTION
 --------------------------------------------------------------------------------
--- putPhoto - handle a photo being received.
-FUNCTION getPhoto(l_req com.HTTPServiceRequest)
-	DEFINE l_photo_file STRING
+-- getMedia - handle a photo/video being received.
+FUNCTION getMedia(l_req com.HTTPServiceRequest, l_vid BOOLEAN)
+	DEFINE l_media_file, l_media_path, l_newpath STRING
 
-	IF NOT check_token("getPhoto") THEN RETURN END IF
+	IF NOT check_token("getMedia") THEN RETURN END IF
 
-	CALL gl_lib.gl_logIt(%"Getting Photo ...")
+	CALL gl_lib.gl_logIt(%"Getting "||IIF(l_vid,"Video","Photo")||" ...")
 	TRY
-		LET l_photo_file = l_req.readFileRequest()
+		LET l_media_file = l_req.readFileRequest()
 	CATCH
-		CALL setReply(200,%"ERR",%"Photo receive Failed!")
+		CALL setReply(200,%"ERR",%"Media receive Failed!")
 		RETURN
 	END TRY
 
-	CALL gl_lib.gl_logIt(%"Got Photo:"||NVL(l_photo_file,"NULL"))
-	IF os.Path.exists( l_photo_file ) THEN
-		CALL setReply(200,%"OK",%"Photo received")
+	CALL gl_lib.gl_logIt(%"Got :"||IIF(l_vid,"Video","Photo")||NVL(l_media_file,"NULL"))
+	IF os.Path.exists( l_media_file ) THEN
+		CALL setReply(200,%"OK", SFMT(%"Media File %1 received",l_media_file))
 	ELSE
-		CALL setReply(200,%"OK",%"Photo Doesn't Exists!")
+		CALL setReply(200,%"OK",%"Media File Doesn't Exists!")
+		RETURN
 	END IF
+
+	LET l_media_path = fgl_getEnv("MEDIAPATH")
+	IF NOT os.path.exists( l_media_path ) THEN
+		IF NOT os.path.mkdir( l_media_path ) THEN
+			CALL setReply(200,%"OK",SFMT(%"Media Path Failed to create %1!",l_media_path))
+			RETURN
+		END IF
+	END IF
+
+	LET l_newpath = os.path.join( l_media_path, os.path.basename(l_media_file) )
+
+	IF os.Path.copy(l_media_file, l_newpath) THEN
+		IF NOT os.path.delete(l_media_file) THEN
+			CALL gl_lib.gl_logIt(SFMT(%"Failed to delete %1",l_media_file))
+		END IF
+	ELSE
+		CALL gl_lib.gl_logIt(SFMT(%"Failed to copy %1 to %2",l_media_file,l_newpath))
+		CALL setReply(200,%"OK",%"Media processing failed!")
+		RETURN
+	END IF
+
+	CALL mob_db_backend.db_log_media(m_user, IIF(l_vid,"V","P"), l_newpath)
+
 END FUNCTION
 --------------------------------------------------------------------------------
 -- simple fetch data from the server.

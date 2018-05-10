@@ -20,6 +20,7 @@ MAIN
 	OPEN FORM main FROM "mob_framework"
 	DISPLAY FORM main
 	DISPLAY IIF( mob_lib.check_network(), "Connected","No Connection") TO f_network
+	DISPLAY fgl_getResource("mob_framework.ws_url") TO f_server
 
 	MENU
 		ON ACTION list_custs
