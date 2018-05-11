@@ -109,8 +109,9 @@
         <DynamicProperty name="packageLabel" value="mob_ui_backend"/>
         <DynamicProperty name="packageVersion" value="1000"/>
         <DynamicProperty name="packageVersionName" value="1000"/>
-        <Directory label="Binaries" sourceDirectory="$(ProjectDir)/bin_srv_ui"/>
-        <Directory label="Binaries_common" sourceDirectory="$(ProjectDir)/bin_common"/>
+        <Directory includedFiles="*.42?" label="Binaries" sourceDirectory="$(ProjectDir)/bin_srv_ui"/>
+        <Directory includedFiles="*.42?" label="Binaries_common" sourceDirectory="$(ProjectDir)/bin_common"/>
+        <Directory label="etc" sourceDirectory="$(ProjectDir)/etc"/>
         <Directory includedFiles="mob_ui_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas"/>
       </Package>
       <Package binaryName="mob_ws_backend" dependencies="991859968,-1451902566,-994061721" label="mob_ws_backend" platform="Genero Application Server">
@@ -159,6 +160,9 @@
       </Library>
     </Group>
     <Group label="mob_ui_backend" targetDirectory="$(ProjectDir)/bin_srv_ui">
+      <Library binaryName="etc" id="1804037942" label="etc">
+        <File filePath="etc/default.4ad"/>
+      </Library>
       <Library binaryName="gas" id="1011122750" label="gas">
         <File filePath="gas/mob_ui_backend.xcf"/>
       </Library>
@@ -166,6 +170,7 @@
         <File filePath="../../../../../opt/fourjs/all/my_github/mob_framework/src_server/accessLog.per"/>
         <File filePath="../../../../../opt/fourjs/all/my_github/mob_framework/src_server/mediaLog.per"/>
         <File filePath="src_server/mob_ui_backend.4gl"/>
+        <File filePath="src_server/mob_ui_backend.per"/>
       </Application>
     </Group>
     <Group label="mob_ws_backend" language="Genero" targetDirectory="$(ProjectDir)/bin_srv_ws">

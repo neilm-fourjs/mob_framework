@@ -4,8 +4,8 @@
 	 xsi:noNamespaceSchemaLocation="http://www.4js.com/ns/gas/3.10/cfextwa.xsd">
 	<RESOURCE Id="res.app.path" Source="INTERNAL">$(res.deployment.path)</RESOURCE>
 	<EXECUTION>
-    <ENVIRONMENT_VARIABLE Id="DBNAME">njm_demo310</ENVIRONMENT_VARIABLE>
-    <ENVIRONMENT_VARIABLE Id="MEDIAPATH">../ws_mob_media</ENVIRONMENT_VARIABLE>
+		<ENVIRONMENT_VARIABLE Id="DBNAME">njm_demo310</ENVIRONMENT_VARIABLE>
+		<ENVIRONMENT_VARIABLE Id="MEDIAPATH">../ws_mob_media</ENVIRONMENT_VARIABLE>
 		<PATH>$(res.app.path)</PATH>
 		<MODULE>mob_ui_backend.42r</MODULE>
 	</EXECUTION>

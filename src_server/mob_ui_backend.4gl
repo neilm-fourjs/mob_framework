@@ -10,9 +10,12 @@ MAIN
 
 	CALL mob_db_backend.db_connect()
 
-	MENU
+	OPEN FORM f1 FROM "mob_ui_backend"
+	DISPLAY FORM f1
+
+	MENU %"Menu"
 		ON ACTION users CALL users()
-		ON ACTION acclog CALL accessLog()
+		ON ACTION accesslog CALL accessLog()
 		ON ACTION medialog CALL mediaLog()
 		ON ACTION quit EXIT MENU
 	END MENU

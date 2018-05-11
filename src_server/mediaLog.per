@@ -1,6 +1,6 @@
 SCHEMA njm_demo310
 LAYOUT ( TEXT="Media Log" )
-VBOX
+VBOX ( SPLITTER )
 TABLE
 {
 [a001       ][a2][a003                                ][a004               ]
@@ -39,7 +39,7 @@ COMBOBOX a2 = ws_log_media.media_type, TITLE=%"Typ", ITEMS=(("P","Photo"),("V","
 a003 = ws_log_media.filepath, TITLE=%"File Path";
 a004 = ws_log_media.access_date, TITLE=%"Timestamp";
 
-IMAGE img = FORMONLY.f_img, AUTOSCALE;
+IMAGE img = FORMONLY.f_img, STRETCH=BOTH, AUTOSCALE;
 
 INSTRUCTIONS
 SCREEN RECORD arr ( ws_log_media.* )
