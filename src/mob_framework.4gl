@@ -37,6 +37,8 @@ MAIN
 			CALL send_data("This is some test data!")
 		ON ACTION about
 			CALL ui.interface.frontCall("Android","showAbout",[],[])
+		ON ACTION view_log
+			CALL mob_lib.view_log()
 		ON ACTION quit
 			EXIT MENU
 		ON TIMER 10

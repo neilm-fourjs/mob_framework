@@ -1,0 +1,25 @@
+SCHEMA njm_demo310
+LAYOUT ( TEXT="Data Log" )
+TABLE
+{
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+}
+END -- TABLE
+
+TABLES
+ws_log_data
+
+ATTRIBUTES
+a001 = ws_log_data.username, TITLE=%"User";
+a002 = ws_log_data.data, TITLE=%"Data";
+a003 = ws_log_data.access_date, TITLE=%"Timestamp";
+
+INSTRUCTIONS
+SCREEN RECORD arr ( ws_log_data.* )

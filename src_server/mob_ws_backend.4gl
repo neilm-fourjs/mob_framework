@@ -308,6 +308,8 @@ FUNCTION getData(l_req com.HTTPServiceRequest)
 		RETURN
 	END TRY
 
+	CALL mob_db_backend.db_log_data(m_user,l_str)
+
 	CALL gl_lib.gl_logIt(%"Data:"||NVL(l_str,"NULL"))
 	CALL setReply(200,%"OK",%"Data received")
 END FUNCTION

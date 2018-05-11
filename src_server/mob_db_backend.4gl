@@ -52,6 +52,14 @@ FUNCTION db_connect()
 	CATCH
 	END TRY
 
+	TRY
+		CREATE TABLE ws_log_data (
+			username CHAR(30),
+			data VARCHAR(250),
+			access_date DATETIME YEAR TO SECOND
+		)
+	CATCH
+	END TRY
 END FUNCTION
 
 --------------------------------------------------------------------------------
@@ -84,6 +92,22 @@ FUNCTION db_log_media(l_user STRING, l_type CHAR(1), l_path STRING)
 	LET l_path = l_path.trim()
 	CALL gl_lib.gl_logIt(SFMT("db_log_media:%1:%2:%3",l_user,l_type,l_path))
 	INSERT INTO ws_log_media VALUES(l_user, l_type, l_path, l_ts)
+
+END FUNCTION
+--------------------------------------------------------------------------------
+-- Log the data received
+-- 
+-- @params l_user User
+-- @params l_path File path
+-- @returns the auth token or NULL if fails
+FUNCTION db_log_data(l_user STRING, l_data STRING)
+	DEFINE l_ts DATETIME YEAR TO SECOND
+
+	LET l_ts = CURRENT
+	LET l_user = l_user.trim()
+	LET l_data = l_data.trim()
+	CALL gl_lib.gl_logIt(SFMT("db_log_data:%1:%2",l_user,l_data))
+	INSERT INTO ws_log_data VALUES(l_user, l_data, l_ts)
 
 END FUNCTION
 --------------------------------------------------------------------------------

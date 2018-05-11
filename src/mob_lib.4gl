@@ -142,6 +142,33 @@ FUNCTION init_db() RETURNS BOOLEAN
 	RETURN TRUE
 END FUNCTION
 --------------------------------------------------------------------------------
+FUNCTION view_log()
+	DEFINE l_log, l_file STRING
+	DEFINE c base.channel
+	OPEN WINDOW view_log WITH FORM "view_log"
+
+	LET l_file = os.path.join(gl_lib.gl_getLogDir(),gl_lib.gl_getLogName()||".log")
+	LET c = base.Channel.create()
+	TRY
+		CALL c.openFile(l_file,"r")
+		WHILE NOT c.isEof()
+			LET l_log = l_log.append( c.readLine()||"\n" )
+		END WHILE
+		CALL c.close()
+	CATCH
+		LET l_log = SFMT(%"Failed to open %1",l_file)
+	END TRY
+
+	DISPLAY BY NAME l_log
+
+	MENU
+		ON ACTION back EXIT MENU
+		ON ACTION close EXIT MENU
+	END MENU
+
+	CLOSE WINDOW view_log
+END FUNCTION
+--------------------------------------------------------------------------------
 FUNCTION login() RETURNS BOOLEAN
 	DEFINE l_user, l_pass STRING
 	DEFINE l_token, l_salt, l_pass_hash, l_xml_creds STRING

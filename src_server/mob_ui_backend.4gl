@@ -17,6 +17,7 @@ MAIN
 		ON ACTION users CALL users()
 		ON ACTION accesslog CALL accessLog()
 		ON ACTION medialog CALL mediaLog()
+		ON ACTION datalog CALL dataLog()
 		ON ACTION quit EXIT MENU
 	END MENU
 
@@ -47,6 +48,26 @@ FUNCTION accessLog()
 	DISPLAY ARRAY l_al TO arr.*
 
 	CLOSE WINDOW al
+  
+END FUNCTION
+--------------------------------------------------------------------------------
+-- View the Data log
+-- 
+-- @params 
+-- @returns
+FUNCTION dataLog()
+	DEFINE l_dl DYNAMIC ARRAY OF RECORD LIKE ws_log_data.*
+
+	DECLARE cur_dl CURSOR FOR SELECT * FROM ws_log_data
+	FOREACH cur_dl INTO l_dl[ l_dl.getLength() + 1 ].*
+	END FOREACH
+	CALL l_dl.deleteElement( l_dl.getLength() )
+
+	OPEN WINDOW dl WITH FORM "dataLog"
+	
+	DISPLAY ARRAY l_dl TO arr.*
+
+	CLOSE WINDOW dl
   
 END FUNCTION
 --------------------------------------------------------------------------------

@@ -33,6 +33,7 @@
 
   <ActionDefault name="users" text="Users" image="fa-users" validate="no" defaultView="yes"  contextMenu="no"/>
   <ActionDefault name="accesslog" text="Access" image="fa-list" validate="no" defaultView="yes"  contextMenu="no"/>
+  <ActionDefault name="datalog" text="Data" image="fa-database" validate="no" defaultView="yes"  contextMenu="no"/>
   <ActionDefault name="medialog" text="Media" image="fa-image" validate="no" defaultView="yes"  contextMenu="no"/>
   <ActionDefault name="quit" text="Quit" image="fa-power-off" validate="no" defaultView="yes"  contextMenu="no"/>
 </ActionDefaultList>

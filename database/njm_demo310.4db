@@ -232,6 +232,11 @@
     <Column fglLength="250" fglType="13" name="request" notNull="false" order="2" status="U" uuid="db/column3"/>
     <Column fglLength="3594" fglType="10" name="access_date" notNull="false" order="3" status="U" uuid="db/column5"/>
   </Table>
+  <Table active="true" name="ws_log_data" status="U" uuid="db/table5">
+    <Column fglLength="30" fglType="0" name="username" notNull="false" order="1" status="U" uuid="db/column15"/>
+    <Column fglLength="250" fglType="13" name="data" notNull="false" order="2" status="U" uuid="db/column17"/>
+    <Column fglLength="3594" fglType="10" name="access_date" notNull="false" order="3" status="U" uuid="db/column19"/>
+  </Table>
   <Table active="true" name="ws_log_media" status="U" uuid="db/table3">
     <Column fglLength="30" fglType="0" name="username" notNull="false" order="1" status="U" uuid="db/column7"/>
     <Column fglLength="1" fglType="0" name="media_type" notNull="false" order="2" status="U" uuid="db/column9"/>
