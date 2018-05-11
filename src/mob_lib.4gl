@@ -42,6 +42,7 @@ PUBLIC DEFINE m_list1_date, m_list2_date DATETIME YEAR TO SECOND
 
 FUNCTION init_app()
 	DEFINE l_dbname STRING
+
 	LET l_dbname = "mob_database.db"
 	TRY
 		CONNECT TO l_dbname

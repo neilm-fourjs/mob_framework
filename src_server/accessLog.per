@@ -1,0 +1,25 @@
+SCHEMA njm_demo310
+LAYOUT ( TEXT="Access Log" )
+TABLE
+{
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+[a001       ][a002                                ][a003               ]
+}
+END -- TABLE
+
+TABLES
+ws_log_access
+
+ATTRIBUTES
+a001 = ws_log_access.username, TITLE=%"User";
+a002 = ws_log_access.request, TITLE=%"Request";
+a003 = ws_log_access.access_date, TITLE=%"Timestamp";
+
+INSTRUCTIONS
+SCREEN RECORD arr ( ws_log_access.* )

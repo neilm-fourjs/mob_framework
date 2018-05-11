@@ -163,6 +163,8 @@
         <File filePath="gas/mob_ui_backend.xcf"/>
       </Library>
       <Application binaryName="mob_ui_backend" dependencies="-994061721,455109296,1553065829,1011122750" id="-1031729630" label="mob_ui_backend">
+        <File filePath="../../../../../opt/fourjs/all/my_github/mob_framework/src_server/accessLog.per"/>
+        <File filePath="../../../../../opt/fourjs/all/my_github/mob_framework/src_server/mediaLog.per"/>
         <File filePath="src_server/mob_ui_backend.4gl"/>
       </Application>
     </Group>
