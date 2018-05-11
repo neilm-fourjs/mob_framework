@@ -3,6 +3,7 @@
 
 IMPORT util
 IMPORT com
+IMPORT security
 
 IMPORT FGL gl_lib
 
@@ -171,5 +172,84 @@ PRIVATE FUNCTION doRestRequestData(l_param STRING, l_data STRING)
 		CALL gl_lib.gl_winMessage("WS Error", m_ret.reply,"exclamation")
 		RETURN FALSE
 	END IF
+	RETURN TRUE
+END FUNCTION
+
+--------------------------------------------------------------------------------
+-- Service Certainty 
+PRIVATE FUNCTION doRestServiceCertainty(l_jobid STRING, l_custid STRING, l_vrn STRING, l_files DYNAMIC ARRAY OF STRING)
+	DEFINE l_url, l_user, l_pass STRING
+	DEFINE l_req com.HttpRequest
+	DEFINE l_resp com.HttpResponse
+	DEFINE l_stat, x SMALLINT
+	DEFINE l_data, l_textReply STRING
+	DEFINE l_jo, l_jo_ref util.JSONObject
+	DEFINE l_ja_imgs util.JSONArray
+	DEFINE l_ret RECORD
+		link STRING,
+		references RECORD
+			jobId STRING
+		END RECORD,
+		success BOOLEAN,
+		message STRING
+	END RECORD
+
+	LET l_url = fgl_getResource("mob_framework.ws_sc_url")
+	LET l_user = fgl_getResource("mob_framework.ws_sc_user")
+	LET l_pass = fgl_getResource("mob_framework.ws_sc_pass")
+
+	CALL gl_lib.gl_logIt("doRestServiceCertainty URL:"||NVL(l_url,"NULL"))
+
+	LET l_jo = util.JSONObject.create()
+	CALL l_jo.put("username", l_user)
+	CALL l_jo.put("password", l_pass)
+	LET l_jo_ref = util.JSONObject.create()
+	CALL l_jo_ref.put("jobId", l_jobid)
+	CALL l_jo_ref.put("customerid", l_custid)
+	CALL l_jo_ref.put("vrn", l_vrn)
+	CALL l_jo.put("references", l_jo_ref)
+	LET l_ja_imgs = util.JSONArray.create()
+	FOR x = 1 TO l_files.getLength()
+		TRY
+			LET l_data = security.Base64.LoadBinary( l_files[x] )
+		CATCH
+			LET m_ret.reply = SFMT("WS Image processing failed!\n%1-%2",STATUS,l_files[x] )
+			RETURN FALSE
+		END TRY
+		CALL l_ja_imgs.put(x, l_data)
+	END FOR
+	CALL l_jo.put("images", l_ja_imgs)
+
+-- Do the POST
+	TRY
+		LET l_req = com.HttpRequest.Create(l_url)
+		CALL l_req.setMethod("POST")
+		CALL l_req.setHeader("Content-Type", "application/json")
+		CALL l_req.setHeader("Accept", "application/json")
+		CALL l_req.doTextRequest(l_jo.toString()  )
+		LET l_resp = l_req.getResponse()
+		LET l_stat = l_resp.getStatusCode()
+    LET l_textReply = l_resp.getTextResponse()
+    CASE l_stat
+      WHEN 200
+        CALL util.JSON.parse( l_textReply, l_ret )
+      WHEN 400
+        CALL util.JSON.parse( l_textReply, l_ret )
+				CALL gl_lib.gl_logIt(SFMT(%"Error 400:%1",l_textReply))
+      OTHERWISE
+        LET m_ret.reply = SFMT("WS Call Failed!\n%1-%2",l_stat, l_resp.getStatusDescription())
+    END CASE
+	CATCH
+		LET l_stat = STATUS
+		LET m_ret.reply = ERR_GET( l_stat )
+	END TRY
+	LET m_ret.stat = l_stat
+	IF m_ret.stat != 200 THEN
+		CALL gl_lib.gl_logIt("Error:"||NVL(m_ret.reply,"NULL"))
+		CALL gl_lib.gl_winMessage("WS Error", m_ret.reply,"exclamation")
+		RETURN FALSE
+	END IF
+	LET m_ret.reply = l_ret.link
+	CALL gl_lib.gl_logIt("m_ret reply:"||NVL(m_ret.reply,"NULL"))
 	RETURN TRUE
 END FUNCTION
