@@ -57,7 +57,7 @@ END FUNCTION
 -- @returns
 FUNCTION dataLog()
 	DEFINE l_dl DYNAMIC ARRAY OF RECORD LIKE ws_log_data.*
-
+	DEFINE l_ret SMALLINT
 	DECLARE cur_dl CURSOR FOR SELECT * FROM ws_log_data
 	FOREACH cur_dl INTO l_dl[ l_dl.getLength() + 1 ].*
 	END FOREACH
@@ -66,6 +66,11 @@ FUNCTION dataLog()
 	OPEN WINDOW dl WITH FORM "dataLog"
 	
 	DISPLAY ARRAY l_dl TO arr.*
+		ON ACTION select
+			IF l_dl[ arr_curr()].data[1,4] = "http" THEN
+				CALL ui.Interface.frontCall("standard", "launchURL", [ l_dl[ arr_curr()].data ], l_ret)
+			END IF
+	END DISPLAY
 
 	CLOSE WINDOW dl
   
