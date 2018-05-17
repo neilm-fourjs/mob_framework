@@ -177,12 +177,12 @@ END FUNCTION
 
 --------------------------------------------------------------------------------
 -- Service Certainty 
-PRIVATE FUNCTION doRestServiceCertainty(l_jobid STRING, l_custid STRING, l_vrn STRING, l_files DYNAMIC ARRAY OF STRING)
+PRIVATE FUNCTION doRestServiceCertainty(l_jobid STRING, l_custid STRING, l_vrn STRING, l_files DYNAMIC ARRAY OF STRING) RETURNS BOOLEAN
 	DEFINE l_url, l_user, l_pass STRING
 	DEFINE l_req com.HttpRequest
 	DEFINE l_resp com.HttpResponse
 	DEFINE l_stat, x SMALLINT
-	DEFINE l_data, l_textReply STRING
+	DEFINE l_data, l_textReply, l_json STRING
 	DEFINE l_jo, l_jo_ref util.JSONObject
 	DEFINE l_ja_imgs util.JSONArray
 	DEFINE l_ret RECORD
@@ -194,9 +194,9 @@ PRIVATE FUNCTION doRestServiceCertainty(l_jobid STRING, l_custid STRING, l_vrn S
 		message STRING
 	END RECORD
 
-	LET l_url = fgl_getResource("mob_framework.ws_sc_url")
-	LET l_user = fgl_getResource("mob_framework.ws_sc_user")
-	LET l_pass = fgl_getResource("mob_framework.ws_sc_pass")
+	LET l_url = fgl_getResource("mob_bms.ws_sc_url")
+	LET l_user = fgl_getResource("mob_bms.ws_sc_user")
+	LET l_pass = fgl_getResource("mob_bms.ws_sc_pass")
 
 	CALL gl_lib.gl_logIt("doRestServiceCertainty URL:"||NVL(l_url,"NULL"))
 
@@ -226,15 +226,20 @@ PRIVATE FUNCTION doRestServiceCertainty(l_jobid STRING, l_custid STRING, l_vrn S
 		CALL l_req.setMethod("POST")
 		CALL l_req.setHeader("Content-Type", "application/json")
 		CALL l_req.setHeader("Accept", "application/json")
-		CALL l_req.doTextRequest(l_jo.toString()  )
+		CALL l_req.doTextRequest( l_jo.toString() )
 		LET l_resp = l_req.getResponse()
 		LET l_stat = l_resp.getStatusCode()
     LET l_textReply = l_resp.getTextResponse()
+		LET l_json = findJson(l_textReply)
     CASE l_stat
       WHEN 200
-        CALL util.JSON.parse( l_textReply, l_ret )
+				IF l_json IS NOT NULL THEN
+        	CALL util.JSON.parse( l_json, l_ret )
+				END IF
       WHEN 400
-        CALL util.JSON.parse( l_textReply, l_ret )
+				IF l_json IS NOT NULL THEN
+        	CALL util.JSON.parse( l_json, l_ret )
+				END IF
 				CALL gl_lib.gl_logIt(SFMT(%"Error 400:%1",l_textReply))
       OTHERWISE
         LET m_ret.reply = SFMT("WS Call Failed!\n%1-%2",l_stat, l_resp.getStatusDescription())
@@ -252,4 +257,21 @@ PRIVATE FUNCTION doRestServiceCertainty(l_jobid STRING, l_custid STRING, l_vrn S
 	LET m_ret.reply = l_ret.link
 	CALL gl_lib.gl_logIt("m_ret reply:"||NVL(m_ret.reply,"NULL"))
 	RETURN TRUE
+END FUNCTION
+--------------------------------------------------------------------------------
+-- Return JSON from a string that might not start with JSON
+-- Should return a string that starts with { and ends with } or returns NULL
+FUNCTION findJson( l_txt STRING ) RETURNS STRING
+	DEFINE l_json STRING
+	DEFINE x,z SMALLINT
+	LET x = l_txt.getIndexOf("{",1) -- look for start of JSON
+	IF x > 0 THEN
+		FOR z = l_txt.getLength() TO x STEP -1 -- work backwards to find the last close json tag
+			IF l_txt.getCharAt(z) = "}" THEN
+				LET l_json = l_txt.subString( x, z)
+				EXIT FOR
+			END IF
+		END FOR
+	END IF
+	RETURN l_json
 END FUNCTION
