@@ -4,6 +4,7 @@ ACTION DEFAULTS
 END -- AD
 
 LAYOUT ( TEXT="Gallery" )
+VBOX ( SPLITTER )
 GRID
 {
  [ip                                        ]
@@ -21,6 +22,10 @@ GRID
  [                                          ]
  [                                          ]
 <                                            >
+}
+END -- GRID
+GRID
+{
 <G g3                                        >
  [img                                       ]
  [                                          ]
@@ -33,6 +38,7 @@ GRID
 <                                            >
 }
 END -- GRID
+END -- VBOX
 
 ATTRIBUTES
 LABEL ip = FORMONLY.ip;
