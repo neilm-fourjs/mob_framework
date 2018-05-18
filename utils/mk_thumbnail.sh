@@ -2,6 +2,8 @@
 
 DIR=$1
 FILE=$2
+SIZ=150
+TYP=gif
 
 echo `date` " DIR: $DIR File: $FILE" >> mk_thumbnail.log
 
@@ -17,6 +19,6 @@ if [ ! -e $FILE ]; then
 	exit 0
 fi
 
-NEWFILE=tn_"${FILE%.*}".gif
-convert -thumbnail 100x100 $FILE -auto-orient -background transparent -gravity center -extent 100x100 $NEWFILE
+NEWFILE=tn_"${FILE%.*}".$TYP
+convert -thumbnail ${SIZ}x${SIZ} $FILE -auto-orient -background transparent -gravity center -extent ${SIZ}x${SIZ} $NEWFILE
 

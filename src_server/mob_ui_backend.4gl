@@ -1,5 +1,6 @@
 
 IMPORT os
+IMPORT util
 
 IMPORT FGL gl_lib
 IMPORT FGL mob_db_backend
@@ -19,7 +20,7 @@ MAIN
 	LET m_imageDir = fgl_getEnv("MEDIAPATH")
 	CALL gl_lib.gl_logIt(SFMT("FGLIMAGEPATH=%1",fgl_getEnv("FGLIMAGEPATH")))
 	CALL gl_lib.gl_logIt(SFMT("getting image array from %1",m_imageDir))
-	CALL getImages(m_imageDir, "jpg","gif")
+	CALL getImages(m_imageDir, "gif","png")
 	IF m_pics.getLength() = 0 THEN
 		CALL gl_winMessage("Error",SFMT("No images found in:%1",m_imageDir),"exclamation")
 	END IF
@@ -32,8 +33,8 @@ MAIN
 		ON ACTION users CALL users()
 		ON ACTION accesslog CALL accessLog()
 		ON ACTION medialog CALL mediaLog()
+		ON ACTION gallery CALL showGallery()
 		ON ACTION datalog CALL dataLog()
-		ON ACTION gallery CALL showGAllery()
 		ON ACTION quit EXIT MENU
 	END MENU
 
@@ -135,12 +136,18 @@ END FUNCTION
 FUNCTION showGallery()
 	DEFINE l_id, l_stat INTEGER
 	DEFINE x SMALLINT
+	DEFINE l_rec RECORD
+		gallery_type INTEGER,
+		gallery_size INTEGER,
+		current INTEGER,
+		gallery_wc STRING
+	END RECORD
+	DEFINE l_struct_value fglgallery.t_struct_value
 
 	OPEN WINDOW gallery WITH FORM "wc_gallery"
 
 	DISPLAY "ImageDir:"||m_imageDir TO id
 	DISPLAY "FGLIMAGEPATH:"||fgl_getEnv("FGLIMAGEPATH") TO ip
-	CALL ui.Interface.refresh()
 
 	CALL fglgallery.initialize()
 
@@ -153,27 +160,73 @@ FUNCTION showGallery()
 		CALL fglgallery.addImage(l_id, 
 --					ui.Interface.filenameToURI(os.path.join(c_imageDir,m_pics[x])), 
 						ui.Interface.filenameToURI(m_pics[x]), 
-					m_pics[x] --	"Image "||x
+						getImgFromThumb( m_pics[x] ) --	"Image "||x
 					)
 	END FOR
+	DISPLAY "Added "|| m_pics.getLength()
 
+	LET l_rec.current = 1
+	LET l_rec.gallery_size = FGLGALLERY_SIZE_NORMAL
+	LET l_rec.gallery_type = FGLGALLERY_TYPE_MOSAIC
 -- Display the gallery to the WC.
 	TRY
-		CALL fglgallery.display(l_id, FGLGALLERY_TYPE_MOSAIC, FGLGALLERY_SIZE_NORMAL)
+		CALL fglgallery.display(l_id, l_rec.gallery_type, l_rec.gallery_size)
 	CATCH
 		LET l_stat = STATUS
 		CALL gl_lib.gl_logIt(ERR_GET(l_stat))
 		CALL gl_winMessage("Error",ERR_GET(l_stat),"exclamation")
 	END TRY
 
-	MENU
-		ON ACTION close EXIT MENU
-		ON ACTION quit EXIT MENU
-	END MENU
+	INPUT BY NAME l_rec.* ATTRIBUTES (UNBUFFERED, WITHOUT DEFAULTS, ACCEPT=FALSE, CANCEL=FALSE)
+
+		ON ACTION image_selection ATTRIBUTES(DEFAULTVIEW=NO)
+			DISPLAY "image_sel:",l_rec.gallery_wc
+			IF l_rec.gallery_wc.getLength() < 2 THEN
+				CALL gl_winMessage("Error","Image Selection failed!","exclamation")
+			ELSE
+				CALL util.JSON.parse( l_rec.gallery_wc, l_struct_value )
+				LET l_rec.current = l_struct_value.current
+				DISPLAY getImgFromThumb( m_pics[ l_rec.current ] ) TO f_img
+			END IF
+
+		ON CHANGE gallery_type
+			CALL fglgallery.display(l_id, l_rec.gallery_type, l_rec.gallery_size)
+
+		ON CHANGE gallery_size
+			CALL fglgallery.display(l_id, l_rec.gallery_type, l_rec.gallery_size)
+
+		ON ACTION set_current ATTRIBUTES(DEFAULTVIEW=NO)
+			LET l_struct_value.current = l_rec.current
+			LET l_rec.gallery_wc = util.JSON.stringify(l_struct_value)
+
+		ON ACTION close EXIT INPUT
+		ON ACTION quit EXIT INPUT
+	END INPUT
 
 	CALL fglgallery.finalize()
 
 	CLOSE WINDOW gallery
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION display_type_init(l_cb ui.ComboBox)
+	CALL l_cb.addItem(FGLGALLERY_TYPE_MOSAIC,        "Mosaic")
+	CALL l_cb.addItem(FGLGALLERY_TYPE_LIST,          "List")
+	CALL l_cb.addItem(FGLGALLERY_TYPE_THUMBNAILS,    "Thumbnails")
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION display_size_init(l_cb ui.ComboBox )
+	CALL l_cb.addItem(FGLGALLERY_SIZE_XSMALL, "X-Small")
+	CALL l_cb.addItem(FGLGALLERY_SIZE_SMALL,  "Small")
+	CALL l_cb.addItem(FGLGALLERY_SIZE_NORMAL, "Normal")
+	CALL l_cb.addItem(FGLGALLERY_SIZE_LARGE,  "Large")
+	CALL l_cb.addItem(FGLGALLERY_SIZE_XLARGE, "X-Large")
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION getImgFromThumb( l_nam STRING )
+	IF l_nam.subString(1,3) = "tn_" THEN
+		LET l_nam = l_nam.subString(4, l_nam.getLength())
+	END IF
+	RETURN os.path.rootname( l_nam )
 END FUNCTION
 --------------------------------------------------------------------------------
 -- Set the m_pics array to all images of extention type p_ext or p_ext2.

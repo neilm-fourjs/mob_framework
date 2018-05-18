@@ -6,21 +6,52 @@ END -- AD
 LAYOUT ( TEXT="Gallery" )
 GRID
 {
-[ip                                        ]
-[id                                        ]
-[ig                                        ]
-[                                          ]
-[                                          ]
-[                                          ]
-[                                          ]
+ [ip                                        ]
+ [id                                        ]
+
+<G g1                                        >
+ Type: [f1                         ]
+ Size: [f2                         ]
+ Currrent image index: [f3         ]
+<                                            >
+<G g2                                        >
+ [ig                                        ]
+ [                                          ]
+ [                                          ]
+ [                                          ]
+ [                                          ]
+<                                            >
+<G g3                                        >
+ [img                                       ]
+ [                                          ]
+ [                                          ]
+ [                                          ]
+ [                                          ]
+ [                                          ]
+ [                                          ]
+ [                                          ]
+<                                            >
 }
 END -- GRID
 
 ATTRIBUTES
 LABEL ip = FORMONLY.ip;
 LABEL id = FORMONLY.id;
+
+GROUP g1: group1, TEXT="Options", HIDDEN;
+GROUP g2: group2, TEXT="";
+GROUP g3: group3, TEXT="";
+
+COMBOBOX f1 = FORMONLY.gallery_type, NOT NULL,
+         INITIALIZER=display_type_init;
+COMBOBOX f2 = FORMONLY.gallery_size, NOT NULL,
+         INITIALIZER=display_size_init;
+
+EDIT f3 = FORMONLY.current;
 WEBCOMPONENT ig = FORMONLY.gallery_wc,
          COMPONENTTYPE = "fglgallery",
          PROPERTIES=(selection="image_selection"),
          SIZEPOLICY = FIXED,
          STRETCH = BOTH;
+
+IMAGE img = FORMONLY.f_img, STRETCH=BOTH, AUTOSCALE;
