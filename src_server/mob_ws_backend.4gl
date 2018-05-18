@@ -290,6 +290,8 @@ FUNCTION getMedia(l_req com.HTTPServiceRequest, l_vid BOOLEAN)
 		RETURN
 	END IF
 
+	RUN "./mk_thumbnail.sh "||l_media_path||" "||os.path.basename(l_media_file) WITHOUT WAITING
+
 	CALL mob_db_backend.db_log_media(m_user, IIF(l_vid,"V","P"), l_newpath)
 
 END FUNCTION

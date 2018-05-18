@@ -3,14 +3,9 @@ LAYOUT ( TEXT="Media Log" )
 VBOX ( SPLITTER )
 TABLE
 {
-[a001       ][a2][a003                                ][a004               ]
-[a001       ][a2][a003                                ][a004               ]
-[a001       ][a2][a003                                ][a004               ]
-[a001       ][a2][a003                                ][a004               ]
-[a001       ][a2][a003                                ][a004               ]
-[a001       ][a2][a003                                ][a004               ]
-[a001       ][a2][a003                                ][a004               ]
-[a001       ][a2][a003                                ][a004               ]
+[i     |a003                  |a2|a001       |a004               ]
+[      |                      |  |           |                   ]
+[      |                      |  |           |                   ]
 }
 END -- TABLE
 GRID
@@ -34,12 +29,14 @@ TABLES
 ws_log_media
 
 ATTRIBUTES
+
 a001 = ws_log_media.username, TITLE=%"User";
 COMBOBOX a2 = ws_log_media.media_type, TITLE=%"Typ", ITEMS=(("P","Photo"),("V","Video"));
 a003 = ws_log_media.filepath, TITLE=%"File Path";
 a004 = ws_log_media.access_date, TITLE=%"Timestamp";
+IMAGE i = FORMONLY.img, AUTOSCALE;
 
 IMAGE img = FORMONLY.f_img, STRETCH=BOTH, AUTOSCALE;
 
 INSTRUCTIONS
-SCREEN RECORD arr ( ws_log_media.* )
+SCREEN RECORD arr ( ws_log_media.username THRU FORMONLY.img )

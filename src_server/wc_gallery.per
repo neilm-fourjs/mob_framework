@@ -1,0 +1,26 @@
+
+ACTION DEFAULTS
+	ACTION quit (TEXT="Quit", IMAGE="quit" )
+END -- AD
+
+LAYOUT ( TEXT="Gallery" )
+GRID
+{
+[ip                                        ]
+[id                                        ]
+[ig                                        ]
+[                                          ]
+[                                          ]
+[                                          ]
+[                                          ]
+}
+END -- GRID
+
+ATTRIBUTES
+LABEL ip = FORMONLY.ip;
+LABEL id = FORMONLY.id;
+WEBCOMPONENT ig = FORMONLY.gallery_wc,
+         COMPONENTTYPE = "fglgallery",
+         PROPERTIES=(selection="image_selection"),
+         SIZEPOLICY = FIXED,
+         STRETCH = BOTH;

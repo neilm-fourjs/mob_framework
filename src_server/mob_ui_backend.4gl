@@ -1,14 +1,29 @@
 
+IMPORT os
+
 IMPORT FGL gl_lib
 IMPORT FGL mob_db_backend
+IMPORT FGL fglgallery
 
 SCHEMA njm_demo310
+
+DEFINE m_pics DYNAMIC ARRAY OF STRING
+DEFINE m_imageDir STRING
 
 MAIN
 
 	CALL STARTLOG( base.Application.getProgramName()||".err" )
 
 	CALL mob_db_backend.db_connect()
+
+	LET m_imageDir = fgl_getEnv("MEDIAPATH")
+	CALL gl_lib.gl_logIt(SFMT("FGLIMAGEPATH=%1",fgl_getEnv("FGLIMAGEPATH")))
+	CALL gl_lib.gl_logIt(SFMT("getting image array from %1",m_imageDir))
+	CALL getImages(m_imageDir, "jpg","gif")
+	IF m_pics.getLength() = 0 THEN
+		CALL gl_winMessage("Error",SFMT("No images found in:%1",m_imageDir),"exclamation")
+	END IF
+	CALL gl_lib.gl_logIt(SFMT("got %1 images.",m_pics.getLength()))
 
 	OPEN FORM f1 FROM "mob_ui_backend"
 	DISPLAY FORM f1
@@ -18,6 +33,7 @@ MAIN
 		ON ACTION accesslog CALL accessLog()
 		ON ACTION medialog CALL mediaLog()
 		ON ACTION datalog CALL dataLog()
+		ON ACTION gallery CALL showGAllery()
 		ON ACTION quit EXIT MENU
 	END MENU
 
@@ -77,14 +93,30 @@ FUNCTION dataLog()
 END FUNCTION
 --------------------------------------------------------------------------------
 -- View the Media log
--- 
--- @params 
+--
+-- @params
 -- @returns
 FUNCTION mediaLog()
-  DEFINE l_ml DYNAMIC ARRAY OF RECORD LIKE ws_log_media.*
+  DEFINE l_ml DYNAMIC ARRAY OF RECORD 
+			user_name LIKE ws_log_media.username,
+			media_type LIKE ws_log_media.media_type,
+			filepath LIKE ws_log_media.filepath,
+			access_date LIKE ws_log_media.access_date,
+			img STRING
+		END RECORD
+	DEFINE l_thumb STRING
 
 	DECLARE cur_ml CURSOR FOR SELECT * FROM ws_log_media 
 	FOREACH cur_ml INTO l_ml[ l_ml.getLength() + 1 ].*
+		LET l_thumb = os.path.join( 
+					os.path.dirName(l_ml[ l_ml.getLength() ].filepath),
+					"tn_"||os.path.rootName( os.path.basename( l_ml[ l_ml.getLength() ].filepath ) ).append(".gif"))
+		IF os.path.exists( l_thumb ) THEN
+			DISPLAY l_thumb||" Okay"
+		ELSE
+			DISPLAY l_thumb||" Missing"
+		END IF
+		LET l_ml[ l_ml.getLength() ].img = l_thumb
 	END FOREACH
 	CALL l_ml.deleteElement( l_ml.getLength() )
 
@@ -98,4 +130,80 @@ FUNCTION mediaLog()
 	END DISPLAY
 
 	CLOSE WINDOW ml
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION showGallery()
+	DEFINE l_id, l_stat INTEGER
+	DEFINE x SMALLINT
+
+	OPEN WINDOW gallery WITH FORM "wc_gallery"
+
+	DISPLAY "ImageDir:"||m_imageDir TO id
+	DISPLAY "FGLIMAGEPATH:"||fgl_getEnv("FGLIMAGEPATH") TO ip
+	CALL ui.Interface.refresh()
+
+	CALL fglgallery.initialize()
+
+-- Create a gallery
+	LET l_id = fglgallery.create("formonly.gallery_wc")
+
+-- Add the images.
+	FOR x = 1 TO m_pics.getLength()
+--		CALL gl_lib.gl_logIt( SFMT("add image %1 to gallery",m_pics[x]))
+		CALL fglgallery.addImage(l_id, 
+--					ui.Interface.filenameToURI(os.path.join(c_imageDir,m_pics[x])), 
+						ui.Interface.filenameToURI(m_pics[x]), 
+					m_pics[x] --	"Image "||x
+					)
+	END FOR
+
+-- Display the gallery to the WC.
+	TRY
+		CALL fglgallery.display(l_id, FGLGALLERY_TYPE_MOSAIC, FGLGALLERY_SIZE_NORMAL)
+	CATCH
+		LET l_stat = STATUS
+		CALL gl_lib.gl_logIt(ERR_GET(l_stat))
+		CALL gl_winMessage("Error",ERR_GET(l_stat),"exclamation")
+	END TRY
+
+	MENU
+		ON ACTION close EXIT MENU
+		ON ACTION quit EXIT MENU
+	END MENU
+
+	CALL fglgallery.finalize()
+
+	CLOSE WINDOW gallery
+END FUNCTION
+--------------------------------------------------------------------------------
+-- Set the m_pics array to all images of extention type p_ext or p_ext2.
+FUNCTION getImages(l_imageDir STRING, p_ext STRING, p_ext2 STRING)
+	DEFINE l_ext, l_path STRING
+	DEFINE d SMALLINT
+
+	CALL os.Path.dirSort( "name", 1 )
+	LET d = os.Path.dirOpen( l_imageDir )
+	IF d > 0 THEN
+		WHILE TRUE
+			LET l_path = os.Path.dirNext( d )
+			IF l_path IS NULL THEN EXIT WHILE END IF
+
+			IF os.path.isDirectory( l_path ) THEN 
+			--	DISPLAY "Dir:",l_path
+				CONTINUE WHILE 
+			ELSE
+				--DISPLAY "Fil:",l_path
+			END IF
+
+			LET l_ext = os.path.extension( l_path )
+			IF l_ext IS NULL OR (p_ext != l_ext AND p_ext2 != l_ext) THEN CONTINUE WHILE END IF
+
+			LET m_pics[ m_pics.getLength() + 1 ] = l_path
+
+		END WHILE
+	ELSE
+		CALL gl_winMessage("Error",SFMT("Failed to open directory %1",l_imageDir),"exclamation")
+		EXIT PROGRAM
+	END IF
+
 END FUNCTION

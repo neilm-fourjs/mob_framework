@@ -60,7 +60,7 @@
   </Settings>
   <LanguageList version="1.0"/>
   <PlatformList version="1.0"/>
-  <Group environment="value:FGLAPPSERVER=8090" label="mob_project" language="Genero">
+  <Group environment="dir:MEDIAPATH=../ws_mob_media,value:FGLAPPSERVER=8090,value:FGLIMAGEPATH=$(FGLDIR)/lib:$(FGLDIR)/lib/image2font.txt:$(MEDIAPATH)" label="mob_project" language="Genero">
     <Group label="_Packages" language="Genero">
       <Package binaryName="mob_framework12" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin12" label="mob_framework12" platform="Android">
         <DynamicProperty name="gma-accent-color" value="#5555ff"/>
@@ -107,6 +107,7 @@
         <Directory label="Binaries" sourceDirectory="$(ProjectDir)/bin_srv_ws"/>
         <Directory label="Binaries_common" sourceDirectory="$(ProjectDir)/bin_common"/>
         <Directory includedFiles="mob_ws_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas"/>
+        <Directory label="utils" sourceDirectory="$(ProjectDir)/utils"/>
       </Package>
     </Group>
     <Group label="Common" targetDirectory="$(ProjectDir)/bin_common">
@@ -158,6 +159,7 @@
         <File filePath="src_server/mediaLog.per"/>
         <File filePath="src_server/mob_ui_backend.4gl"/>
         <File filePath="src_server/mob_ui_backend.per"/>
+        <File filePath="src_server/wc_gallery.per"/>
       </Application>
     </Group>
     <Group label="mob_ws_backend" language="Genero" targetDirectory="$(ProjectDir)/bin_srv_ws">
@@ -168,6 +170,9 @@
         <File filePath="src_server/gl_lib_restful.4gl"/>
         <File filePath="src_server/mob_ws_backend.4gl"/>
       </Application>
+      <Library binaryName="utils" id="300690543" label="utils">
+        <File filePath="utils/mk_thumbnail.sh"/>
+      </Library>
     </Group>
   </Group>
 </Project>
