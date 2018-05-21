@@ -19,12 +19,7 @@ MAIN
 
 	LET m_imageDir = fgl_getEnv("MEDIAPATH")
 	CALL gl_lib.gl_logIt(SFMT("FGLIMAGEPATH=%1",fgl_getEnv("FGLIMAGEPATH")))
-	CALL gl_lib.gl_logIt(SFMT("getting image array from %1",m_imageDir))
 	CALL getImages(m_imageDir, "gif","png")
-	IF m_pics.getLength() = 0 THEN
-		CALL gl_winMessage("Error",SFMT("No images found in:%1",m_imageDir),"exclamation")
-	END IF
-	CALL gl_lib.gl_logIt(SFMT("got %1 images.",m_pics.getLength()))
 
 	OPEN FORM f1 FROM "mob_ui_backend"
 	DISPLAY FORM f1
@@ -33,7 +28,10 @@ MAIN
 		ON ACTION users CALL users()
 		ON ACTION accesslog CALL accessLog()
 		ON ACTION medialog CALL mediaLog()
-		ON ACTION gallery CALL showGallery()
+		ON ACTION gallery 
+			WHILE showGallery()
+				CALL getImages(m_imageDir, "gif","png")
+			END WHILE
 		ON ACTION datalog CALL dataLog()
 		ON ACTION quit EXIT MENU
 	END MENU
@@ -142,8 +140,10 @@ FUNCTION showGallery()
 		current INTEGER,
 		gallery_wc STRING
 	END RECORD
+	DEFINE l_refresh BOOLEAN
 	DEFINE l_struct_value fglgallery.t_struct_value
 
+	LET l_refresh = FALSE
 	OPEN WINDOW gallery WITH FORM "wc_gallery"
 
 	DISPLAY "ImageDir:"||m_imageDir TO id
@@ -198,7 +198,7 @@ FUNCTION showGallery()
 		ON ACTION set_current ATTRIBUTES(DEFAULTVIEW=NO)
 			LET l_struct_value.current = l_rec.current
 			LET l_rec.gallery_wc = util.JSON.stringify(l_struct_value)
-
+		ON ACTION refresh LET l_refresh = TRUE EXIT INPUT
 		ON ACTION close EXIT INPUT
 		ON ACTION quit EXIT INPUT
 	END INPUT
@@ -206,6 +206,7 @@ FUNCTION showGallery()
 	CALL fglgallery.finalize()
 
 	CLOSE WINDOW gallery
+	RETURN l_refresh
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION display_type_init(l_cb ui.ComboBox)
@@ -234,6 +235,8 @@ FUNCTION getImages(l_imageDir STRING, p_ext STRING, p_ext2 STRING)
 	DEFINE l_ext, l_path STRING
 	DEFINE d SMALLINT
 
+	CALL m_pics.clear()
+	CALL gl_lib.gl_logIt(SFMT("getting image array from %1",m_imageDir))
 	CALL os.Path.dirSort( "name", 1 )
 	LET d = os.Path.dirOpen( l_imageDir )
 	IF d > 0 THEN
@@ -258,5 +261,9 @@ FUNCTION getImages(l_imageDir STRING, p_ext STRING, p_ext2 STRING)
 		CALL gl_winMessage("Error",SFMT("Failed to open directory %1",l_imageDir),"exclamation")
 		EXIT PROGRAM
 	END IF
+	IF m_pics.getLength() = 0 THEN
+		CALL gl_winMessage("Error",SFMT("No images found in:%1",m_imageDir),"exclamation")
+	END IF
+	CALL gl_lib.gl_logIt(SFMT("got %1 images.",m_pics.getLength()))
 
 END FUNCTION

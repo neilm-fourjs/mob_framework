@@ -139,7 +139,7 @@
     </Group>
     <Group label="Common" targetDirectory="$(ProjectDir)/bin_common">
       <Library binaryName="Database" id="455109296" label="Database">
-        <File filePath="database/njm_demo310.4db"/>
+        <File filePath="../../../../../opt/fourjs/all/my_github/mob_framework/database/njm_demo310.4db"/>
       </Library>
       <Library binaryName="db_backend" dependencies="-994061721,455109296" id="1553065829" label="db_backend">
         <File filePath="src_server/mob_db_backend.4gl"/>

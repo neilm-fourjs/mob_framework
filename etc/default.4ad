@@ -31,6 +31,7 @@
   <ActionDefault name="prevtab" text="Previous Folder Tab" acceleratorName="Control-Shift-Tab" contextMenu="no"/>
   <ActionDefault name="dialogtouched" validate="no" defaultView="no"  contextMenu="no"/>
 
+  <ActionDefault name="refresh" text="Refresh" image="fa-refresh" validate="no" defaultView="yes"  contextMenu="no"/>
   <ActionDefault name="users" text="Users" image="fa-users" validate="no" defaultView="yes"  contextMenu="no"/>
   <ActionDefault name="accesslog" text="Access" image="fa-list" validate="no" defaultView="yes"  contextMenu="no"/>
   <ActionDefault name="datalog" text="Data" image="fa-database" validate="no" defaultView="yes"  contextMenu="no"/>
