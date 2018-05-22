@@ -116,7 +116,7 @@
         <Directory description="Resources" includedFiles="*.4ad,*.4st,*.4tm,*.4tb,*.4sm,*.42s,*.iem" label="Resources" recursive="false" sourceDirectory="$(ProjectDir)/resources"/>
         <Directory description="Web Components" destinationDirectory="$(RootDir)/webcomponents" label="Webcomponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
       </Package>
-      <Package binaryName="mob_ui_backend" label="mob_ui_backend" platform="Genero Application Server">
+      <Package binaryName="mob_ui_backend" dependencies="-1031729630,1011122750,1804037942,455109296,1553065829,-994061721" label="mob_ui_backend" platform="Genero Application Server">
         <DynamicProperty name="packageId" value="mob_ui_backend"/>
         <DynamicProperty name="packageLabel" value="mob_ui_backend"/>
         <DynamicProperty name="packageVersion" value="1000"/>
@@ -126,7 +126,7 @@
         <Directory label="etc" sourceDirectory="$(ProjectDir)/etc"/>
         <Directory includedFiles="mob_ui_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas"/>
       </Package>
-      <Package binaryName="mob_ws_backend" dependencies="991859968,-1451902566,-994061721" label="mob_ws_backend" platform="Genero Application Server">
+      <Package binaryName="mob_ws_backend" dependencies="991859968,-1451902566,-994061721,300690543" label="mob_ws_backend" platform="Genero Application Server">
         <DynamicProperty name="packageId" value="mob_ws_backend"/>
         <DynamicProperty name="packageLabel" value="mob_ws_backend"/>
         <DynamicProperty name="packageVersion" value="1000"/>

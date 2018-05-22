@@ -67,24 +67,70 @@ FUNCTION accessLog()
 END FUNCTION
 --------------------------------------------------------------------------------
 -- View the Data log
--- 
+-- {"api_param"
+-- 123456789012
 -- @params 
 -- @returns
 FUNCTION dataLog()
-	DEFINE l_dl DYNAMIC ARRAY OF RECORD LIKE ws_log_data.*
+	DEFINE l_dl_rec RECORD LIKE ws_log_data.*
+	DEFINE l_dl  DYNAMIC ARRAY OF RECORD
+			username LIKE ws_log_data.username,
+			data STRING,
+			timestamp LIKE ws_log_data.access_date
+		END RECORD
 	DEFINE l_ret SMALLINT
+	DEFINE l_url STRING
+	DEFINE l_sc_rec RECORD
+		api_param RECORD
+			jobid STRING,
+			custid STRING,
+			vrn STRING
+		END RECORD,
+		sent RECORD
+			ts DATETIME YEAR TO SECOND,
+				files DYNAMIC ARRAY OF RECORD
+				filename STRING,
+				size STRING
+			END RECORD
+		END RECORD,
+			reply RECORD
+			link STRING,
+			jobid STRING,
+			msg STRING
+		END RECORD
+	END RECORD
+
+	LOCATE l_dl_rec.data IN MEMORY
 	DECLARE cur_dl CURSOR FOR SELECT * FROM ws_log_data
-	FOREACH cur_dl INTO l_dl[ l_dl.getLength() + 1 ].*
+	FOREACH cur_dl INTO l_dl_rec.*
+		LET l_dl[ l_dl.getLength() + 1 ].username = l_dl_rec.username
+		LET l_dl[ l_dl.getLength() ].data = l_dl_rec.data
+		LET l_dl[ l_dl.getLength() ].timestamp = l_dl_rec.access_date
 	END FOREACH
-	CALL l_dl.deleteElement( l_dl.getLength() )
 
 	OPEN WINDOW dl WITH FORM "dataLog"
 	
 	DISPLAY ARRAY l_dl TO arr.*
-		ON ACTION select
-			IF l_dl[ arr_curr()].data[1,4] = "http" THEN
-				CALL ui.Interface.frontCall("standard", "launchURL", [ l_dl[ arr_curr()].data ], l_ret)
+		BEFORE ROW
+			CALL DIALOG.setActionActive("select", FALSE)
+			DISPLAY l_dl[ arr_curr() ].data TO f_data
+			LET l_url = NULL
+			IF l_dl[ arr_curr() ].data.subString(1,12) = "{\"api_param\"" THEN
+				TRY
+					CALL util.JSON.parse(l_dl[ arr_curr() ].data, l_sc_rec )
+					LET l_url = l_sc_rec.reply.link
+				CATCH
+					ERROR "Invalid JSON!"
+				END TRY
 			END IF
+			IF l_dl[ arr_curr() ].data.subString(1,8) = "https://" THEN
+				LET l_url = l_dl[ arr_curr() ].data
+			END IF
+			IF l_url iS NOT NULL THEN
+				CALL DIALOG.setActionActive("select", TRUE)
+			END IF
+		ON ACTION select
+				CALL ui.Interface.frontCall("standard", "launchURL", [ l_url ], l_ret)
 	END DISPLAY
 
 	CLOSE WINDOW dl

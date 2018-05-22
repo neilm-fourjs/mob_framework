@@ -38,4 +38,6 @@
   <ActionDefault name="medialog" text="Media" image="fa-image" validate="no" defaultView="yes"  contextMenu="no"/>
   <ActionDefault name="gallery" text="Gallery" image="fa-image" validate="no" defaultView="yes"  contextMenu="no"/>
   <ActionDefault name="quit" text="Quit" image="fa-power-off" validate="no" defaultView="yes"  contextMenu="no"/>
+  <ActionDefault name="select" text="Open" image="fa-chrome" validate="no" defaultView="yes"  contextMenu="no"/>
+
 </ActionDefaultList>

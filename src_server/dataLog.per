@@ -1,5 +1,6 @@
 SCHEMA njm_demo310
 LAYOUT ( TEXT="Data Log" )
+VBOX ( SPLITTER )
 TABLE (DOUBLECLICK=select)
 {
 [a001       ][a002                                ][a003               ]
@@ -12,6 +13,22 @@ TABLE (DOUBLECLICK=select)
 [a001       ][a002                                ][a003               ]
 }
 END -- TABLE
+HBOX ( SPLITTER )
+GRID
+{
+[l_data                               ]
+[                                     ]
+[                                     ]
+[                                     ]
+}
+END -- GRID
+GRID
+{
+record
+}
+END -- GRID
+END -- HBOX
+END -- VBOX
 
 TABLES
 ws_log_data
@@ -20,6 +37,8 @@ ATTRIBUTES
 a001 = ws_log_data.username, TITLE=%"User";
 a002 = ws_log_data.data, TITLE=%"Data";
 a003 = ws_log_data.access_date, TITLE=%"Timestamp";
+
+TEXTEDIT l_data = FORMONLY.f_data, STRETCH=BOTH;
 
 INSTRUCTIONS
 SCREEN RECORD arr ( ws_log_data.* )

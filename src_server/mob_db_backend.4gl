@@ -55,7 +55,7 @@ FUNCTION db_connect()
 	TRY
 		CREATE TABLE ws_log_data (
 			username CHAR(30),
-			data VARCHAR(250),
+			data TEXT,
 			access_date DATETIME YEAR TO SECOND
 		)
 	CATCH
@@ -101,14 +101,14 @@ END FUNCTION
 -- @params l_path File path
 -- @returns the auth token or NULL if fails
 FUNCTION db_log_data(l_user STRING, l_data STRING)
+	DEFINE l_text TEXT
 	DEFINE l_ts DATETIME YEAR TO SECOND
-
+	LOCATE l_text IN MEMORY
 	LET l_ts = CURRENT
 	LET l_user = l_user.trim()
-	LET l_data = l_data.trim()
+	LET l_text = l_data.trim()
 	CALL gl_lib.gl_logIt(SFMT("db_log_data:%1:%2",l_user,l_data))
-	INSERT INTO ws_log_data VALUES(l_user, l_data, l_ts)
-
+	INSERT INTO ws_log_data VALUES(l_user, l_text, l_ts)
 END FUNCTION
 --------------------------------------------------------------------------------
 -- Check the user is registered with that password or register new user

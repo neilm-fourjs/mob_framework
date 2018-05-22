@@ -200,6 +200,10 @@ FUNCTION login() RETURNS BOOLEAN
 			END IF 
 			IF l_token_date > ( l_now - 1 UNITS DAY ) THEN EXIT WHILE END IF -- all okay, exit the while
 		END IF
+		IF NOT check_network() THEN
+			CALL gl_lib.gl_winMessage("Error","Invalid Login, network connection required\nConnect to network and try again","exclamation")
+			EXIT PROGRAM
+		END IF
 -- user not in DB or token expired - connect to server for login check / new token.
 -- encrypt the username and password attempt
 		LET l_xml_creds = lib_secure.glsec_encryptCreds(l_user, l_pass)
