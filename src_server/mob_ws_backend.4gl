@@ -10,7 +10,7 @@ IMPORT FGL gl_lib_restful
 IMPORT FGL lib_secure
 IMPORT FGL mob_db_backend
 
-CONSTANT WS_VER = 1
+CONSTANT WS_VER = 2
 
 DEFINE m_ret RECORD
 		ver SMALLINT,
@@ -58,6 +58,9 @@ MAIN
 			CASE gl_lib_restful.m_reqInfo.method
 				WHEN "GET"
 					CASE
+						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("checkToken") 
+							IF checkToken("checkToken") THEN
+							END IF
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("getToken") 
 							CALL getToken()
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("getList1") 
@@ -144,7 +147,7 @@ FUNCTION getToken()
 	CALL setReply(200,%"OK",l_token)
 END FUNCTION
 --------------------------------------------------------------------------------
-FUNCTION check_token(l_func STRING) RETURNS BOOLEAN
+FUNCTION checkToken(l_func STRING) RETURNS BOOLEAN
 	DEFINE x SMALLINT
 	DEFINE l_token, l_res STRING
 
@@ -167,7 +170,7 @@ END FUNCTION
 FUNCTION getList1()
 	DEFINE l_data STRING
 
-	IF NOT check_token("getList1") THEN RETURN END IF
+	IF NOT checkToken("getList1") THEN RETURN END IF
 
 	CALL gl_lib.gl_logIt(%"Return customer list for user:"||NVL(m_user,"NULL"))
 
@@ -181,7 +184,7 @@ FUNCTION getList2()
 	DEFINE l_data, l_key STRING
 	DEFINE x SMALLINT
 
-	IF NOT check_token("getList2") THEN RETURN END IF
+	IF NOT checkToken("getList2") THEN RETURN END IF
 
 	LET x = gl_lib_restful.gl_getParameterIndex("key") 
 	IF x = 0 THEN
@@ -204,7 +207,7 @@ FUNCTION getDets1()
 	DEFINE l_data, l_key STRING
 	DEFINE x SMALLINT
 
-	IF NOT check_token("getDets1") THEN RETURN END IF
+	IF NOT checkToken("getDets1") THEN RETURN END IF
 
 	LET x = gl_lib_restful.gl_getParameterIndex("key") 
 	IF x = 0 THEN
@@ -228,7 +231,7 @@ FUNCTION getDets2()
 	DEFINE l_data, l_key STRING
 	DEFINE x SMALLINT
 
-	IF NOT check_token("getDets2") THEN RETURN END IF
+	IF NOT checkToken("getDets2") THEN RETURN END IF
 
 	LET x = gl_lib_restful.gl_getParameterIndex("key") 
 	IF x = 0 THEN
@@ -250,15 +253,15 @@ END FUNCTION
 --------------------------------------------------------------------------------
 -- getMedia - handle a photo/video being received.
 FUNCTION getMedia(l_req com.HTTPServiceRequest, l_vid BOOLEAN)
-	DEFINE l_media_file, l_media_path, l_newpath STRING
+	DEFINE l_media_file, l_media_path, l_newpath, l_json STRING
 
-	IF NOT check_token("getMedia") THEN RETURN END IF
+	IF NOT checkToken("getMedia") THEN RETURN END IF
 
 	CALL gl_lib.gl_logIt(%"Getting "||IIF(l_vid,"Video","Photo")||" ...")
 	TRY
 		LET l_media_file = l_req.readFileRequest()
 	CATCH
-		CALL setReply(200,%"ERR",%"Media receive Failed!")
+		CALL setReply(200,%"ERR",SFMT(%"Media receive Failed: %1:%2",STATUS,ERR_GET(STATUS)))
 		RETURN
 	END TRY
 
@@ -299,8 +302,15 @@ END FUNCTION
 -- simple fetch data from the server.
 FUNCTION getData(l_req com.HTTPServiceRequest)
 	DEFINE l_str STRING
+	DEFINE l_info DYNAMIC ARRAY OF RECORD
+		filename STRING,
+		filesize STRING,
+		type STRING,
+		timestamp STRING,
+		id STRING
+	END RECORD
 
-	IF NOT check_token("getData") THEN RETURN END IF
+	IF NOT checkToken("getData") THEN RETURN END IF
 
 	CALL gl_lib.gl_logIt(%"Getting Text Data ...")
 	TRY
@@ -309,6 +319,16 @@ FUNCTION getData(l_req com.HTTPServiceRequest)
 		CALL setReply(200,%"ERR",%"Data receive Failed!")
 		RETURN
 	END TRY
+
+	IF l_str.getCharAt(1) = "{" THEN
+		TRY
+			CALL util.JSON.parse(l_str, l_info)
+			CALL gl_lib.gl_logIt(SFMT(%"Got Info:%1",l_str))
+		CATCH
+			CALL setReply(200,%"ERR",%"Invalid JSon received!")
+			RETURN
+		END TRY
+	END IF
 
 	CALL mob_db_backend.db_log_data(m_user,l_str)
 

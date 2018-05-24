@@ -6,13 +6,11 @@ GRID
 <G opts                    >
 [bt1                      ]
 [bt2                      ]
-[bt2v                     ]
 [bt3                      ]
-[bt3v                     ]
 [bt4                      ]
 [bt5                      ]
-[bt5a                     ]
 [bt6                      ]
+[bt7                      ]
 <                          >
 [lb2:nt                   ]
 [lb3:sv                   ]
@@ -25,14 +23,12 @@ LABEL titl : titl, TEXT=%"A Simple Demo", JUSTIFY=CENTER,STYLE="blue big";
 GROUP opts : opts, TEXT=%"Options:";
 
 BUTTON bt1 : list_custs, TEXT=%"View Customers", IMAGE="fa-users";
-BUTTON bt2 : take_photo, TEXT=%"Take Photo", IMAGE="fa-camera";
-BUTTON bt2v: take_video, TEXT=%"Take Video", IMAGE="fa-camera";
-BUTTON bt3 : choose_photo, TEXT=%"Choose Photo", IMAGE="fa-photo";
-BUTTON bt3v: choose_video, TEXT=%"Choose Video", IMAGE="fa-film";
-BUTTON bt4 : send_data, TEXT=%"Send Data", IMAGE="fa-database";
-BUTTON bt5 : about, TEXT=%"About", IMAGE="fa-info";
-BUTTON bt5a: view_log, TEXT=%"View Log", IMAGE="fa-list";
-BUTTON bt6 : quit, TEXT=%"Logout", IMAGE="fa-power-off";
+BUTTON bt2 : send_media, TEXT=%"Send Media", IMAGE="fa-photo";
+BUTTON bt3 : send_data, TEXT=%"Send Data", IMAGE="fa-database";
+BUTTON bt4 : about, TEXT=%"About", IMAGE="fa-info";
+BUTTON bt5 : check_token, TEXT=%"Check Token", IMAGE="fa-check";
+BUTTON bt6 : view_log, TEXT=%"View Log", IMAGE="fa-list";
+BUTTON bt7 : quit, TEXT=%"Logout", IMAGE="fa-power-off";
 
 LABEL lb2 : lb2, TEXT=%"Network:";
 TEXTEDIT nt = FORMONLY.f_network, SCROLLBARS=NONE;

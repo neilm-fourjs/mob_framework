@@ -1,27 +1,43 @@
 LAYOUT ( TEXT="Media" )
 GRID
 {
-[lb_med    ]
-[mpth                        ]
-[                            ]
-[                            ]
-[lb_pth|lpth                 ]
-[lb_siz|siz                  ]
-[img                               ]
-[                                  ]
-[                                  ]
-[                                  ]
-[                                  ]
-[                                  ]
-[                                  ]
+[lb_job|job                  ]
+[lb_cus|cus      ]
+[lb_vrn|vrn      ]
+       [b1|b2|b3|b4]
+       [b5   |b6   ]
+[stat                         ]
+Table:
+<T t1                         >
+ [a1     |a2                 ]
+ [a1     |a2                 ]
+ [a1     |a2                 ]
 }
 END -- GRID
 
 ATTRIBUTES
-LABEL lb_med : lb_med, TEXT=%"Media URI:";
-TEXTEDIT mpth = FORMONLY.f_mpath;
-LABEL lb_pth : lb_pth, TEXT=%"New Name:";
-LABEL lb_siz : lb_siz, TEXT=%"File Size:";
-lpth = FORMONLY.f_lpath;
-siz = FORMONLY.f_size, FORMAT="###,###,###", JUSTIFY=LEFT;
-IMAGE img = FORMONLY.f_photo, AUTOSCALE, SIZEPOLICY=FIXED;
+
+LABEL lb_job : lb_job, TEXT=%"Job Id:";
+LABEL lb_cus : lb_cus, TEXT=%"Cust Id:";
+LABEL lb_vrn : lb_vrn, TEXT=%"V.R.N:";
+
+job = FORMONLY.jobid, UPSHIFT;
+cus = FORMONLY.custid, UPSHIFT;
+vrn = FORMONLY.vrn, UPSHIFT;
+
+stat = FORMONLY.status;
+
+BUTTON b1 : take_photo, IMAGE="fa-camera";
+BUTTON b2 : choose_photo, IMAGE="fa-photo";
+BUTTON b3 : take_video, IMAGE="fa-camera";
+BUTTON b4 : choose_video, IMAGE="fa-photo";
+
+BUTTON b5 : send;
+BUTTON b6 : send_sc;
+
+a1 = FORMONLY.filename;
+a2 = FORMONLY.fsize;
+PHANTOM FORMONLY.vid;
+
+INSTRUCTIONS
+SCREEN RECORD arr ( FORMONLY.filename THRU FORMONLY.vid )

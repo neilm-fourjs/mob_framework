@@ -739,7 +739,7 @@ END FUNCTION --}}}
 #+
 #+ @param l_mess Message to write to audit file.
 FUNCTION gl_logIt( l_mess STRING ) --{{{
-	DEFINE l_pid,l_fil STRING
+	DEFINE l_msg, l_pid,l_fil STRING
 	--DEFINE x,y SMALLINT
 	DEFINE c base.Channel
 	LET l_pid = fgl_getPID()
@@ -752,13 +752,16 @@ FUNCTION gl_logIt( l_mess STRING ) --{{{
 
 	LET l_fil = gl_getCallingModuleName()
 	IF l_fil MATCHES "cloud_gl_lib.gl_dbgMsg:*" THEN
-		LET l_mess = CURRENT||"|"||NVL(l_mess,"NULL")
+		LET l_msg = CURRENT||"|"||NVL(l_mess,"NULL")
 	ELSE
-		LET l_mess = CURRENT||"|"||NVL(l_fil,"NULL")||"|"||l_mess
+		LET l_msg = CURRENT||"|"||NVL(l_fil,"NULL")||"|"||l_mess
 	END IF
-	
-	DISPLAY "Log:",l_mess
-	CALL c.writeLine(l_mess)
+
+	DISPLAY "Log:",l_msg
+	IF l_mess.subString(1,3) = "***" THEN
+		LET l_msg = "\n\n"||l_msg
+	END IF
+	CALL c.writeLine(l_msg)
 
 	CALL c.close()
 END FUNCTION --}}}

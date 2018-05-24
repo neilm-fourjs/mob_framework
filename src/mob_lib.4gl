@@ -3,9 +3,10 @@
 IMPORT util
 IMPORT os
 
-IMPORT FGL mob_ws_lib
 IMPORT FGL gl_lib
 IMPORT FGL lib_secure
+IMPORT FGL mob_ws_lib
+IMPORT FGL mob_ws_lib_sc
 
 CONSTANT DB_VER = 1
 
@@ -55,6 +56,8 @@ FUNCTION init_app()
 		CALL gl_lib.gl_winMessage("Error",SFMT(%"Failed to initialize '%1'!\n%2",l_dbname, SQLERRMESSAGE),"exclamation")
 		RETURN
 	END IF
+
+	CALL gl_lib.gl_logIt("*** Started ***")
 
 END FUNCTION
 --------------------------------------------------------------------------------
@@ -148,6 +151,7 @@ FUNCTION view_log()
 	OPEN WINDOW view_log WITH FORM "view_log"
 
 	LET l_file = os.path.join(gl_lib.gl_getLogDir(),gl_lib.gl_getLogName()||".log")
+	LET l_log = "File:",l_file||"\n"
 	LET c = base.Channel.create()
 	TRY
 		CALL c.openFile(l_file,"r")
@@ -162,6 +166,12 @@ FUNCTION view_log()
 	DISPLAY BY NAME l_log
 
 	MENU
+		ON ACTION delete
+			IF NOT os.path.delete( l_file ) THEN
+				CALL fgl_winMessage("Error","Failed to delete the log file!","exclamation")
+			ELSE
+				EXIT PROGRAM
+			END IF
 		ON ACTION back EXIT MENU
 		ON ACTION close EXIT MENU
 	END MENU
@@ -200,12 +210,12 @@ FUNCTION login() RETURNS BOOLEAN
 			END IF 
 			IF l_token_date > ( l_now - 1 UNITS DAY ) THEN EXIT WHILE END IF -- all okay, exit the while
 		END IF
-		IF NOT check_network() THEN
-			CALL gl_lib.gl_winMessage("Error","Invalid Login, network connection required\nConnect to network and try again","exclamation")
-			EXIT PROGRAM
-		END IF
 -- user not in DB or token expired - connect to server for login check / new token.
 -- encrypt the username and password attempt
+		IF NOT check_network() THEN
+			CALL gl_lib.gl_winMessage("Error","Invalid Login, a network connection required\nConnect to network and try again","exclamation")
+			RETURN FALSE
+		END IF
 		LET l_xml_creds = lib_secure.glsec_encryptCreds(l_user, l_pass)
 		IF l_xml_creds IS NULL THEN RETURN FALSE END IF
 		LET l_token = ws_getSecurityToken( l_xml_creds ) 
@@ -218,11 +228,12 @@ FUNCTION login() RETURNS BOOLEAN
 			UPDATE users SET ( token, token_date ) = ( l_token, l_now )
 				WHERE username = l_user
 		END IF
+		LET l_token_date = l_now
 		EXIT WHILE
 	END WHILE
 	LET m_user = l_user
 	LET mob_ws_lib.m_security_token = l_token
-	CALL gl_lib.gl_logIt("Security Token is '"||NVL(l_token.trim(),"NULL")||"'")
+	CALL gl_lib.gl_logIt(SFMT("Security Token: %1 From:%2",NVL(l_token.trim(),"NULL"),l_token_date))
 
 	RETURN TRUE
 END FUNCTION
@@ -243,64 +254,151 @@ FUNCTION check_network() RETURNS BOOLEAN
 	RETURN m_connected
 END FUNCTION
 --------------------------------------------------------------------------------
--- Take / Choose a Photo and send to the server
-FUNCTION photo_vid(l_take BOOLEAN, l_vid BOOLEAN)
-	DEFINE l_media_file, l_local_file, l_ret STRING
-	DEFINE l_image BYTE
+FUNCTION check_token()
+	DEFINE l_ret STRING
 
-	IF l_vid THEN
-		IF l_take THEN
-			CALL ui.Interface.frontCall("mobile","takeVideo",[],[l_media_file])
+	IF check_network() THEN
+		LET l_ret = mob_ws_lib.ws_checkToken()
+		IF l_ret IS NOT NULL THEN
+			CALL gl_lib.gl_winMessage("Info",l_ret,"information")
 		ELSE
-			CALL ui.Interface.frontCall("mobile","chooseVideo",[],[l_media_file])
+-- token invalid - delete the user from the local db!
+			DELETE FROM users WHERE username = m_user
+			IF NOT login() THEN -- force re-login
+				EXIT PROGRAM
+			END IF
 		END IF
 	ELSE
-		IF l_take THEN
-			CALL ui.Interface.frontCall("mobile","takePhoto",[],[l_media_file])
-		ELSE
-			CALL ui.Interface.frontCall("mobile","choosePhoto",[],[l_media_file])
-		END IF
+		CALL gl_lib.gl_winMessage("Error","No network connection","exclamation")
 	END IF
-	IF l_media_file IS NULL THEN
-		CALL gl_winMessage("","No Media Taken/Choosen","information")
-		RETURN
+
+END FUNCTION
+--------------------------------------------------------------------------------
+-- Take / Choose a Photo and send to the server
+FUNCTION send_media()
+	DEFINE l_media_file, l_local_file, l_ret STRING
+	DEFINE l_files DYNAMIC ARRAY OF RECORD
+		filename STRING,
+		size STRING,
+		vid BOOLEAN
+	END RECORD
+	DEFINE x SMALLINT
+
+	IF m_sc_rec.api_param.jobid IS NULL THEN
+		LET m_sc_rec.api_param.jobId = "45546465467"
+		LET m_sc_rec.api_param.custid = "159"
+		LET m_sc_rec.api_param.vrn = "EX58YHY"
+	--"jobId":"45546465466","customerid":"159","vrn":"EX58YHY"
 	END IF
 
 	OPEN WINDOW show_photo WITH FORM "show_media"
 
-	DISPLAY l_media_file TO f_mpath
+	LET int_flag = FALSE
+	DIALOG ATTRIBUTES(UNBUFFERED)
+		INPUT BY NAME m_sc_rec.api_param.* ATTRIBUTES(WITHOUT DEFAULTS)
+		END INPUT
+		DISPLAY ARRAY l_files TO arr.*
+		END DISPLAY
+		ON ACTION take_photo
+			CALL ui.Interface.frontCall("mobile","takePhoto",[],[l_media_file])
+			LET l_local_file = process_file(l_media_file, FALSE)
+			IF l_local_file IS NOT NULL THEN
+				LET l_files[ l_files.getLength() + 1 ].filename = l_local_file
+				LET l_files[ l_files.getLength() ].size = os.path.size(l_local_file)
+				LET l_files[ l_files.getLength() ].vid = FALSE
+			END IF
+
+		ON ACTION choose_photo
+			CALL ui.Interface.frontCall("mobile","choosePhoto",[],[l_media_file])
+			LET l_local_file = process_file(l_media_file, FALSE)
+			IF l_local_file IS NOT NULL THEN
+				LET l_files[ l_files.getLength() + 1 ].filename = l_local_file
+				LET l_files[ l_files.getLength() ].size = os.path.size(l_local_file)
+				LET l_files[ l_files.getLength() ].vid = FALSE
+			END IF
+
+		ON ACTION take_video
+			CALL ui.Interface.frontCall("mobile","takeVideo",[],[l_media_file])
+			LET l_local_file = process_file(l_media_file, TRUE)
+			IF l_local_file IS NOT NULL THEN
+				LET l_files[ l_files.getLength() + 1 ].filename = l_local_file
+				LET l_files[ l_files.getLength() ].size = os.path.size(l_local_file)
+				LET l_files[ l_files.getLength() ].vid = TRUE
+			END IF
+
+		ON ACTION choose_video
+			CALL ui.Interface.frontCall("mobile","chooseVideo",[],[l_media_file])
+			LET l_local_file = process_file(l_media_file, TRUE)
+			IF l_local_file IS NOT NULL THEN
+				LET l_files[ l_files.getLength() + 1 ].filename = l_local_file
+				LET l_files[ l_files.getLength() ].size = os.path.size(l_local_file)
+				LET l_files[ l_files.getLength() ].vid = TRUE
+			END IF
+
+		ON ACTION send
+			IF check_network() THEN
+				DISPLAY "Sending, please wait ..." TO status
+				LET l_ret = mob_ws_lib.ws_putMedia( l_files )
+				IF l_ret IS NOT NULL THEN
+					CALL gl_lib.gl_winMessage("Info",l_ret,"information")
+				END IF
+				DISPLAY "" TO status
+			ELSE
+				CALL gl_lib.gl_winMessage("Error","No network connection","exclamation")
+			END IF
+
+		ON ACTION send_sc
+			IF check_network() THEN
+				DISPLAY "Sending, please wait ..." TO status
+				CALL ui.interface.refresh()
+				LET l_ret =  mob_ws_lib_sc.ws_putMedia_sc( l_files )
+				IF l_ret IS NOT NULL THEN
+					CALL gl_lib.gl_winMessage("Info",l_ret,"information")
+				END IF
+				DISPLAY "" TO status
+			ELSE
+				CALL gl_lib.gl_winMessage("Error","No network connection","exclamation")
+			END IF
+
+		ON ACTION back EXIT DIALOG
+	END DIALOG
+	FOR x = 1 TO l_files.getLength()
+		IF NOT os.path.delete( l_files[x].filename ) THEN
+			CALL gl_lib.gl_logIt(%"Failed to delete local file!")
+		END IF
+	END FOR
+	LET int_flag = FALSE
+	CLOSE WINDOW show_photo
+END FUNCTION
+--------------------------------------------------------------------------------
+-- send some data to the server
+FUNCTION process_file(l_media_file STRING, l_vid BOOLEAN) RETURNS STRING
+	DEFINE l_local_file STRING
+	IF l_media_file IS NULL THEN RETURN NULL END IF
+
+	CALL gl_lib.gl_logIt(SFMT(%"Processing %1 ...",l_media_file))
+
+	DISPLAY "Processing file, please wait ..." TO status
+	CALL ui.interface.refresh()
 
 	LET l_local_file = util.Datetime.format( CURRENT, "%Y%m%d_%H%M%S"||IIF(l_vid,".mp4",".jpg") )
 	TRY
-		CALL fgl_getfile(l_media_file,l_local_file)
+		CALL fgl_getfile(l_media_file, l_local_file)
 	CATCH
 		CALL gl_lib.gl_winMessage("Error",ERR_GET( STATUS ),"exclamation")
 	END TRY
 
-	IF os.path.exists( l_local_file ) THEN
-		DISPLAY l_local_file TO f_lpath
-		DISPLAY os.path.size(l_local_file) TO f_size
-		IF NOT l_vid THEN
-			LOCATE l_image IN FILE l_local_file
-			DISPLAY l_image TO f_photo
-		END IF
-	ELSE
-		DISPLAY l_local_file||" Missing!" TO f_lpath
-	END IF
+	DISPLAY "Processing done, ready to send." TO status
+	CALL ui.interface.refresh()
 
-	MENU
-		ON ACTION send
-			IF check_network() THEN
-				LET l_ret = mob_ws_lib.ws_putMedia( l_local_file, l_vid )
-				IF l_ret IS NOT NULL THEN
-					CALL gl_lib.gl_winMessage("Info",l_ret,"information")
-				END IF
-			ELSE
-				CALL gl_lib.gl_winMessage("Error","No network connection","exclamation")
-			END IF
-		ON ACTION back EXIT MENU
-	END MENU
-	CLOSE WINDOW show_photo
+	IF NOT os.path.exists( l_local_file ) THEN
+		ERROR l_local_file||" Missing!"
+		CALL gl_lib.gl_logIt(SFMT(%"%1 Missing!",l_local_file))
+		RETURN NULL
+	ELSE
+		CALL gl_lib.gl_logIt(SFMT(%"Processed to %1 completed.",l_local_file))
+	END IF
+	RETURN l_local_file
 END FUNCTION
 --------------------------------------------------------------------------------
 -- send some data to the server

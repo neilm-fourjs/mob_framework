@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Project defaultApplication="-1031729630" gstVersion="30a07" version="3.2">
+<Project defaultApplication="400358049" gstVersion="30a07" version="3.2">
   <Settings>
     <DynamicProperties version="2">
       <DynamicProperty description="Accent color (Android 5.0 and later)" initialValue="#9575CD" isDefaultInherited="false" isHidden="false" label="Accent color" name="gma-accent-color" readOnly="false" type="COLOR"/>
@@ -126,7 +126,7 @@
         <Directory label="etc" sourceDirectory="$(ProjectDir)/etc"/>
         <Directory includedFiles="mob_ui_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas"/>
       </Package>
-      <Package binaryName="mob_ws_backend" dependencies="991859968,-1451902566,-994061721,300690543" label="mob_ws_backend" platform="Genero Application Server">
+      <Package binaryName="mob_ws_backend" dependencies="991859968,-1451902566,-994061721,300690543,455109296,1553065829" label="mob_ws_backend" platform="Genero Application Server">
         <DynamicProperty name="packageId" value="mob_ws_backend"/>
         <DynamicProperty name="packageLabel" value="mob_ws_backend"/>
         <DynamicProperty name="packageVersion" value="1000"/>
@@ -170,6 +170,7 @@
       <Library binaryName="mob_lib" dependencies="-994061721,455109296" id="1065793016" label="mob_lib">
         <File filePath="src/mob_lib.4gl"/>
         <File filePath="src/mob_ws_lib.4gl"/>
+        <File filePath="src/mob_ws_lib_sc.4gl"/>
         <File filePath="src/view_log.per"/>
       </Library>
     </Group>

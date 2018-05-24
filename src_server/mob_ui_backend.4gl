@@ -10,6 +10,19 @@ SCHEMA njm_demo310
 
 DEFINE m_pics DYNAMIC ARRAY OF STRING
 DEFINE m_imageDir STRING
+DEFINE m_al DYNAMIC ARRAY OF RECORD LIKE ws_log_access.*
+DEFINE m_ml DYNAMIC ARRAY OF RECORD 
+		user_name LIKE ws_log_media.username,
+		media_type LIKE ws_log_media.media_type,
+		filepath LIKE ws_log_media.filepath,
+		access_date LIKE ws_log_media.access_date,
+		img STRING
+	END RECORD
+DEFINE m_dl  DYNAMIC ARRAY OF RECORD
+		username LIKE ws_log_data.username,
+		data STRING,
+		timestamp LIKE ws_log_data.access_date
+	END RECORD
 
 MAIN
 
@@ -46,24 +59,41 @@ FUNCTION users()
   
 END FUNCTION
 --------------------------------------------------------------------------------
+-- Get the Access log Data
+FUNCTION get_accessLog()
+	CALL m_al.clear()
+	DECLARE cur_al CURSOR FOR SELECT * FROM ws_log_access 
+	FOREACH cur_al INTO m_al[ m_al.getLength() + 1 ].*
+	END FOREACH
+	CALL m_al.deleteElement( m_al.getLength() )
+	MESSAGE SFMT(%"Got %1 AccessLog Records",m_al.getLength())
+END FUNCTION
+--------------------------------------------------------------------------------
 -- View the Access log
 -- 
 -- @params 
 -- @returns
 FUNCTION accessLog()
-	DEFINE l_al DYNAMIC ARRAY OF RECORD LIKE ws_log_access.*
-
-	DECLARE cur_al CURSOR FOR SELECT * FROM ws_log_access 
-	FOREACH cur_al INTO l_al[ l_al.getLength() + 1 ].*
-	END FOREACH
-	CALL l_al.deleteElement( l_al.getLength() )
-
+	CALL get_accessLog()
 	OPEN WINDOW al WITH FORM "accessLog"
-	
-	DISPLAY ARRAY l_al TO arr.*
-
+	DISPLAY ARRAY m_al TO arr.*
+		ON ACTION refresh CALL get_accessLog()
+	END DISPLAY
 	CLOSE WINDOW al
-  
+END FUNCTION
+--------------------------------------------------------------------------------
+-- Get the Data log data
+FUNCTION get_dataLog()
+	DEFINE l_dl_rec RECORD LIKE ws_log_data.*
+	LOCATE l_dl_rec.data IN MEMORY
+	DECLARE cur_dl CURSOR FOR SELECT * FROM ws_log_data
+	CALL m_dl.clear()
+	FOREACH cur_dl INTO l_dl_rec.*
+		LET m_dl[ m_dl.getLength() + 1 ].username = l_dl_rec.username
+		LET m_dl[ m_dl.getLength() ].data = l_dl_rec.data
+		LET m_dl[ m_dl.getLength() ].timestamp = l_dl_rec.access_date
+	END FOREACH
+	MESSAGE SFMT(%"Got %1 DataLog Records",m_dl.getLength())
 END FUNCTION
 --------------------------------------------------------------------------------
 -- View the Data log
@@ -72,12 +102,7 @@ END FUNCTION
 -- @params 
 -- @returns
 FUNCTION dataLog()
-	DEFINE l_dl_rec RECORD LIKE ws_log_data.*
-	DEFINE l_dl  DYNAMIC ARRAY OF RECORD
-			username LIKE ws_log_data.username,
-			data STRING,
-			timestamp LIKE ws_log_data.access_date
-		END RECORD
+
 	DEFINE l_ret SMALLINT
 	DEFINE l_url STRING
 	DEFINE l_sc_rec RECORD
@@ -100,41 +125,56 @@ FUNCTION dataLog()
 		END RECORD
 	END RECORD
 
-	LOCATE l_dl_rec.data IN MEMORY
-	DECLARE cur_dl CURSOR FOR SELECT * FROM ws_log_data
-	FOREACH cur_dl INTO l_dl_rec.*
-		LET l_dl[ l_dl.getLength() + 1 ].username = l_dl_rec.username
-		LET l_dl[ l_dl.getLength() ].data = l_dl_rec.data
-		LET l_dl[ l_dl.getLength() ].timestamp = l_dl_rec.access_date
-	END FOREACH
+	CALL get_dataLog()
 
 	OPEN WINDOW dl WITH FORM "dataLog"
 	
-	DISPLAY ARRAY l_dl TO arr.*
+	DISPLAY ARRAY m_dl TO arr.*
 		BEFORE ROW
 			CALL DIALOG.setActionActive("select", FALSE)
-			DISPLAY l_dl[ arr_curr() ].data TO f_data
+			DISPLAY m_dl[ arr_curr() ].data TO f_data
 			LET l_url = NULL
-			IF l_dl[ arr_curr() ].data.subString(1,12) = "{\"api_param\"" THEN
+			IF m_dl[ arr_curr() ].data.subString(1,12) = "{\"api_param\"" THEN
 				TRY
-					CALL util.JSON.parse(l_dl[ arr_curr() ].data, l_sc_rec )
+					CALL util.JSON.parse(m_dl[ arr_curr() ].data, l_sc_rec )
 					LET l_url = l_sc_rec.reply.link
 				CATCH
 					ERROR "Invalid JSON!"
 				END TRY
 			END IF
-			IF l_dl[ arr_curr() ].data.subString(1,8) = "https://" THEN
-				LET l_url = l_dl[ arr_curr() ].data
+			IF m_dl[ arr_curr() ].data.subString(1,8) = "https://" THEN
+				LET l_url = m_dl[ arr_curr() ].data
 			END IF
 			IF l_url iS NOT NULL THEN
 				CALL DIALOG.setActionActive("select", TRUE)
 			END IF
 		ON ACTION select
 				CALL ui.Interface.frontCall("standard", "launchURL", [ l_url ], l_ret)
+		ON ACTION refresh CALL get_dataLog()
 	END DISPLAY
 
 	CLOSE WINDOW dl
   
+END FUNCTION
+--------------------------------------------------------------------------------
+-- Get the Media log Data
+FUNCTION get_mediaLog()
+	DEFINE l_thumb STRING
+	DECLARE cur_ml CURSOR FOR SELECT * FROM ws_log_media 
+	CALL m_ml.clear()
+	FOREACH cur_ml INTO m_ml[ m_ml.getLength() + 1 ].*
+		LET l_thumb = os.path.join( 
+					os.path.dirName(m_ml[ m_ml.getLength() ].filepath),
+					"tn_"||os.path.rootName( os.path.basename( m_ml[ m_ml.getLength() ].filepath ) ).append(".gif"))
+		IF os.path.exists( l_thumb ) THEN
+			DISPLAY l_thumb||" Okay"
+		ELSE
+			DISPLAY l_thumb||" Missing"
+		END IF
+		LET m_ml[ m_ml.getLength() ].img = l_thumb
+	END FOREACH
+	CALL m_ml.deleteElement( m_ml.getLength() )
+	MESSAGE SFMT(%"Got %1 MediaLog Records",m_ml.getLength())
 END FUNCTION
 --------------------------------------------------------------------------------
 -- View the Media log
@@ -142,38 +182,15 @@ END FUNCTION
 -- @params
 -- @returns
 FUNCTION mediaLog()
-  DEFINE l_ml DYNAMIC ARRAY OF RECORD 
-			user_name LIKE ws_log_media.username,
-			media_type LIKE ws_log_media.media_type,
-			filepath LIKE ws_log_media.filepath,
-			access_date LIKE ws_log_media.access_date,
-			img STRING
-		END RECORD
-	DEFINE l_thumb STRING
-
-	DECLARE cur_ml CURSOR FOR SELECT * FROM ws_log_media 
-	FOREACH cur_ml INTO l_ml[ l_ml.getLength() + 1 ].*
-		LET l_thumb = os.path.join( 
-					os.path.dirName(l_ml[ l_ml.getLength() ].filepath),
-					"tn_"||os.path.rootName( os.path.basename( l_ml[ l_ml.getLength() ].filepath ) ).append(".gif"))
-		IF os.path.exists( l_thumb ) THEN
-			DISPLAY l_thumb||" Okay"
-		ELSE
-			DISPLAY l_thumb||" Missing"
-		END IF
-		LET l_ml[ l_ml.getLength() ].img = l_thumb
-	END FOREACH
-	CALL l_ml.deleteElement( l_ml.getLength() )
-
+	CALL get_mediaLog()
 	OPEN WINDOW ml WITH FORM "mediaLog"
-	
-	DISPLAY ARRAY l_ml TO arr.*
+	DISPLAY ARRAY m_ml TO arr.*
 		BEFORE ROW 
-			IF l_ml[arr_curr()].media_type = "P" THEN
-				DISPLAY l_ml[arr_curr()].filepath TO f_img
+			IF m_ml[arr_curr()].media_type = "P" THEN
+				DISPLAY m_ml[arr_curr()].filepath TO f_img
 			END IF
+		ON ACTION refresh CALL get_mediaLog()
 	END DISPLAY
-
 	CLOSE WINDOW ml
 END FUNCTION
 --------------------------------------------------------------------------------
