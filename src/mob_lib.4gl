@@ -282,16 +282,16 @@ FUNCTION send_media()
 
 		ON ACTION send
 			IF check_network() THEN
-				DISPLAY "Sending, please wait ..." TO status
-				LET l_ret = mob_ws_lib.ws_putMedia( l_files )
-				IF l_ret IS NOT NULL THEN
+				DISPLAY %"Sending, please wait ..." TO status
+				LET l_ret =  mob_ws_lib.ws_putMedia( l_files )
+				IF l_ret.subString(1,4) = "ERR:" THEN
+					DISPLAY l_ret TO status
+				ELSE
 					CALL gl_lib.gl_winMessage("Info",l_ret,"information")
 					CALL l_files.clear()
 					CALL DIALOG.setActionActive("send",FALSE)
 					CALL DIALOG.setActionActive("send_sc",FALSE)
-					DISPLAY "Files Send, choose more?" TO status
-				ELSE
-					DISPLAY "There was an issue sending, try again."
+					DISPLAY %"Files Send, choose more?" TO status
 				END IF
 			ELSE
 				CALL gl_lib.gl_winMessage("Error","No network connection","exclamation")
@@ -299,17 +299,17 @@ FUNCTION send_media()
 
 		ON ACTION send_sc
 			IF check_network() THEN
-				DISPLAY "Sending, please wait ..." TO status
+				DISPLAY %"Sending, please wait ..." TO status
 				CALL ui.interface.refresh()
 				LET l_ret =  mob_ws_lib_sc.ws_putMedia_sc( l_files )
-				IF l_ret IS NOT NULL THEN
+				IF l_ret.subString(1,4) = "ERR:" THEN
+					DISPLAY l_ret TO status
+				ELSE
 					CALL gl_lib.gl_winMessage("Info",l_ret,"information")
 					CALL l_files.clear()
 					CALL DIALOG.setActionActive("send",FALSE)
 					CALL DIALOG.setActionActive("send_sc",FALSE)
 					DISPLAY "Files Send, choose more?" TO status
-				ELSE
-					DISPLAY "There was an issue sending, try again."
 				END IF
 			ELSE
 				CALL gl_lib.gl_winMessage("Error","No network connection","exclamation")

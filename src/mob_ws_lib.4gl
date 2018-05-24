@@ -47,33 +47,35 @@ FUNCTION ws_putMedia(l_files) RETURNS STRING
 		vid BOOLEAN
 	END RECORD
 	DEFINE x SMALLINT
+	DEFINE l_errors SMALLINT
 	DEFINE l_tS DATETIME YEAR TO SECOND
 	DEFINE l_info DYNAMIC ARRAY OF RECORD
 		filename STRING,
 		filesize STRING,
 		type STRING,
 		timestamp STRING,
-		id STRING
+		id STRING,
+		sent_ok BOOLEAN,
+		send_reply STRING
 	END RECORD
 
-	LET l_ts = CURRENT
+	LET l_errors = 0
 	FOR x = 1 TO l_files.getLength()
+		LET l_ts = CURRENT
 		LET l_info[x].filename = l_files[x].filename
 		LET l_info[x].filesize = l_files[x].size
 		LET l_info[x].timestamp = l_ts
 		LET l_info[x].type = IIF(l_files[x].vid,"Video","Photo")
 		LET l_info[x].id = security.RandomGenerator.CreateUUIDString()
+		LET l_info[x].sent_ok =  doRestRequestMedia(SFMT("%1?token=%2",IIF(l_files[x].vid,"putVideo","putPhoto"), m_security_token), l_files[x].filename, l_files[x].vid)
+		IF NOT l_info[x].sent_ok THEN LET l_errors = l_errors + 1 END IF
+		LET l_info[x].send_reply = m_ret.reply
 	END FOR
-	IF NOT doRestRequestData(SFMT("sendData?token=%1",m_security_token), util.JSON.stringify(l_info)) THEN
-		RETURN NULL
-	END IF
 
-	FOR x = 1 TO l_files.getLength()
-		IF NOT doRestRequestMedia(SFMT("%1?token=%2",IIF(l_files[x].vid,"putVideo","putPhoto"), m_security_token), l_files[x].filename, l_files[x].vid) THEN
-			RETURN NULL
-		END IF
-	END FOR
-	RETURN "Media Sent"
+	IF NOT doRestRequestData(SFMT("sendData?token=%1",m_security_token), util.JSON.stringify(l_info)) THEN
+		RETURN SFMT(%"ERR: Data Send failed:%1",m_ret.reply)
+	END IF
+	RETURN IIF(l_errors=0, %"All Media Sent", SFMT(%"ERR: %1 Failed to send", l_errors))
 END FUNCTION
 --------------------------------------------------------------------------------
 -- Send some json data back to server
@@ -127,7 +129,7 @@ PRIVATE FUNCTION doRestRequest(l_param STRING) RETURNS BOOLEAN
 		LET l_stat = STATUS
 		LET m_ret.reply = ERR_GET( l_stat )
 	END TRY
-	CALL gl_lib.gl_logIt("m_ret reply:"||NVL(m_ret.reply,"NULL"))
+	CALL gl_lib.gl_logIt("m_ret reply:"||NVL(m_ret.stat,"NULL")||":"||NVL(m_ret.reply,"NULL"))
 	IF m_ret.stat != 200 THEN
 		CALL gl_lib.gl_winMessage("WS Error", m_ret.reply,"exclamation")
 		RETURN FALSE
@@ -170,7 +172,7 @@ PRIVATE FUNCTION doRestRequestMedia(l_param STRING, l_media_file STRING, l_vid B
 		LET l_stat = STATUS
 		LET m_ret.reply = ERR_GET( l_stat )
 	END TRY
-	CALL gl_lib.gl_logIt("m_ret reply:"||NVL(m_ret.reply,"NULL"))
+	CALL gl_lib.gl_logIt("m_ret reply:"||NVL(m_ret.stat,"NULL")||":"||NVL(m_ret.reply,"NULL"))
 	IF m_ret.stat != 200 THEN
 		CALL gl_lib.gl_winMessage("WS Error", m_ret.reply,"exclamation")
 		RETURN FALSE
@@ -207,7 +209,7 @@ PRIVATE FUNCTION doRestRequestData(l_param STRING, l_data STRING)
 		LET l_stat = STATUS
 		LET m_ret.reply = ERR_GET( l_stat )
 	END TRY
-	CALL gl_lib.gl_logIt("m_ret reply:"||NVL(m_ret.reply,"NULL"))
+	CALL gl_lib.gl_logIt("m_ret reply:"||NVL(m_ret.stat,"NULL")||":"||NVL(m_ret.reply,"NULL"))
 	IF m_ret.stat != 200 THEN
 		CALL gl_lib.gl_winMessage("WS Error", m_ret.reply,"exclamation")
 		RETURN FALSE

@@ -44,7 +44,7 @@ FUNCTION ws_putMedia_sc(l_files) RETURNS STRING
 		size STRING,
 		vid BOOLEAN
 	END RECORD
-	DEFINE x SMALLINT
+	DEFINE x, l_errors SMALLINT
 	DEFINE l_vids, l_imgs BOOLEAN
 
 	LET l_vids = FALSE
@@ -53,15 +53,18 @@ FUNCTION ws_putMedia_sc(l_files) RETURNS STRING
 		IF l_files[x].vid THEN LET l_vids = TRUE END IF
 	END FOR
 
+	LET l_errors = 0
 	IF l_imgs THEN
 		IF NOT doRestServiceCertainty( FALSE, m_sc_rec.api_param.jobid, m_sc_rec.api_param.custid, m_sc_rec.api_param.vrn, l_files ) THEN
+			LET l_errors = l_errors + 1
 		END IF
 	END IF
 	IF l_vids THEN
 		IF NOT doRestServiceCertainty( TRUE, m_sc_rec.api_param.jobid, m_sc_rec.api_param.custid, m_sc_rec.api_param.vrn, l_files ) THEN
+			LET l_errors = l_errors + 1
 		END IF
 	END IF
-	RETURN m_ret.reply
+	RETURN IIF(l_errors=0, %"All Media Sent", SFMT(%"ERR: %1 Failed to send", l_errors))
 END FUNCTION
 --------------------------------------------------------------------------------
 -- Service Certainty 
