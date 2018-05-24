@@ -6,6 +6,8 @@ IMPORT util
 IMPORT FGL gl_lib
 IMPORT FGL mob_ws_lib
 
+&include "mob_ws_lib.inc"
+
 PUBLIC DEFINE m_sel_list1 DYNAMIC ARRAY OF RECORD
 		key STRING,
 		line1 STRING,
@@ -36,11 +38,17 @@ PUBLIC DEFINE m_list1_date, m_list2_date DATETIME YEAR TO SECOND
 PUBLIC DEFINE m_welcome STRING
 PUBLIC DEFINE m_apptitle STRING
 PUBLIC DEFINE m_logo STRING
+PUBLIC DEFINE m_param t_param_rec
 
 FUNCTION init_app()
 	LET m_apptitle = "Genero Mobile Demo"
 	LET m_welcome = "Welcome to a Simple GeneroMobile Demo Application"
 	LET m_logo = "demoicon"
+
+--TODO: find a better way to set these on a per install basis
+	LET m_param.custId = "159"
+	LET m_param.jobId = "45546465467"
+	LET m_param.jobRef = "DUMMY"
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION init_app_db()

@@ -9,6 +9,8 @@ IMPORT FGL mob_lib_app
 IMPORT FGL mob_ws_lib
 IMPORT FGL mob_ws_lib_sc
 
+&include "mob_ws_lib.inc"
+
 CONSTANT DB_VER = 1
 
 DEFINE m_init_db BOOLEAN
@@ -223,20 +225,16 @@ FUNCTION send_media()
 		size STRING,
 		vid BOOLEAN
 	END RECORD
+	DEFINE l_param t_param_rec
 	DEFINE x SMALLINT
 
-	IF m_sc_rec.api_param.jobid IS NULL THEN
-		LET m_sc_rec.api_param.jobId = "45546465467"
-		LET m_sc_rec.api_param.custid = "159"
-		LET m_sc_rec.api_param.vrn = "EX58YHY"
-	--"jobId":"45546465466","customerid":"159","vrn":"EX58YHY"
-	END IF
+	LET l_param.* = mob_lib_app.m_param.*
 
 	OPEN WINDOW show_photo WITH FORM "show_media"
 	DISPLAY "Select media to send." TO status
 	LET int_flag = FALSE
 	DIALOG ATTRIBUTES(UNBUFFERED)
-		INPUT BY NAME m_sc_rec.api_param.* ATTRIBUTES(WITHOUT DEFAULTS)
+		INPUT BY NAME l_param.* ATTRIBUTES(WITHOUT DEFAULTS)
 		END INPUT
 		DISPLAY ARRAY l_files TO arr.*
 		END DISPLAY
@@ -287,7 +285,7 @@ FUNCTION send_media()
 		ON ACTION send
 			IF check_network() THEN
 				DISPLAY %"Sending, please wait ..." TO status
-				LET l_ret =  mob_ws_lib.ws_putMedia( l_files )
+				LET l_ret =  mob_ws_lib.ws_putMedia( l_files, l_param.* )
 				IF l_ret.subString(1,4) = "ERR:" THEN
 					DISPLAY l_ret TO status
 				ELSE
@@ -305,7 +303,7 @@ FUNCTION send_media()
 			IF check_network() THEN
 				DISPLAY %"Sending, please wait ..." TO status
 				CALL ui.interface.refresh()
-				LET l_ret =  mob_ws_lib_sc.ws_putMedia_sc( l_files )
+				LET l_ret =  mob_ws_lib_sc.ws_putMedia_sc( l_files, l_param.*)
 				IF l_ret.subString(1,4) = "ERR:" THEN
 					DISPLAY l_ret TO status
 				ELSE

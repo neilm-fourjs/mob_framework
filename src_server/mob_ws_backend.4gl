@@ -10,14 +10,9 @@ IMPORT FGL gl_lib_restful
 IMPORT FGL lib_secure
 IMPORT FGL mob_db_backend
 
-CONSTANT WS_VER = 2
+&include "mob_ws_lib.inc"
 
-DEFINE m_ret RECORD
-		ver SMALLINT,
-		stat SMALLINT,
-		type STRING,
-		reply STRING
-	END RECORD
+DEFINE m_ret t_ws_reply_rec
 DEFINE m_user STRING
 
 MAIN
@@ -302,13 +297,6 @@ END FUNCTION
 -- simple fetch data from the server.
 FUNCTION getData(l_req com.HTTPServiceRequest)
 	DEFINE l_str STRING
-	DEFINE l_info DYNAMIC ARRAY OF RECORD
-		filename STRING,
-		filesize STRING,
-		type STRING,
-		timestamp STRING,
-		id STRING
-	END RECORD
 
 	IF NOT checkToken("getData") THEN RETURN END IF
 
@@ -319,16 +307,6 @@ FUNCTION getData(l_req com.HTTPServiceRequest)
 		CALL setReply(200,%"ERR",%"Data receive Failed!")
 		RETURN
 	END TRY
-
-	IF l_str.getCharAt(1) = "{" THEN
-		TRY
-			CALL util.JSON.parse(l_str, l_info)
-			CALL gl_lib.gl_logIt(SFMT(%"Got Info:%1",l_str))
-		CATCH
-			CALL setReply(200,%"ERR",%"Invalid JSon received!")
-			RETURN
-		END TRY
-	END IF
 
 	CALL mob_db_backend.db_log_data(m_user,l_str)
 

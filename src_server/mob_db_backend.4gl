@@ -8,9 +8,13 @@ IMPORT FGL lib_secure
 
 SCHEMA njm_demo310
 
+&include "mob_ws_lib.inc"
+
 --------------------------------------------------------------------------------
 FUNCTION db_connect()
 	DEFINE l_dbname STRING
+	DEFINE l_ver INTEGER
+
 	LET l_dbname = fgl_getEnv("DBNAME")
 	IF l_dbname.getLength() < 2 THEN LET l_dbname = "njm_demo310" END IF
 
@@ -20,6 +24,20 @@ FUNCTION db_connect()
 	CATCH
 		CALL gl_lib.gl_logIt(SFMT(%"ERROR: Failed to connect to %1",l_dbname))
 		EXIT PROGRAM
+	END TRY
+
+	TRY
+		CREATE TABLE ws_backend_ver (
+			ver INTEGER
+		)
+		INSERT INTO ws_backend_ver VALUES( WS_VER )
+	CATCH
+		SELECT ver INTO l_ver FROM ws_backend_ver
+		IF l_ver != WS_VER THEN
+			CALL db_drops()
+			DELETE FROM ws_backend_ver
+			INSERT INTO ws_backend_ver VALUES( WS_VER )
+		END IF
 	END TRY
 
 	TRY
@@ -60,8 +78,37 @@ FUNCTION db_connect()
 		)
 	CATCH
 	END TRY
+
+	TRY
+		CREATE TABLE ws_media_details (
+			username CHAR(30),
+			custid INTEGER,
+			jobid CHAR(30),
+			jobref CHAR(30),
+			uri VARCHAR(100),
+			filename VARCHAR(100),
+			filesize INTEGER,
+			type CHAR(10),
+			timestamp DATETIME YEAR TO SECOND,
+			id CHAR(40),
+			sent_ok BOOLEAN,
+			send_reply VARCHAR(100)
+		)
+	CATCH
+	END TRY
+
 END FUNCTION
 
+--------------------------------------------------------------------------------
+-- Drop the tables
+-- 
+FUNCTION db_drops()
+	DROP TABLE ws_users
+	DROP TABLE ws_log_access
+	DROP TABLE ws_log_media
+	DROP TABLE ws_log_data
+	DROP TABLE ws_media_details
+END FUNCTION
 --------------------------------------------------------------------------------
 -- Log the access to the service
 -- 
@@ -103,12 +150,40 @@ END FUNCTION
 FUNCTION db_log_data(l_user STRING, l_data STRING)
 	DEFINE l_text TEXT
 	DEFINE l_ts DATETIME YEAR TO SECOND
+	DEFINE l_info DYNAMIC ARRAY OF t_img_info
+	DEFINE l_info_rec t_img_info
+	DEFINE l_media_path, l_media_uri STRING
+	DEFINE x SMALLINT
+
 	LOCATE l_text IN MEMORY
 	LET l_ts = CURRENT
 	LET l_user = l_user.trim()
-	LET l_text = l_data.trim()
+	LET l_data = l_data.trim()
+
 	CALL gl_lib.gl_logIt(SFMT("db_log_data:%1:%2",l_user,l_data))
+	LET l_text = l_data
 	INSERT INTO ws_log_data VALUES(l_user, l_text, l_ts)
+
+	IF l_data.getCharAt(1) = "[" THEN
+		TRY
+			CALL util.JSON.parse(l_data, l_info)
+			CALL gl_lib.gl_logIt(SFMT(%"Got Info:%1 media files",l_info.getLength()))
+		CATCH
+			CALL gl_lib.gl_logIt(SFMT(%"JSON Parse failed:%1",l_data))
+			RETURN
+		END TRY
+	END IF
+
+	LET l_media_path = fgl_getEnv("MEDIAPATH")
+	LET l_media_uri = fgl_getEnv("MEDIAURI")
+	IF l_media_uri IS NULL THEN LET l_media_uri = l_media_path END IF
+	FOR x = 1 TO l_info.getLength()
+		LET l_info_rec.* = l_info[x].*
+		LET l_info_rec.username = l_user
+		LET l_info_rec.uri = l_media_uri
+		INSERT INTO ws_media_details VALUES( l_info_rec.* )
+	END FOR
+
 END FUNCTION
 --------------------------------------------------------------------------------
 -- Check the user is registered with that password or register new user

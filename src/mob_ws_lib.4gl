@@ -8,15 +8,10 @@ IMPORT security
 
 IMPORT FGL gl_lib
 
-CONSTANT WS_VER = 2
+&include "mob_ws_lib.inc"
 
 PUBLIC DEFINE m_security_token STRING
-PUBLIC DEFINE m_ret RECORD
-		ver SMALLINT,
-		stat SMALLINT,
-		type STRING,
-		reply STRING
-	END RECORD
+PUBLIC DEFINE m_ret t_ws_reply_rec
 
 --------------------------------------------------------------------------------
 FUNCTION ws_getSecurityToken( l_xml_creds STRING )
@@ -40,28 +35,26 @@ FUNCTION ws_call(l_func STRING, l_key STRING) RETURNS STRING
 	RETURN m_ret.reply
 END FUNCTION
 --------------------------------------------------------------------------------
-FUNCTION ws_putMedia(l_files) RETURNS STRING
+FUNCTION ws_putMedia(l_files, l_custid, l_jobid, l_jobref) RETURNS STRING
 	DEFINE l_files DYNAMIC ARRAY OF RECORD
 		filename STRING,
 		size STRING,
 		vid BOOLEAN
 	END RECORD
+	DEFINE l_custid INTEGER
+	DEFINE l_jobid, l_jobref STRING
 	DEFINE x SMALLINT
 	DEFINE l_errors SMALLINT
 	DEFINE l_tS DATETIME YEAR TO SECOND
-	DEFINE l_info DYNAMIC ARRAY OF RECORD
-		filename STRING,
-		filesize STRING,
-		type STRING,
-		timestamp STRING,
-		id STRING,
-		sent_ok BOOLEAN,
-		send_reply STRING
-	END RECORD
+	DEFINE l_info DYNAMIC ARRAY OF t_img_info
+	DEFINE l_param STRING
 
 	LET l_errors = 0
 	FOR x = 1 TO l_files.getLength()
 		LET l_ts = CURRENT
+		LET l_info[x].custid = l_custid
+		LET l_info[x].jobid = l_jobid
+		LET l_info[x].jobref = l_jobref
 		LET l_info[x].filename = l_files[x].filename
 		LET l_info[x].filesize = l_files[x].size
 		LET l_info[x].timestamp = l_ts
@@ -72,7 +65,8 @@ FUNCTION ws_putMedia(l_files) RETURNS STRING
 		LET l_info[x].send_reply = m_ret.reply
 	END FOR
 
-	IF NOT doRestRequestData(SFMT("sendData?token=%1",m_security_token), util.JSON.stringify(l_info)) THEN
+	LET l_param = SFMT("sendData?token=%1&custid=%2&jobid=%3",m_security_token, l_custid, l_jobid)
+	IF NOT doRestRequestData(l_param, util.JSON.stringify(l_info)) THEN
 		RETURN SFMT(%"ERR: Data Send failed:%1",m_ret.reply)
 	END IF
 	RETURN IIF(l_errors=0, %"All Media Sent", SFMT(%"ERR: %1 Failed to send", l_errors))

@@ -1,9 +1,9 @@
 LAYOUT ( TEXT="Media" )
 GRID
 {
-[lb_job|job                  ]
 [lb_cus|cus      ]
-[lb_vrn|vrn      ]
+[lb_job|job                  ]
+[lb_jbr|jbr      ]
 [lb_pho|b1|b2]
 [lb_vid|b3|b4]
 [stat                         ]
@@ -18,14 +18,13 @@ END -- GRID
 
 ATTRIBUTES
 
-LABEL lb_job : lb_job, TEXT=%"Job Id:";
 LABEL lb_cus : lb_cus, TEXT=%"Cust Id:";
-LABEL lb_vrn : lb_vrn, TEXT=%"V.R.N:";
+LABEL lb_job : lb_job, TEXT=%"Job Id:";
+LABEL lb_jbr : lb_jbr, TEXT=%"Job Ref:";
 
-job = FORMONLY.jobid, UPSHIFT;
 cus = FORMONLY.custid, UPSHIFT;
-vrn = FORMONLY.vrn, UPSHIFT;
-
+job = FORMONLY.jobid, UPSHIFT;
+jbr = FORMONLY.jobref, UPSHIFT;
 
 
 LABEL lb_pho : lb_pho, TEXT=%"Photo:";

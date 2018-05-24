@@ -6,6 +6,8 @@ IMPORT security
 
 IMPORT FGL gl_lib
 
+&include "mob_ws_lib.inc"
+
 PUBLIC DEFINE m_ret RECORD
 		ver SMALLINT,
 		stat SMALLINT,
@@ -38,14 +40,20 @@ PUBLIC DEFINE m_sc_rec RECORD
 --------------------------------------------------------------------------------
 -- Service Certainly
 --------------------------------------------------------------------------------
-FUNCTION ws_putMedia_sc(l_files) RETURNS STRING
+FUNCTION ws_putMedia_sc(l_files, l_custid, l_jobid, l_jobref) RETURNS STRING
 	DEFINE l_files DYNAMIC ARRAY OF RECORD
 		filename STRING,
 		size STRING,
 		vid BOOLEAN
 	END RECORD
+	DEFINE l_custid INTEGER
+	DEFINE l_jobid, l_jobref STRING
 	DEFINE x, l_errors SMALLINT
 	DEFINE l_vids, l_imgs BOOLEAN
+
+	LET m_sc_rec.api_param.custid = l_custid
+	LET m_sc_rec.api_param.jobId = l_jobid
+	LET m_sc_rec.api_param.vrn = l_jobref
 
 	LET l_vids = FALSE
 	FOR x = 1 TO l_files.getLength()
