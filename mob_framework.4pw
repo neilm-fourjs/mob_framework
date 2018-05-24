@@ -169,6 +169,7 @@
       </Application>
       <Library binaryName="mob_lib" dependencies="-994061721,455109296" id="1065793016" label="mob_lib">
         <File filePath="src/mob_lib.4gl"/>
+        <File filePath="src/mob_lib_app.4gl"/>
         <File filePath="src/mob_ws_lib.4gl"/>
         <File filePath="src/mob_ws_lib_sc.4gl"/>
         <File filePath="src/view_log.per"/>

@@ -6,6 +6,7 @@ IMPORT util
 IMPORT os
 
 IMPORT FGL mob_lib
+IMPORT FGL mob_lib_app
 IMPORT FGL mob_ws_lib
 IMPORT FGL gl_lib
 
@@ -26,11 +27,11 @@ MAIN
 		ON ACTION list_custs
 			CALL list_custs()
 		ON ACTION send_media
-			CALL send_media()
+			CALL mob_lib.send_media()
 		ON ACTION send_data
 			CALL send_data("This is some test data!")
 		ON ACTION check_token
-			CALL check_token()
+			CALL mob_lib.check_token()
 		ON ACTION about
 			CALL ui.interface.frontCall("Android","showAbout",[],[])
 		ON ACTION view_log
@@ -45,18 +46,18 @@ END MAIN
 --------------------------------------------------------------------------------
 FUNCTION list_custs()
 
-	IF mob_lib.m_sel_list1.getLength() = 0 THEN
-		IF NOT mob_lib.get_list1() THEN
+	IF mob_lib_app.m_sel_list1.getLength() = 0 THEN
+		IF NOT mob_lib_app.get_list1(mob_lib.m_user) THEN
 			RETURN
 		END IF
 	END IF
 
 	OPEN WINDOW custs WITH FORM "cust_list" 
 
-	MESSAGE "Data as of: "||mob_lib.m_list1_date
+	MESSAGE "Data as of: "||mob_lib_app.m_list1_date
 	DISPLAY ARRAY m_sel_list1 TO scr_arr.* ATTRIBUTES(ACCEPT=FALSE,CANCEL=FALSE)
 		ON ACTION select
-			CALL show_cust( mob_lib.m_sel_list1[ arr_curr() ].key )
+			CALL show_cust( mob_lib_app.m_sel_list1[ arr_curr() ].key )
 		ON ACTION back EXIT DISPLAY
 	END DISPLAY
 
@@ -65,13 +66,13 @@ END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION show_cust(l_key STRING)
 
-	IF NOT mob_lib.get_dets1( l_key ) THEN
+	IF NOT mob_lib_app.get_dets1( l_key ) THEN
 		RETURN 
 	END IF
 
 	OPEN WINDOW cust_det WITH FORM "cust_dets"
 
-	DISPLAY BY NAME mob_lib.m_Dets1.*
+	DISPLAY BY NAME mob_lib_app.m_Dets1.*
 
 	MENU
 		ON ACTION back EXIT MENU

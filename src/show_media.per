@@ -4,9 +4,10 @@ GRID
 [lb_job|job                  ]
 [lb_cus|cus      ]
 [lb_vrn|vrn      ]
-       [b1|b2|b3|b4]
-       [b5   |b6   ]
+[lb_pho|b1|b2]
+[lb_vid|b3|b4]
 [stat                         ]
+[b5    |b6   ]
 Table:
 <T t1                         >
  [a1     |a2                 ]
@@ -25,15 +26,20 @@ job = FORMONLY.jobid, UPSHIFT;
 cus = FORMONLY.custid, UPSHIFT;
 vrn = FORMONLY.vrn, UPSHIFT;
 
-stat = FORMONLY.status;
 
+
+LABEL lb_pho : lb_pho, TEXT=%"Photo:";
 BUTTON b1 : take_photo, IMAGE="fa-camera";
 BUTTON b2 : choose_photo, IMAGE="fa-photo";
+
+LABEL lb_vid : lb_vid, TEXT=%"Video:";
 BUTTON b3 : take_video, IMAGE="fa-camera";
 BUTTON b4 : choose_video, IMAGE="fa-photo";
 
+stat = FORMONLY.status;
+
 BUTTON b5 : send;
-BUTTON b6 : send_sc;
+BUTTON b6 : send_sc, HIDDEN;
 
 a1 = FORMONLY.filename;
 a2 = FORMONLY.fsize;
