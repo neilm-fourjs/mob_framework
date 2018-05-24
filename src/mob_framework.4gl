@@ -1,4 +1,3 @@
---SCHEMA mob_database
 
 -- A Genero Mobile Framework Demo with web services.
 
@@ -12,7 +11,7 @@ IMPORT FGL gl_lib
 
 MAIN
 
-	CALL mob_lib.init_app()
+	CALL mob_lib.init_mob()
 
 	IF NOT mob_lib.login() THEN
 		EXIT PROGRAM
@@ -20,6 +19,7 @@ MAIN
 
 	OPEN FORM main FROM "mob_framework"
 	DISPLAY FORM main
+	DISPLAY mob_lib_app.m_apptitle TO f_apptitle
 	DISPLAY IIF( mob_lib.check_network(), "Connected","No Connection") TO f_network
 	DISPLAY fgl_getResource("mob_framework.ws_url") TO f_server
 

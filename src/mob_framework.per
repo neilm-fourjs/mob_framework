@@ -2,7 +2,7 @@ LAYOUT ( TEXT="Menu" )
 GRID
 {
 [""]
-[titl                     ]
+[ :titl                 : ]
 <G opts                    >
 [bt1                      ]
 [bt2                      ]
@@ -18,16 +18,16 @@ GRID
 END -- GRID
 
 ATTRIBUTES
-LABEL titl : titl, TEXT=%"A Simple Demo", JUSTIFY=CENTER,STYLE="blue big";
+LABEL titl = FORMONLY.f_apptitle, SIZEPOLICY=DYNAMIC, STYLE="apptitle";
 
 GROUP opts : opts, TEXT=%"Options:";
 
 BUTTON bt1 : list_custs, TEXT=%"View Customers", IMAGE="fa-users";
 BUTTON bt2 : send_media, TEXT=%"Send Media", IMAGE="fa-photo";
 BUTTON bt3 : send_data, TEXT=%"Send Data", IMAGE="fa-database";
-BUTTON bt4 : about, TEXT=%"About", IMAGE="fa-info";
-BUTTON bt5 : check_token, TEXT=%"Check Token", IMAGE="fa-check";
-BUTTON bt6 : view_log, TEXT=%"View Log", IMAGE="fa-list";
+BUTTON bt4 : check_token, TEXT=%"Check Token", IMAGE="fa-check";
+BUTTON bt5 : view_log, TEXT=%"View Log", IMAGE="fa-list";
+BUTTON bt6 : about, TEXT=%"About", IMAGE="fa-info";
 BUTTON bt7 : quit, TEXT=%"Logout", IMAGE="fa-power-off";
 
 LABEL lb2 : lb2, TEXT=%"Network:";

@@ -1,4 +1,6 @@
 
+-- This modulbe contains Application specific code.
+
 IMPORT util
 
 IMPORT FGL gl_lib
@@ -31,7 +33,16 @@ PUBLIC DEFINE m_dets1 RECORD
 	END RECORD
 
 PUBLIC DEFINE m_list1_date, m_list2_date DATETIME YEAR TO SECOND
+PUBLIC DEFINE m_welcome STRING
+PUBLIC DEFINE m_apptitle STRING
+PUBLIC DEFINE m_logo STRING
 
+FUNCTION init_app()
+	LET m_apptitle = "Genero Mobile Demo"
+	LET m_welcome = "Welcome to a Simple GeneroMobile Demo Application"
+	LET m_logo = "demoicon"
+END FUNCTION
+--------------------------------------------------------------------------------
 FUNCTION init_app_db()
 	TRY
 		DROP TABLE sel_list1

@@ -15,7 +15,7 @@ DEFINE m_init_db BOOLEAN
 PUBLIC DEFINE m_connected BOOLEAN
 PUBLIC DEFINE m_user STRING
 
-FUNCTION init_app()
+FUNCTION init_mob()
 	DEFINE l_dbname STRING
 
 	LET l_dbname = "mob_database.db"
@@ -30,6 +30,8 @@ FUNCTION init_app()
 		CALL gl_lib.gl_winMessage("Error",SFMT(%"Failed to initialize '%1'!\n%2",l_dbname, SQLERRMESSAGE),"exclamation")
 		RETURN
 	END IF
+
+	CALL mob_lib_app.init_app()
 
 	CALL gl_lib.gl_logIt("*** Started ***")
 
@@ -123,7 +125,9 @@ FUNCTION login() RETURNS BOOLEAN
 
 	OPEN FORM mob_login FROM "mob_login"
 	DISPLAY FORM mob_login
-	DISPLAY "Welcome to a simple GeneroMobile demo" TO welcome
+	DISPLAY mob_lib_app.m_apptitle TO f_apptitle
+	DISPLAY mob_lib_app.m_welcome TO f_welcome
+	DISPLAY mob_lib_app.m_logo TO f_logo
 	DISPLAY IIF( check_network(), "Connected","No Connection") TO f_network
 
 	IF m_init_db AND NOT check_network() THEN
