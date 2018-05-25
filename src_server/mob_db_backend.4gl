@@ -39,6 +39,7 @@ FUNCTION db_connect()
 			INSERT INTO ws_backend_ver VALUES( WS_VER )
 		END IF
 	END TRY
+	CALL gl_lib.gl_logIt(SFMT(%"Backend DB Ver: %1",l_ver))
 
 	TRY
 		CREATE TABLE ws_users (
@@ -103,6 +104,7 @@ END FUNCTION
 -- Drop the tables
 -- 
 FUNCTION db_drops()
+	CALL gl_lib.gl_logIt(%"Dropping Backend DB Tables")
 	DROP TABLE ws_users
 	DROP TABLE ws_log_access
 	DROP TABLE ws_log_media
@@ -255,14 +257,14 @@ FUNCTION db_check_token( l_token STRING ) RETURNS STRING
 
 	SELECT username, token_date INTO l_user, l_token_date FROM ws_users WHERE token = l_token
 	IF STATUS = NOTFOUND THEN
-		RETURN SFMT(%"ERROR: Invalid Token '%1'!",l_token)
+		RETURN SFMT(%"ERR: Invalid Token '%1'!",l_token)
 	END IF
 
 	LET l_now = CURRENT
 	IF l_token_date > ( l_now - 1 UNITS DAY ) THEN
 		RETURN l_user
 	ELSE
-		RETURN %"ERROR: Token expired!"
+		RETURN %"ERR: Token expired!"
 	END IF
 END FUNCTION
 

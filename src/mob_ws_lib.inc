@@ -1,5 +1,5 @@
 
-CONSTANT WS_VER = 3
+CONSTANT WS_VER = 4
 
 TYPE t_param_rec RECORD
 	custid STRING,

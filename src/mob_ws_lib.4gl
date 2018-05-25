@@ -60,12 +60,13 @@ FUNCTION ws_putMedia(l_files, l_custid, l_jobid, l_jobref) RETURNS STRING
 		LET l_info[x].timestamp = l_ts
 		LET l_info[x].type = IIF(l_files[x].vid,"Video","Photo")
 		LET l_info[x].id = security.RandomGenerator.CreateUUIDString()
-		LET l_info[x].sent_ok =  doRestRequestMedia(SFMT("%1?token=%2",IIF(l_files[x].vid,"putVideo","putPhoto"), m_security_token), l_files[x].filename, l_files[x].vid)
+		LET l_param = SFMT("%1?token=%2&custid=%3&jobid=%4&imgid=%5",IIF(l_files[x].vid,"putVideo","putPhoto"),m_security_token, l_custid, l_jobid, l_info[x].id)
+		LET l_info[x].sent_ok =  doRestRequestMedia(l_param, l_files[x].filename, l_files[x].vid)
 		IF NOT l_info[x].sent_ok THEN LET l_errors = l_errors + 1 END IF
 		LET l_info[x].send_reply = m_ret.reply
 	END FOR
 
-	LET l_param = SFMT("sendData?token=%1&custid=%2&jobid=%3",m_security_token, l_custid, l_jobid)
+	LET l_param = SFMT("sendData?token=%1",m_security_token)
 	IF NOT doRestRequestData(l_param, util.JSON.stringify(l_info)) THEN
 		RETURN SFMT(%"ERR: Data Send failed:%1",m_ret.reply)
 	END IF

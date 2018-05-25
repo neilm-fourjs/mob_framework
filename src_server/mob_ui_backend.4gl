@@ -8,7 +8,6 @@ IMPORT FGL fglgallery
 
 SCHEMA njm_demo310
 
-DEFINE m_pics DYNAMIC ARRAY OF STRING
 DEFINE m_imageDir STRING
 DEFINE m_al DYNAMIC ARRAY OF RECORD LIKE ws_log_access.*
 DEFINE m_ml DYNAMIC ARRAY OF RECORD 
@@ -32,18 +31,18 @@ MAIN
 
 	LET m_imageDir = fgl_getEnv("MEDIAPATH")
 	CALL gl_lib.gl_logIt(SFMT("FGLIMAGEPATH=%1",fgl_getEnv("FGLIMAGEPATH")))
-	CALL getImages(m_imageDir, "gif","png")
 
 	OPEN FORM f1 FROM "mob_ui_backend"
 	DISPLAY FORM f1
 
+	CALL get_mediaLog()
 	MENU %"Menu"
 		ON ACTION users CALL users()
 		ON ACTION accesslog CALL accessLog()
 		ON ACTION medialog CALL mediaLog()
 		ON ACTION gallery 
 			WHILE showGallery()
-				CALL getImages(m_imageDir, "gif","png")
+				CALL get_mediaLog()
 			END WHILE
 		ON ACTION datalog CALL dataLog()
 		ON ACTION quit EXIT MENU
@@ -218,15 +217,15 @@ FUNCTION showGallery()
 	LET l_id = fglgallery.create("formonly.gallery_wc")
 
 -- Add the images.
-	FOR x = 1 TO m_pics.getLength()
+	FOR x = 1 TO m_ml.getLength()
 --		CALL gl_lib.gl_logIt( SFMT("add image %1 to gallery",m_pics[x]))
-		CALL fglgallery.addImage(l_id, 
---					ui.Interface.filenameToURI(os.path.join(c_imageDir,m_pics[x])), 
-						ui.Interface.filenameToURI(m_pics[x]), 
-						getImgFromThumb( m_pics[x] ) --	"Image "||x
+		DISPLAY "AddToGallery:", ui.Interface.filenameToURI(m_ml[x].img),":", os.path.baseName(m_ml[x].filepath)
+		CALL fglgallery.addImage(l_id,
+						ui.Interface.filenameToURI(m_ml[x].img), 
+						os.path.basename(m_ml[x].filepath)
 					)
 	END FOR
-	DISPLAY "Added "|| m_pics.getLength()
+	DISPLAY "Added "|| m_ml.getLength()
 
 	LET l_rec.current = 1
 	LET l_rec.gallery_size = FGLGALLERY_SIZE_NORMAL
@@ -249,7 +248,7 @@ FUNCTION showGallery()
 			ELSE
 				CALL util.JSON.parse( l_rec.gallery_wc, l_struct_value )
 				LET l_rec.current = l_struct_value.current
-				DISPLAY getImgFromThumb( m_pics[ l_rec.current ] ) TO f_img
+				DISPLAY m_ml[ l_rec.current ].filepath TO f_img
 			END IF
 
 		ON CHANGE gallery_type
@@ -291,42 +290,4 @@ FUNCTION getImgFromThumb( l_nam STRING )
 		LET l_nam = l_nam.subString(4, l_nam.getLength())
 	END IF
 	RETURN os.path.rootname( l_nam )
-END FUNCTION
---------------------------------------------------------------------------------
--- Set the m_pics array to all images of extention type p_ext or p_ext2.
-FUNCTION getImages(l_imageDir STRING, p_ext STRING, p_ext2 STRING)
-	DEFINE l_ext, l_path STRING
-	DEFINE d SMALLINT
-
-	CALL m_pics.clear()
-	CALL gl_lib.gl_logIt(SFMT("getting image array from %1",m_imageDir))
-	CALL os.Path.dirSort( "name", 1 )
-	LET d = os.Path.dirOpen( l_imageDir )
-	IF d > 0 THEN
-		WHILE TRUE
-			LET l_path = os.Path.dirNext( d )
-			IF l_path IS NULL THEN EXIT WHILE END IF
-
-			IF os.path.isDirectory( l_path ) THEN 
-			--	DISPLAY "Dir:",l_path
-				CONTINUE WHILE 
-			ELSE
-				--DISPLAY "Fil:",l_path
-			END IF
-
-			LET l_ext = os.path.extension( l_path )
-			IF l_ext IS NULL OR (p_ext != l_ext AND p_ext2 != l_ext) THEN CONTINUE WHILE END IF
-
-			LET m_pics[ m_pics.getLength() + 1 ] = l_path
-
-		END WHILE
-	ELSE
-		CALL gl_winMessage("Error",SFMT("Failed to open directory %1",l_imageDir),"exclamation")
-		EXIT PROGRAM
-	END IF
-	IF m_pics.getLength() = 0 THEN
-		CALL gl_winMessage("Error",SFMT("No images found in:%1",m_imageDir),"exclamation")
-	END IF
-	CALL gl_lib.gl_logIt(SFMT("got %1 images.",m_pics.getLength()))
-
 END FUNCTION

@@ -5,7 +5,7 @@ IMPORT os
 
 IMPORT FGL gl_lib
 IMPORT FGL lib_secure
-IMPORT FGL mob_lib_app
+IMPORT FGL mob_app_lib
 IMPORT FGL mob_ws_lib
 IMPORT FGL mob_ws_lib_sc
 
@@ -33,7 +33,7 @@ FUNCTION init_mob()
 		RETURN
 	END IF
 
-	CALL mob_lib_app.init_app()
+	CALL mob_app_lib.init_app()
 
 	CALL gl_lib.gl_logIt("*** Started ***")
 
@@ -81,7 +81,7 @@ FUNCTION init_db() RETURNS BOOLEAN
 		updated_date DATETIME YEAR TO SECOND
 	)
 
-	CALL mob_lib_app.init_app_db()
+	CALL mob_app_lib.init_app_db()
 
 	RETURN TRUE
 END FUNCTION
@@ -127,9 +127,9 @@ FUNCTION login() RETURNS BOOLEAN
 
 	OPEN FORM mob_login FROM "mob_login"
 	DISPLAY FORM mob_login
-	DISPLAY mob_lib_app.m_apptitle TO f_apptitle
-	DISPLAY mob_lib_app.m_welcome TO f_welcome
-	DISPLAY mob_lib_app.m_logo TO f_logo
+	DISPLAY mob_app_lib.m_apptitle TO f_apptitle
+	DISPLAY mob_app_lib.m_welcome TO f_welcome
+	DISPLAY mob_app_lib.m_logo TO f_logo
 	DISPLAY IIF( check_network(), "Connected","No Connection") TO f_network
 
 	IF m_init_db AND NOT check_network() THEN
@@ -228,7 +228,7 @@ FUNCTION send_media()
 	DEFINE l_param t_param_rec
 	DEFINE x SMALLINT
 
-	LET l_param.* = mob_lib_app.m_param.*
+	LET l_param.* = mob_app_lib.m_param.*
 
 	OPEN WINDOW show_photo WITH FORM "show_media"
 	DISPLAY "Select media to send." TO status

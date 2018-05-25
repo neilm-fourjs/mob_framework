@@ -12,8 +12,8 @@ if [ ! -d $DIR ]; then
 fi
 cd $DIR
 
-chmod 664 mk_thumbnail.log
-echo `date` " DIR: $DIR File: $FILE" >> mk_thumbnail.log
+chmod 664 ../mk_thumbnail.log
+echo `date` " DIR: $DIR File: $FILE" >> ../mk_thumbnail.log
 
 if [ ! -e $FILE ]; then
 	echo `date` " $FILE didn't exist!"

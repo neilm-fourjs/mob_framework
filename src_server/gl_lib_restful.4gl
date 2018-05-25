@@ -78,11 +78,11 @@ FUNCTION gl_setError(l_str STRING)
 END FUNCTION
 --------------------------------------------------------------------------------
 -- returns 0 if element not found
-FUNCTION gl_getParameterIndex(l_str STRING) RETURNS INTEGER
+FUNCTION gl_getParameterIndex(l_key STRING) RETURNS INTEGER
 	DEFINE x INTEGER
 
 	FOR x = 1 TO m_reqInfo.items.getLength()
-		IF l_str.equals(m_reqInfo.items[x].name) THEN 
+		IF l_key.equals(m_reqInfo.items[x].name) THEN 
 			RETURN x
 		END IF
 	END FOR
@@ -90,6 +90,18 @@ FUNCTION gl_getParameterIndex(l_str STRING) RETURNS INTEGER
 	RETURN 0
 END FUNCTION
 --------------------------------------------------------------------------------
-FUNCTION gl_getParameterValue(x INTEGER) RETURNS STRING
+FUNCTION gl_getParameterValueByKey(l_key STRING) RETURNS STRING
+	DEFINE x INTEGER
+
+	FOR x = 1 TO m_reqInfo.items.getLength()
+		IF l_key.equals(m_reqInfo.items[x].name) THEN 
+			EXIT FOR
+		END IF
+	END FOR
+	IF x > m_reqInfo.items.getLength() THEN RETURN SFMT(%"ERR: Missing key of '%1'",l_key) END IF
+	RETURN m_reqInfo.items[x].value
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION gl_getParameterValueByIfx(x INTEGER) RETURNS STRING
 	RETURN m_reqInfo.items[x].value
 END FUNCTION

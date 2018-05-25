@@ -9,11 +9,14 @@ IMPORT FGL gl_lib
 IMPORT FGL gl_lib_restful
 IMPORT FGL lib_secure
 IMPORT FGL mob_db_backend
+IMPORT FGL mob_app_backend
 
 &include "mob_ws_lib.inc"
 
 DEFINE m_ret t_ws_reply_rec
-DEFINE m_user STRING
+GLOBALS
+	DEFINE g_user STRING
+END GLOBALS
 
 MAIN
 	DEFINE l_ret INTEGER
@@ -116,17 +119,15 @@ FUNCTION setReply(l_stat SMALLINT, l_typ STRING, l_msg STRING)
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION getToken()
-	DEFINE x SMALLINT
 	DEFINE l_xml, l_user, l_pass STRING
 	DEFINE l_token STRING
 
-	LET x = gl_lib_restful.gl_getParameterIndex("xml") 
-	IF x = 0 THEN
-		CALL setReply(201,%"ERR",%"Missing parameter 'xml'!")
+	LET l_xml = gl_lib_restful.gl_getParameterValueByKey("xml")
+	IF l_xml.subString(1,4) = "ERR:" THEN
+		CALL setReply(203,%"ERR",l_xml)
 		RETURN
 	END IF
-	LET l_xml = gl_lib_restful.gl_getParameterValue(x)
-	IF l_xml.getLength() < 10 THEN
+	IF l_xml.getCharAt(1) != "<" THEN
 		CALL setReply(203,%"ERR",SFMT(%"XML looks invalid '%1'!",l_xml))
 		RETURN
 	END IF
@@ -143,22 +144,21 @@ FUNCTION getToken()
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION checkToken(l_func STRING) RETURNS BOOLEAN
-	DEFINE x SMALLINT
 	DEFINE l_token, l_res STRING
 
-	LET x = gl_lib_restful.gl_getParameterIndex("token") 
-	IF x = 0 THEN
-		CALL setReply(201,%"ERR",SFMT(%"%1:Missing parameter 'token'!",l_func))
+	LET l_token = gl_lib_restful.gl_getParameterValueByKey("token")
+	IF l_token.subString(1,4) = "ERR:" THEN
+		CALL setReply(201,%"ERR",l_token)
 		RETURN FALSE
-	END IF
-	LET l_token = gl_lib_restful.gl_getParameterValue(x)
+	END  IF
+
 	LET l_res = mob_db_backend.db_check_token( l_token )
-	IF l_res.subString(1,5) = "ERROR" THEN
+	IF l_res.subString(1,4) = "ERR:" THEN
 		CALL setReply(201,%"ERR",l_res)
 		RETURN FALSE
 	END IF
-	LET m_user = l_res
-	CALL mob_db_backend.db_log_access(m_user,SFMT("%1?%2",gl_lib_restful.m_reqInfo.path,gl_lib_restful.m_reqInfo.query))
+	LET g_user = l_res
+	CALL mob_db_backend.db_log_access(g_user,SFMT("%1?%2",gl_lib_restful.m_reqInfo.path,gl_lib_restful.m_reqInfo.query))
 	RETURN TRUE
 END FUNCTION
 --------------------------------------------------------------------------------
@@ -167,7 +167,7 @@ FUNCTION getList1()
 
 	IF NOT checkToken("getList1") THEN RETURN END IF
 
-	CALL gl_lib.gl_logIt(%"Return customer list for user:"||NVL(m_user,"NULL"))
+	CALL gl_lib.gl_logIt(%"Return customer list for user:"||NVL(g_user,"NULL"))
 
 	LET l_data = mob_db_backend.db_get_custs()
 	CALL gl_lib.gl_logIt(SFMT(%"Data size is %1", l_data.getLength()))
@@ -177,20 +177,15 @@ END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION getList2()
 	DEFINE l_data, l_key STRING
-	DEFINE x SMALLINT
 
 	IF NOT checkToken("getList2") THEN RETURN END IF
 
-	LET x = gl_lib_restful.gl_getParameterIndex("key") 
-	IF x = 0 THEN
-		CALL setReply(202,%"ERR",%"Missing parameter 'key'!")
+	LET l_key = gl_lib_restful.gl_getParameterValueByKey("key")
+	IF l_key.subString(1,4) = "ERR:" THEN
+		CALL setReply(201,%"ERR",l_key)
 		RETURN
-	END IF
-	LET l_key = gl_lib_restful.gl_getParameterValue(x)
-	IF l_key.getLength() < 1 THEN
-		CALL setReply(202,%"ERR",%"Parameter 'key' looks invalid!")
-		RETURN
-	END IF
+	END  IF
+
 	CALL gl_lib.gl_logIt(%"Return order list for customer:"||NVL(l_key,"NULL"))
 
 	LET l_data = mob_db_backend.db_get_orders(l_key)
@@ -200,20 +195,14 @@ END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION getDets1()
 	DEFINE l_data, l_key STRING
-	DEFINE x SMALLINT
 
 	IF NOT checkToken("getDets1") THEN RETURN END IF
 
-	LET x = gl_lib_restful.gl_getParameterIndex("key") 
-	IF x = 0 THEN
-		CALL setReply(202,%"ERR",%"Missing parameter 'key'!")
+	LET l_key = gl_lib_restful.gl_getParameterValueByKey("key")
+	IF l_key.subString(1,4) = "ERR:" THEN
+		CALL setReply(201,%"ERR",l_key)
 		RETURN
-	END IF
-	LET l_key = gl_lib_restful.gl_getParameterValue(x)
-	IF l_key.getLength() < 1 THEN
-		CALL setReply(202,%"ERR",%"Parameter 'key' looks invalid!")
-		RETURN
-	END IF
+	END  IF
 
 	CALL gl_lib.gl_logIt(%"Return details for customer:"||NVL(l_key,"NULL"))
 
@@ -224,18 +213,12 @@ END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION getDets2()
 	DEFINE l_data, l_key STRING
-	DEFINE x SMALLINT
 
 	IF NOT checkToken("getDets2") THEN RETURN END IF
 
-	LET x = gl_lib_restful.gl_getParameterIndex("key") 
-	IF x = 0 THEN
-		CALL setReply(202,%"ERR",%"Missing parameter 'key'!")
-		RETURN
-	END IF
-	LET l_key = gl_lib_restful.gl_getParameterValue(x)
-	IF l_key.getLength() < 1 THEN
-		CALL setReply(202,%"ERR",%"Parameter 'key' looks invalid!")
+	LET l_key = gl_lib_restful.gl_getParameterValueByKey("key")
+	IF l_key.subString(1,4) = "ERR:" THEN
+		CALL setReply(202,%"ERR",l_key)
 		RETURN
 	END IF
 
@@ -248,49 +231,36 @@ END FUNCTION
 --------------------------------------------------------------------------------
 -- getMedia - handle a photo/video being received.
 FUNCTION getMedia(l_req com.HTTPServiceRequest, l_vid BOOLEAN)
-	DEFINE l_media_file, l_media_path, l_newpath, l_json STRING
+	DEFINE l_media_file, l_ret, l_imgid STRING
 
 	IF NOT checkToken("getMedia") THEN RETURN END IF
+
+	LET l_imgid = gl_lib_restful.gl_getParameterValueByKey("imgid")
+	IF l_imgid.subString(1,4) = "ERR:" THEN
+		CALL setReply(202,%"ERR",l_imgid)
+		RETURN
+	END IF
 
 	CALL gl_lib.gl_logIt(%"Getting "||IIF(l_vid,"Video","Photo")||" ...")
 	TRY
 		LET l_media_file = l_req.readFileRequest()
 	CATCH
-		CALL setReply(200,%"ERR",SFMT(%"Media receive Failed: %1:%2",STATUS,ERR_GET(STATUS)))
+		CALL setReply(200,%"ERR",SFMT(%"ERR: Media receive Failed: %1:%2",STATUS,ERR_GET(STATUS)))
 		RETURN
 	END TRY
 
 	CALL gl_lib.gl_logIt(%"Got :"||IIF(l_vid,"Video","Photo")||NVL(l_media_file,"NULL"))
 	IF os.Path.exists( l_media_file ) THEN
-		CALL setReply(200,%"OK", SFMT(%"Media File %1 received",l_media_file))
+		CALL setReply(200,%"OK", SFMT(%"ERR: Media File %1 received",l_media_file))
 	ELSE
-		CALL setReply(200,%"OK",%"Media File Doesn't Exists!")
+		CALL setReply(200,%"OK",%"ERR: Media File Doesn't Exists!")
 		RETURN
 	END IF
 
-	LET l_media_path = fgl_getEnv("MEDIAPATH")
-	IF NOT os.path.exists( l_media_path ) THEN
-		IF NOT os.path.mkdir( l_media_path ) THEN
-			CALL setReply(200,%"OK",SFMT(%"Media Path Failed to create %1!",l_media_path))
-			RETURN
-		END IF
+	LET l_ret = mob_app_backend.process_media(l_media_file, l_vid, l_imgid)
+	IF l_ret.subString(1,4) = "ERR:" THEN
+		CALL setReply(200,%"OK", l_ret)
 	END IF
-
-	LET l_newpath = os.path.join( l_media_path, os.path.basename(l_media_file) )
-
-	IF os.Path.copy(l_media_file, l_newpath) THEN
-		IF NOT os.path.delete(l_media_file) THEN
-			CALL gl_lib.gl_logIt(SFMT(%"Failed to delete %1",l_media_file))
-		END IF
-	ELSE
-		CALL gl_lib.gl_logIt(SFMT(%"Failed to copy %1 to %2",l_media_file,l_newpath))
-		CALL setReply(200,%"OK",%"Media processing failed!")
-		RETURN
-	END IF
-
-	RUN "./mk_thumbnail.sh "||l_media_path||" "||os.path.basename(l_media_file) WITHOUT WAITING
-
-	CALL mob_db_backend.db_log_media(m_user, IIF(l_vid,"V","P"), l_newpath)
 
 END FUNCTION
 --------------------------------------------------------------------------------
@@ -308,7 +278,7 @@ FUNCTION getData(l_req com.HTTPServiceRequest)
 		RETURN
 	END TRY
 
-	CALL mob_db_backend.db_log_data(m_user,l_str)
+	CALL mob_db_backend.db_log_data(g_user,l_str)
 
 	CALL gl_lib.gl_logIt(%"Data:"||NVL(l_str,"NULL"))
 	CALL setReply(200,%"OK",%"Data received")
