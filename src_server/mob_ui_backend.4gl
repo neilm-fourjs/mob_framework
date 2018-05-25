@@ -4,11 +4,11 @@ IMPORT util
 
 IMPORT FGL gl_lib
 IMPORT FGL mob_db_backend
+IMPORT FGL mob_app_backend
 IMPORT FGL fglgallery
 
 SCHEMA njm_demo310
 
-DEFINE m_imageDir STRING
 DEFINE m_al DYNAMIC ARRAY OF RECORD LIKE ws_log_access.*
 DEFINE m_ml DYNAMIC ARRAY OF RECORD 
 		user_name LIKE ws_log_media.username,
@@ -24,16 +24,21 @@ DEFINE m_dl  DYNAMIC ARRAY OF RECORD
 	END RECORD
 
 MAIN
-
+	DEFINE l_ret STRING
 	CALL STARTLOG( base.Application.getProgramName()||".err" )
 
 	CALL mob_db_backend.db_connect()
 
-	LET m_imageDir = fgl_getEnv("MEDIAPATH")
 	CALL gl_lib.gl_logIt(SFMT("FGLIMAGEPATH=%1",fgl_getEnv("FGLIMAGEPATH")))
 
 	OPEN FORM f1 FROM "mob_ui_backend"
 	DISPLAY FORM f1
+
+	LET l_ret = mob_app_backend.init_app_backend()
+	IF l_ret IS NOT NULL THEN
+		CALL gl_winMessage("Error", l_ret, "exclamation")
+		EXIT PROGRAM
+	END IF
 
 	CALL get_mediaLog()
 	MENU %"Menu"
@@ -162,15 +167,16 @@ FUNCTION get_mediaLog()
 	DECLARE cur_ml CURSOR FOR SELECT * FROM ws_log_media 
 	CALL m_ml.clear()
 	FOREACH cur_ml INTO m_ml[ m_ml.getLength() + 1 ].*
+--		LET m_ml[ m_ml.getLength() ].filepath = os.path.join(m_media_path, m_ml[ m_ml.getLength() ].filepath )
 		LET l_thumb = os.path.join( 
 					os.path.dirName(m_ml[ m_ml.getLength() ].filepath),
 					"tn_"||os.path.rootName( os.path.basename( m_ml[ m_ml.getLength() ].filepath ) ).append(".gif"))
-		IF os.path.exists( l_thumb ) THEN
-			DISPLAY l_thumb||" Okay"
+		LET m_ml[ m_ml.getLength() ].img = os.path.join(m_media_path,l_thumb)
+		IF os.path.exists( m_ml[ m_ml.getLength() ].img ) THEN
+			DISPLAY m_ml[ m_ml.getLength() ].img||" Okay"
 		ELSE
-			DISPLAY l_thumb||" Missing"
+			DISPLAY m_ml[ m_ml.getLength() ].img||" Missing"
 		END IF
-		LET m_ml[ m_ml.getLength() ].img = l_thumb
 	END FOREACH
 	CALL m_ml.deleteElement( m_ml.getLength() )
 	MESSAGE SFMT(%"Got %1 MediaLog Records",m_ml.getLength())
@@ -181,13 +187,19 @@ END FUNCTION
 -- @params
 -- @returns
 FUNCTION mediaLog()
+	DEFINE l_ret, l_url STRING
 	CALL get_mediaLog()
 	OPEN WINDOW ml WITH FORM "mediaLog"
 	DISPLAY ARRAY m_ml TO arr.*
 		BEFORE ROW 
 			IF m_ml[arr_curr()].media_type = "P" THEN
+				DISPLAY "Filepath:",m_ml[arr_curr()].filepath
 				DISPLAY m_ml[arr_curr()].filepath TO f_img
 			END IF
+		ON ACTION select
+			LET l_url = mob_app_backend.m_media_uri||"/"||m_ml[arr_curr()].filepath
+			DISPLAY "URL:",l_url
+			CALL ui.Interface.frontCall("standard","launchURL",[l_url],[l_ret])
 		ON ACTION refresh CALL get_mediaLog()
 	END DISPLAY
 	CLOSE WINDOW ml
@@ -208,7 +220,7 @@ FUNCTION showGallery()
 	LET l_refresh = FALSE
 	OPEN WINDOW gallery WITH FORM "wc_gallery"
 
-	DISPLAY "ImageDir:"||m_imageDir TO id
+	DISPLAY "ImageDir:"||mob_app_backend.m_media_path TO id
 	DISPLAY "FGLIMAGEPATH:"||fgl_getEnv("FGLIMAGEPATH") TO ip
 
 	CALL fglgallery.initialize()

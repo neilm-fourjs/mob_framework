@@ -32,6 +32,8 @@ MAIN
 
 	CALL mob_db_backend.db_connect()
 
+	LET l_str = mob_app_backend.init_app_backend()
+
 	CALL gl_lib.gl_logIt(SFMT(%"Starting server, FGLAPPSERVER=%1 ...",fgl_getEnv("FGLAPPSERVER")))
 	#
 	# Starts the server on the port number specified by the FGLAPPSERVER environment variable

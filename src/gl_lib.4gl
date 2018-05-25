@@ -693,6 +693,24 @@ END FUNCTION --}}}
 --------------------------------------------------------------------------------
 #+ Return the result from the uname commend on Unix / Linux / Mac.
 #+
+#+ @return hostname of the Unix/Linux machine
+FUNCTION gl_getHostName() RETURNS STRING --{{{
+	DEFINE l_hname STRING
+	DEFINE c base.channel
+
+	LET l_hname = fgl_getEnv("PUBLICHOSTNAME")
+	IF l_hname.getLength() > 1 THEN RETURN l_hname END IF
+
+	LET c = base.channel.create()
+	CALL c.openPipe("hostname -f","r")
+	LET l_hname = c.readLine()
+	CALL c.close()
+	IF l_hname IS NULL THEN LET l_hname = fgl_getEnv("HOSTNAME") END IF
+	RETURN l_hname
+END FUNCTION --}}}
+--------------------------------------------------------------------------------
+#+ Return the result from the uname commend on Unix / Linux / Mac.
+#+
 #+ @return uname of the OS
 FUNCTION gl_getUname() RETURNS STRING --{{{
 	DEFINE l_uname STRING

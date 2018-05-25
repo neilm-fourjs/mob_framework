@@ -9,7 +9,9 @@ IMPORT FGL lib_secure
 SCHEMA njm_demo310
 
 &include "mob_ws_lib.inc"
-
+GLOBALS
+	DEFINE g_user STRING
+END GLOBALS
 --------------------------------------------------------------------------------
 FUNCTION db_connect()
 	DEFINE l_dbname STRING
@@ -133,14 +135,14 @@ END FUNCTION
 -- @params l_user User
 -- @params l_path File path
 -- @returns the auth token or NULL if fails
-FUNCTION db_log_media(l_user STRING, l_type CHAR(1), l_path STRING)
+FUNCTION db_log_media(l_type CHAR(1), l_path STRING)
 	DEFINE l_ts DATETIME YEAR TO SECOND
 
 	LET l_ts = CURRENT
-	LET l_user = l_user.trim()
+
 	LET l_path = l_path.trim()
-	CALL gl_lib.gl_logIt(SFMT("db_log_media:%1:%2:%3",l_user,l_type,l_path))
-	INSERT INTO ws_log_media VALUES(l_user, l_type, l_path, l_ts)
+	CALL gl_lib.gl_logIt(SFMT("db_log_media:%1:%2:%3",g_user,l_type,l_path))
+	INSERT INTO ws_log_media VALUES(g_user, l_type, l_path, l_ts)
 
 END FUNCTION
 --------------------------------------------------------------------------------
