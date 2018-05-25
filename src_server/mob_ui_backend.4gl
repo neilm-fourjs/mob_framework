@@ -197,7 +197,7 @@ FUNCTION mediaLog()
 				DISPLAY m_ml[arr_curr()].filepath TO f_img
 			END IF
 		ON ACTION select
-			LET l_url = mob_app_backend.m_media_uri||"/"||m_ml[arr_curr()].filepath
+			LET l_url = getURL(m_ml[arr_curr()].filepath)
 			DISPLAY "URL:",l_url
 			CALL ui.Interface.frontCall("standard","launchURL",[l_url],[l_ret])
 		ON ACTION refresh CALL get_mediaLog()

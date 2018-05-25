@@ -1,0 +1,45 @@
+
+LAYOUT (TEXT="Job Images")
+VBOX -- ( SPLITTER )
+TABLE -- ( DOUBLECLICK=select )
+{
+[a001                 ]
+[a001                 ]
+[a001                 ]
+[a001                 ]
+[a001                 ]
+}
+END -- TABLE
+GRID
+{
+[img                                                     ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+[                                                        ]
+}
+END -- GRID
+END -- VBOX
+
+ATTRIBUTES
+a001 = FORMONLY.url, IMAGECOLUMN=tn;
+PHANTOM FORMONLY.tn;
+
+IMAGE img = FORMONLY.f_img, STRETCH=BOTH, AUTOSCALE;
+
+INSTRUCTIONS
+SCREEN RECORD arr ( FORMONLY.url THRU FORMONLY.tn )

@@ -83,6 +83,18 @@ FUNCTION ws_sendData(l_data STRING) RETURNS STRING
 	RETURN "Data Sent"
 END FUNCTION
 --------------------------------------------------------------------------------
+-- Get a list of Media for the jobId server
+--
+-- @params l_jobId Job ID
+FUNCTION ws_getMediaList(l_jobId STRING) RETURNS STRING
+	DEFINE l_json STRING
+	IF NOT doRestRequest(SFMT("getMediaList?token=%1&jobid=%2",m_security_token,l_jobid)) THEN
+		RETURN NULL
+	END IF
+	LET l_json = m_ret.reply
+	RETURN l_json
+END FUNCTION
+--------------------------------------------------------------------------------
 -- Send some json data back to server
 --
 -- @params l_data String JSON data

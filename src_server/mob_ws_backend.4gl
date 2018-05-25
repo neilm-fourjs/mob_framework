@@ -67,6 +67,8 @@ MAIN
 							CALL getList1()
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("getList2") 
 							CALL getList2()
+						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("getMediaList") 
+							CALL getMediaList()
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("getDets1") 
 							CALL getDets1()
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("getDets2") 
@@ -191,7 +193,24 @@ FUNCTION getList2()
 	CALL gl_lib.gl_logIt(%"Return order list for customer:"||NVL(l_key,"NULL"))
 
 	LET l_data = mob_db_backend.db_get_orders(l_key)
+	CALL setReply(200,%"OK",l_data)
+END FUNCTION
+--------------------------------------------------------------------------------
+-- A list of image url for a jobid
+FUNCTION getMediaList()
+	DEFINE l_data, l_key STRING
 
+	IF NOT checkToken("getMediaList") THEN RETURN END IF
+
+	LET l_key = gl_lib_restful.gl_getParameterValueByKey("jobid")
+	IF l_key.subString(1,4) = "ERR:" THEN
+		CALL setReply(201,%"ERR",l_key)
+		RETURN
+	END  IF
+
+	CALL gl_lib.gl_logIt(%"Return Media list for jobid:"||NVL(l_key,"NULL"))
+
+	LET l_data = mob_db_backend.db_get_media(l_key)
 	CALL setReply(200,%"OK",l_data)
 END FUNCTION
 --------------------------------------------------------------------------------
@@ -253,7 +272,7 @@ FUNCTION getMedia(l_req com.HTTPServiceRequest, l_vid BOOLEAN)
 
 	CALL gl_lib.gl_logIt(%"Got :"||IIF(l_vid,"Video","Photo")||NVL(l_media_file,"NULL"))
 	IF os.Path.exists( l_media_file ) THEN
-		CALL setReply(200,%"OK", SFMT(%"ERR: Media File %1 received",l_media_file))
+		CALL setReply(200,%"OK", SFMT(%"Media File %1 received",l_media_file))
 	ELSE
 		CALL setReply(200,%"OK",%"ERR: Media File Doesn't Exists!")
 		RETURN

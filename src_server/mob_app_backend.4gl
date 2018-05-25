@@ -24,7 +24,7 @@ FUNCTION init_app_backend()
 	CALL gl_lib.gl_logIt(SFMT("Media Path:%1",m_media_path))
 
 	LET l_host = gl_lib.gl_getHostName()
-	LET m_media_uri = "http://"||l_host||"/"||fgl_getEnv("MEDIAURI")
+	LET m_media_uri = "https://"||l_host||"/"||fgl_getEnv("MEDIAURI")
 	CALL gl_lib.gl_logIt(SFMT("Media URI:%1",m_media_uri))
 
 	RETURN NULL
@@ -55,4 +55,8 @@ FUNCTION process_media(l_file STRING, l_vid BOOLEAN, l_imgid STRING )
  )
 
 	RETURN "Okay"
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION getURL( l_file STRING )
+	RETURN m_media_uri||"/"||l_file
 END FUNCTION

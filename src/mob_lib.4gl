@@ -217,6 +217,49 @@ FUNCTION check_token()
 
 END FUNCTION
 --------------------------------------------------------------------------------
+-- List Media for the JobId
+FUNCTION list_media()
+	DEFINE l_imgs DYNAMIC ARRAY OF STRING
+	DEFINE l_arr DYNAMIC ARRAY OF RECORD
+		img STRING,
+		tn STRING
+	END RECORD
+	DEFINE l_json STRING
+	DEFINE l_jobid, l_name, l_path STRING
+	DEFINE x SMALLINT
+
+	OPEN WINDOW list_media WITH FORM "list_media"
+
+	LET l_jobid = mob_app_lib.m_param.jobid
+
+	LET l_json = mob_ws_lib.ws_getMediaList(l_jobid)
+	IF l_json IS NULL THEN
+		CALL fgl_winMessage("Error",l_json,"exclamation")
+		CLOSE WINDOW list_media
+		RETURN
+	END IF
+
+	CALL util.JSON.parse( l_json, l_imgs )
+
+	FOR x = 1 TO l_imgs.getLength()
+		LET l_arr[x].img = l_imgs[x]
+		LET l_path = os.path.dirname(l_imgs[x])
+		LET l_name = os.path.rootName(os.Path.basename(l_imgs[x]))
+		LET l_arr[x].tn = l_path||"/tn_"||l_name||".gif"
+		--DISPLAY "tn:",l_arr[x].tn
+	END FOR
+
+	DISPLAY ARRAY l_arr TO arr.* ATTRIBUTES( ACCEPT=FALSE )
+		BEFORE ROW
+		--	DISPLAY "Img:", l_arr[ arr_curr() ].img 
+			DISPLAY l_arr[ arr_curr() ].tn TO f_img
+		ON ACTION select
+			CALL ui.Interface.frontCall("standard","launchURL",[ l_arr[ arr_curr() ].img ],[l_json])
+	END DISPLAY
+
+	CLOSE WINDOW list_media
+END FUNCTION
+--------------------------------------------------------------------------------
 -- Take / Choose a Photo and send to the server
 FUNCTION send_media()
 	DEFINE l_media_file, l_local_file, l_ret STRING

@@ -28,6 +28,8 @@ MAIN
 			CALL list_custs()
 		ON ACTION send_media
 			CALL mob_lib.send_media()
+		ON ACTION list_media
+			CALL mob_lib.list_media()
 		ON ACTION send_data
 			CALL send_data("This is some test data!")
 		ON ACTION check_token
