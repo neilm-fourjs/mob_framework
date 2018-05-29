@@ -1,0 +1,15 @@
+{
+  "mob_apptitle": "Genero Mobile Demo",
+  "mob_welcome": "Welcome to a Simple GeneroMobile Demo Application",
+  "mob_icon": "demoicon",
+  "mob_ws_url": "http://uk3.generocloud.net/g/ws/r/mob_ws_backend/",
+  "mob_ws_url2": "http://10.1.0.104/g/ws/r/mob_ws_backend/",
+  "mob_ws_url3": "http://localhost:8090/",
+  "param.custId": "159",
+  "param.jobId": "45546465467",
+  "param.jobRef": "DUMMY",
+  "mob_ws_sc_url_vid": "",
+  "mob_ws_sc_url_img": "",
+  "mob_ws_sc_user": "",
+  "mob_ws_sc_pass": ""
+}

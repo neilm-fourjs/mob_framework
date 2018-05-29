@@ -24,7 +24,11 @@ FUNCTION init_app_backend()
 	CALL gl_lib.gl_logIt(SFMT("Media Path:%1",m_media_path))
 
 	LET l_host = gl_lib.gl_getHostName()
-	LET m_media_uri = "https://"||l_host||"/"||fgl_getEnv("MEDIAURI")
+	IF DOWNSHIFT(fgl_getEnv("FORCEHTTP")) = "yes" THEN
+		LET m_media_uri = "http://"||l_host||"/"||fgl_getEnv("MEDIAURI")
+	ELSE
+		LET m_media_uri = "https://"||l_host||"/"||fgl_getEnv("MEDIAURI")
+	END IF
 	CALL gl_lib.gl_logIt(SFMT("Media URI:%1",m_media_uri))
 
 	RETURN NULL

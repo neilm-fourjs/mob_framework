@@ -227,6 +227,9 @@
     <Column fglLength="200" fglType="0" name="wu_user_agent" notNull="false" order="13" status="U" uuid="db/column1408"/>
     <Column fglLength="50" fglType="0" name="wu_remote_addr" notNull="false" order="14" status="U" uuid="db/column1410"/>
   </Table>
+  <Table active="true" name="ws_backend_ver" status="U" uuid="db/table1">
+    <Column fglLength="4" fglType="2" name="ver" notNull="false" order="1" status="U" uuid="db/column1"/>
+  </Table>
   <Table active="true" name="ws_log_access" status="U" uuid="db/table178">
     <Column fglLength="30" fglType="0" name="username" notNull="false" order="1" status="U" uuid="db/column1412"/>
     <Column fglLength="250" fglType="13" name="request" notNull="false" order="2" status="U" uuid="db/column1414"/>
@@ -242,6 +245,20 @@
     <Column fglLength="1" fglType="0" name="media_type" notNull="false" order="2" status="U" uuid="db/column1426"/>
     <Column fglLength="250" fglType="13" name="filepath" notNull="false" order="3" status="U" uuid="db/column1428"/>
     <Column fglLength="3594" fglType="10" name="access_date" notNull="false" order="4" status="U" uuid="db/column1430"/>
+  </Table>
+  <Table active="true" name="ws_media_details" status="U" uuid="db/table2">
+    <Column fglLength="30" fglType="0" name="username" notNull="false" order="1" status="U" uuid="db/column2"/>
+    <Column fglLength="4" fglType="2" name="custid" notNull="false" order="2" status="U" uuid="db/column3"/>
+    <Column fglLength="30" fglType="0" name="jobid" notNull="false" order="3" status="U" uuid="db/column4"/>
+    <Column fglLength="30" fglType="0" name="jobref" notNull="false" order="4" status="U" uuid="db/column5"/>
+    <Column fglLength="100" fglType="13" name="uri" notNull="false" order="5" status="U" uuid="db/column6"/>
+    <Column fglLength="100" fglType="13" name="filename" notNull="false" order="6" status="U" uuid="db/column7"/>
+    <Column fglLength="4" fglType="2" name="filesize" notNull="false" order="7" status="U" uuid="db/column8"/>
+    <Column fglLength="10" fglType="0" name="type" notNull="false" order="8" status="U" uuid="db/column9"/>
+    <Column fglLength="3594" fglType="10" name="timestamp" notNull="false" order="9" status="U" uuid="db/column10"/>
+    <Column fglLength="40" fglType="0" name="id" notNull="false" order="10" status="U" uuid="db/column11"/>
+    <Column fglLength="1" fglType="45" name="sent_ok" notNull="false" order="11" status="U" uuid="db/column12"/>
+    <Column fglLength="100" fglType="13" name="send_reply" notNull="false" order="12" status="U" uuid="db/column13"/>
   </Table>
   <Table active="true" name="ws_users" status="U" uuid="db/table184">
     <Column fglLength="30" fglType="0" name="username" notNull="false" order="1" status="U" uuid="db/column1432"/>

@@ -4,6 +4,7 @@
 IMPORT util
 
 IMPORT FGL gl_lib
+IMPORT FGL gl_resources
 IMPORT FGL mob_ws_lib
 
 &include "mob_ws_lib.inc"
@@ -40,15 +41,21 @@ PUBLIC DEFINE m_apptitle STRING
 PUBLIC DEFINE m_logo STRING
 PUBLIC DEFINE m_param t_param_rec
 
-FUNCTION init_app()
-	LET m_apptitle = "Genero Mobile Demo"
-	LET m_welcome = "Welcome to a Simple GeneroMobile Demo Application"
-	LET m_logo = "demoicon"
+&include "mob_lib.inc"
 
---TODO: find a better way to set these on a per install basis
-	LET m_param.custId = "159"
-	LET m_param.jobId = "45546465467"
-	LET m_param.jobRef = "DUMMY"
+FUNCTION init_app()
+
+	CALL gl_initResources()
+
+	LET m_apptitle = gl_resources.gl_getResource("mob_apptitle","Genero Mobile Demo")
+	LET m_welcome = gl_resources.gl_getResource("mob_welcome","Welcome to a Simple GeneroMobile Demo Application")
+	LET m_logo = gl_resources.gl_getResource("mob_icon","demoicon")
+
+	LET m_param.custId = gl_resources.gl_getResource("param.custId","159")
+	LET m_param.jobId = gl_resources.gl_getResource("param.jobId","45546465467")
+	LET m_param.jobRef = gl_resources.gl_getResource("param.jobRef","DUMMY")
+
+	LET g_ws_uri = gl_resources.gl_getResource("mob_ws_url","")
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION init_app_db()

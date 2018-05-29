@@ -9,6 +9,7 @@ IMPORT security
 IMPORT FGL gl_lib
 
 &include "mob_ws_lib.inc"
+&include "mob_lib.inc"
 
 PUBLIC DEFINE m_security_token STRING
 PUBLIC DEFINE m_ret t_ws_reply_rec
@@ -115,7 +116,7 @@ PRIVATE FUNCTION doRestRequest(l_param STRING) RETURNS BOOLEAN
 	DEFINE l_resp com.HttpResponse
 	DEFINE l_stat SMALLINT
 
-	LET l_url = fgl_getResource("mob_framework.ws_url")||l_param
+	LET l_url = g_ws_uri||l_param
 	CALL gl_lib.gl_logIt("doRestRequest URL:"||NVL(l_url,"NULL"))
 
 	TRY
@@ -152,7 +153,7 @@ PRIVATE FUNCTION doRestRequestMedia(l_param STRING, l_media_file STRING, l_vid B
 	DEFINE l_stat SMALLINT
 
 
-	LET l_url = fgl_getResource("mob_framework.ws_url")||l_param
+	LET l_url = g_ws_uri||l_param
 	CALL gl_lib.gl_logIt("doRestRequest URL:"||NVL(l_url,"NULL"))
 
 	DISPLAY "Media File:",l_media_file
@@ -194,7 +195,7 @@ PRIVATE FUNCTION doRestRequestData(l_param STRING, l_data STRING)
 	DEFINE l_resp com.HttpResponse
 	DEFINE l_stat SMALLINT
 
-	LET l_url = fgl_getResource("mob_framework.ws_url")||l_param
+	LET l_url = g_ws_uri||l_param
 	CALL gl_lib.gl_logIt("doRestRequestData URL:"||NVL(l_url,"NULL"))
 
 	TRY

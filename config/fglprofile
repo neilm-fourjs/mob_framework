@@ -2,15 +2,3 @@
 dbi.default.driver = "dbmsqt"
 
 mobile.environment.fglimagepath = "."
-
-# Raspberry Pi
-#mob_framework.ws_url = "http://generodemo.hopto.org/g/ws/r/mob_ws_backend/"
-
-#
-mob_framework.ws_url = "http://uk3.generocloud.net/g/ws/r/mob_ws_backend/"
-
-# Local test
-#mob_framework.ws_url = "http://localhost:8090/"
-
-# Local GAS
-#mob_framework.ws_url = "http://localhost/g/ws/r/mob_ws_backend/"

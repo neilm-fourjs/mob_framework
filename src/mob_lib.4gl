@@ -4,6 +4,7 @@ IMPORT util
 IMPORT os
 
 IMPORT FGL gl_lib
+IMPORT FGL gl_resources
 IMPORT FGL lib_secure
 IMPORT FGL mob_app_lib
 IMPORT FGL mob_ws_lib
@@ -16,9 +17,13 @@ CONSTANT DB_VER = 1
 DEFINE m_init_db BOOLEAN
 PUBLIC DEFINE m_connected BOOLEAN
 PUBLIC DEFINE m_user STRING
+PUBLIC DEFINE m_cli_ver STRING
 
 FUNCTION init_mob()
 	DEFINE l_dbname STRING
+
+	LET m_cli_ver = ui.Interface.getFrontEndVersion()
+	LET gl_lib.m_logName = base.Application.getProgramName()||"-"||m_cli_ver||".log"
 
 	LET l_dbname = "mob_database.db"
 	TRY
@@ -32,11 +37,17 @@ FUNCTION init_mob()
 		CALL gl_lib.gl_winMessage("Error",SFMT(%"Failed to initialize '%1'!\n%2",l_dbname, SQLERRMESSAGE),"exclamation")
 		RETURN
 	END IF
-
-	CALL mob_app_lib.init_app()
+	
+	CALL ui.form.setDefaultInitializer("init_form")
 
 	CALL gl_lib.gl_logIt("*** Started ***")
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION init_form(l_f ui.Form) 
+	DEFINE l_titl, l_ver STRING
 
+	LET l_titl = l_f.getNode().getAttribute("text")
+	CALL l_f.getNode().setAttribute("text",l_titl||" "||m_cli_ver)
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION init_db() RETURNS BOOLEAN
@@ -218,7 +229,7 @@ FUNCTION check_token()
 END FUNCTION
 --------------------------------------------------------------------------------
 -- List Media for the JobId
-FUNCTION list_media()
+FUNCTION list_media1()
 	DEFINE l_imgs DYNAMIC ARRAY OF STRING
 	DEFINE l_arr DYNAMIC ARRAY OF RECORD
 		img STRING,
@@ -250,8 +261,7 @@ FUNCTION list_media()
 	END FOR
 
 	DISPLAY ARRAY l_arr TO arr.* ATTRIBUTES( ACCEPT=FALSE )
-		BEFORE ROW
-		--	DISPLAY "Img:", l_arr[ arr_curr() ].img 
+		BEFORE ROW 
 			DISPLAY l_arr[ arr_curr() ].tn TO f_img
 		ON ACTION select
 			CALL ui.Interface.frontCall("standard","launchURL",[ l_arr[ arr_curr() ].img ],[l_json])
@@ -274,6 +284,7 @@ FUNCTION send_media()
 	LET l_param.* = mob_app_lib.m_param.*
 
 	OPEN WINDOW show_photo WITH FORM "show_media"
+
 	DISPLAY "Select media to send." TO status
 	LET int_flag = FALSE
 	DIALOG ATTRIBUTES(UNBUFFERED)
@@ -364,6 +375,9 @@ FUNCTION send_media()
 		BEFORE DIALOG
 			CALL DIALOG.setActionActive("send",FALSE)
 			CALL DIALOG.setActionActive("send_sc",FALSE)
+			IF gl_resources.gl_getResource("mob_ws_sc_user",NULL) IS NOT NULL THEN
+				CALL DIALOG.setActionHidden("send_sc",FALSE)
+			END IF
 	END DIALOG
 	FOR x = 1 TO l_files.getLength()
 		IF NOT os.path.delete( l_files[x].filename ) THEN

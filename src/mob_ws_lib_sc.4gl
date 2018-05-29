@@ -5,6 +5,7 @@ IMPORT com
 IMPORT security
 
 IMPORT FGL gl_lib
+IMPORT FGL gl_resources
 
 &include "mob_ws_lib.inc"
 
@@ -102,12 +103,12 @@ PRIVATE FUNCTION doRestServiceCertainty(l_vids, l_jobid, l_custid, l_vrn, l_file
 	END RECORD
 
 	IF l_vids THEN
-		LET l_url = fgl_getResource("mob_bms.ws_sc_url_vid")
+		LET l_url = gl_resources.gl_getResource("mob_ws_sc_url_vid","")
 	ELSE
-		LET l_url = fgl_getResource("mob_bms.ws_sc_url_img")
+		LET l_url = gl_resources.gl_getResource("mob_ws_sc_url_img","")
 	END IF
-	LET l_user = fgl_getResource("mob_bms.ws_sc_user")
-	LET l_pass = fgl_getResource("mob_bms.ws_sc_pass")
+	LET l_user = gl_resources.gl_getResource("mob_ws_sc_user","")
+	LET l_pass = gl_resources.gl_getResource("mob_ws_sc_pass","")
 
 	CALL gl_lib.gl_logIt("doRestServiceCertainty URL:"||NVL(l_url,"NULL"))
 

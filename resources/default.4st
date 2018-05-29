@@ -29,6 +29,12 @@
   <Style name=".big">
      <StyleAttribute name="fontSize" value="1.2em" />
   </Style>
+  <Style name=".noborder">
+     <StyleAttribute name="border" value="none" />
+  </Style>
+  <Style name=".center">
+     <StyleAttribute name="alignment" value="center" />
+  </Style>
   <Style name="Window">
      <StyleAttribute name="windowType" value="normal" />
   </Style>
