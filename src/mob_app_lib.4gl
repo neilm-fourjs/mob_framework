@@ -7,6 +7,7 @@ IMPORT FGL gl_lib
 IMPORT FGL gl_resources
 IMPORT FGL mob_ws_lib
 
+&include "mob_lib.inc"
 &include "mob_ws_lib.inc"
 
 PUBLIC DEFINE m_sel_list1 DYNAMIC ARRAY OF RECORD
@@ -41,11 +42,8 @@ PUBLIC DEFINE m_apptitle STRING
 PUBLIC DEFINE m_logo STRING
 PUBLIC DEFINE m_param t_param_rec
 
-&include "mob_lib.inc"
 
 FUNCTION init_app()
-
-	CALL gl_initResources()
 
 	LET m_apptitle = gl_resources.gl_getResource("mob_apptitle","Genero Mobile Demo")
 	LET m_welcome = gl_resources.gl_getResource("mob_welcome","Welcome to a Simple GeneroMobile Demo Application")
@@ -56,6 +54,7 @@ FUNCTION init_app()
 	LET m_param.jobRef = gl_resources.gl_getResource("param.jobRef","DUMMY")
 
 	LET g_ws_uri = gl_resources.gl_getResource("mob_ws_url","")
+
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION init_app_db()

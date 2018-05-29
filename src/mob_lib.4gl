@@ -22,8 +22,10 @@ PUBLIC DEFINE m_cli_ver STRING
 FUNCTION init_mob()
 	DEFINE l_dbname STRING
 
+	CALL gl_initResources()
+
 	LET m_cli_ver = ui.Interface.getFrontEndVersion()
-	LET gl_lib.m_logName = base.Application.getProgramName()||"-"||m_cli_ver||".log"
+	LET gl_lib.m_logName = gl_resources.gl_getResource("logname",base.Application.getProgramName()||"-"||m_cli_ver||".log")
 
 	LET l_dbname = "mob_database.db"
 	TRY
