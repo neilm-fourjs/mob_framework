@@ -4,6 +4,11 @@
 		<meta http-equiv="Cache-Control: no-cache, must-revalidate" />
 		<meta name='viewport' content='initial-scale=1.0, maximum-scale=1.0' />
 		<style>
+img {
+	max-width: 640px;
+	max-height: 480px;
+}
+
 .hidden {
 	display: none;
 }
@@ -25,24 +30,25 @@ onICHostReady = function(version) {
 		return "okay";
 	};
 	setVideo = function(l_url) {
-		var l_obj=document.getElementById("video");
+		var l_obj=document.getElementById("video_src");
 		l_obj.src=l_url;
 		document.getElementById("div_image").className = "hidden";
 		document.getElementById("div_video").className = "visible";
+		document.getElementById("video").load();
 		return "okay";
 	};
-}
+};
+
 		</script>
 	</head>
 	<body>
-		Media:<br>
 		<div id="div_image" class="hidden">
-			<img src="test.jpg" id="image">
+			<img src="" id="image">
 		</div>
 		<div id="url"></div>
-		<div id="div_video" class="visible">
-			<video width="320" height="240" controls>
-  			<source src="movie.mp4" type="video/mp4" id="video">
+		<div id="div_video" class="hidden">
+			<video width="640" height="480" controls id="video">
+  			<source src="" type="video/mp4" id="video_src">
 				Your browser does not support the video tag.
 			</video>
 		</div>
