@@ -1,0 +1,50 @@
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html" charset="utf-8" />
+		<meta http-equiv="Cache-Control: no-cache, must-revalidate" />
+		<meta name='viewport' content='initial-scale=1.0, maximum-scale=1.0' />
+		<style>
+.hidden {
+	display: none;
+}
+.visible {
+	display: normal;
+}
+		</style>
+		<script language="JavaScript">
+onICHostReady = function(version) {
+	if ( version != "1.0" ) {
+		alert('Invalid API version');
+	}
+
+	setImage = function(l_url) {
+		var l_obj=document.getElementById("image");
+		l_obj.src=l_url;
+		document.getElementById("div_image").className = "visible";
+		document.getElementById("div_video").className = "hidden";
+		return "okay";
+	};
+	setVideo = function(l_url) {
+		var l_obj=document.getElementById("video");
+		l_obj.src=l_url;
+		document.getElementById("div_image").className = "hidden";
+		document.getElementById("div_video").className = "visible";
+		return "okay";
+	};
+}
+		</script>
+	</head>
+	<body>
+		Media:<br>
+		<div id="div_image" class="hidden">
+			<img src="test.jpg" id="image">
+		</div>
+		<div id="url"></div>
+		<div id="div_video" class="visible">
+			<video width="320" height="240" controls>
+  			<source src="movie.mp4" type="video/mp4" id="video">
+				Your browser does not support the video tag.
+			</video>
+		</div>
+	</body>
+</html>

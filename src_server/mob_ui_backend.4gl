@@ -197,25 +197,35 @@ END FUNCTION
 -- @returns
 FUNCTION mediaLog()
 	DEFINE l_jobid LIKE ws_media_details.jobid
-	DEFINE l_ret, l_url STRING
+	DEFINE l_ret, l_url, l_wc_url STRING
 	OPEN WINDOW ml WITH FORM "mediaLog"
 	LET l_jobid = "*"
 	CALL get_mediaLog(l_jobid)
+	LET l_wc_url = "http://localhost/media.html"
 	DIALOG ATTRIBUTES(UNBUFFERED)
-		INPUT l_jobid FROM f_jobid ATTRIBUTES(WITHOUT DEFAULTS)
+		INPUT l_jobid, l_wc_url FROM f_jobid, f_wc ATTRIBUTES(WITHOUT DEFAULTS)
 			ON CHANGE f_jobid
 				CALL get_mediaLog(l_jobid)
 		END INPUT
 		DISPLAY ARRAY m_ml TO arr.*
 			BEFORE ROW 
+				LET l_url = getURL(os.path.join( m_ml[arr_curr()].id CLIPPED,m_ml[arr_curr()].filename CLIPPED))
+				DISPLAY "URL:",l_url
 				DISPLAY arr_curr(),":",m_ml[arr_curr()].type
 				IF m_ml[arr_curr()].type = "Photo" THEN
 					DISPLAY "Filepath:",m_ml[arr_curr()].filename
 					DISPLAY os.path.join( m_ml[arr_curr()].id CLIPPED,m_ml[arr_curr()].filename CLIPPED) TO f_img
+					CALL ui.Interface.frontCall("webcomponent", "call",
+     				["formonly.f_wc", "setImage", l_url ], [l_ret] )
 				END IF
+				IF m_ml[arr_curr()].type = "Video" THEN
+					DISPLAY "Filepath:",m_ml[arr_curr()].filename
+					CALL ui.Interface.frontCall("webcomponent", "call",
+     				["formonly.f_wc", "setVideo", l_url ], [l_ret] )
+				END IF
+				DISPLAY "ret:",l_ret
 			ON ACTION select
-				LET l_url = getURL(os.path.join( m_ml[arr_curr()].id CLIPPED,m_ml[arr_curr()].filename CLIPPED))
-				DISPLAY "URL:",l_url
+
 				CALL ui.Interface.frontCall("standard","launchURL",[l_url],[l_ret])
 			ON ACTION refresh CALL get_mediaLog(l_jobid)
 			ON ACTION delete

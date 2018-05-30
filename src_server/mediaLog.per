@@ -22,21 +22,38 @@ TABLE ( DOUBLECLICK=select )
 [      |                      |  |           |                   |                   ]
 }
 END -- TABLE
+HBOX
 GRID
 {
-[img                                                                       ]
-[                                                                          ]
-[                                                                          ]
-[                                                                          ]
-[                                                                          ]
-[                                                                          ]
-[                                                                          ]
-[                                                                          ]
-[                                                                          ]
-[                                                                          ]
-[                                                                          ]
+[img                                    ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
 }
 END -- GRID
+GRID
+{
+[wc                                     ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
+[                                       ]
+}
+END -- GRID
+END -- HBOX
 END -- VBOX
 
 TABLES
@@ -55,6 +72,8 @@ a005 = ws_media_details.timestamp, TITLE=%"Timestamp";
 IMAGE i = FORMONLY.img, AUTOSCALE;
 
 IMAGE img = FORMONLY.f_img, STRETCH=BOTH, AUTOSCALE;
+
+WEBCOMPONENT wc = FORMONLY.f_wc, STRETCH=BOTH,COMPONENTTYPE="media";
 
 INSTRUCTIONS
 SCREEN RECORD arr ( ws_media_details.key THRU FORMONLY.img )
