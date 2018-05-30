@@ -10,14 +10,17 @@ IMPORT FGL fglgallery
 SCHEMA njm_demo310
 
 DEFINE m_al DYNAMIC ARRAY OF RECORD LIKE ws_log_access.*
-DEFINE m_ml DYNAMIC ARRAY OF RECORD 
-		user_name LIKE ws_log_media.username,
-		media_type LIKE ws_log_media.media_type,
-		filepath LIKE ws_log_media.filepath,
-		access_date LIKE ws_log_media.access_date,
+DEFINE m_ml DYNAMIC ARRAY OF RECORD
+		key INTEGER,
+		user_name LIKE ws_media_details.username,
+		type LIKE ws_media_details.type,
+		filename LIKE ws_media_details.filename,
+		id LIKE ws_media_details.id,
+		timestamp LIKE ws_media_details.timestamp,
 		img STRING
 	END RECORD
 DEFINE m_dl  DYNAMIC ARRAY OF RECORD
+		key INTEGER,
 		username LIKE ws_log_data.username,
 		data STRING,
 		timestamp LIKE ws_log_data.access_date
@@ -40,14 +43,14 @@ MAIN
 		EXIT PROGRAM
 	END IF
 
-	CALL get_mediaLog()
+	CALL get_mediaLog("*")
 	MENU %"Menu"
 		ON ACTION users CALL users()
 		ON ACTION accesslog CALL accessLog()
 		ON ACTION medialog CALL mediaLog()
 		ON ACTION gallery 
 			WHILE showGallery()
-				CALL get_mediaLog()
+				CALL get_mediaLog("*")
 			END WHILE
 		ON ACTION datalog CALL dataLog()
 		ON ACTION quit EXIT MENU
@@ -154,6 +157,8 @@ FUNCTION dataLog()
 			END IF
 		ON ACTION select
 				CALL ui.Interface.frontCall("standard", "launchURL", [ l_url ], l_ret)
+		ON ACTION delete
+			DELETE FROM ws_log_data WHERE key = m_dl[arr_curr()].key
 		ON ACTION refresh CALL get_dataLog()
 	END DISPLAY
 
@@ -162,15 +167,19 @@ FUNCTION dataLog()
 END FUNCTION
 --------------------------------------------------------------------------------
 -- Get the Media log Data
-FUNCTION get_mediaLog()
+FUNCTION get_mediaLog(l_jobid LIKE ws_media_details.jobid )
 	DEFINE l_thumb STRING
-	DECLARE cur_ml CURSOR FOR SELECT * FROM ws_log_media 
+	DECLARE cur_ml CURSOR FOR SELECT
+			key, username, type, filename, id, timestamp
+		FROM ws_media_details
+	WHERE jobid MATCHES l_jobid
 	CALL m_ml.clear()
 	FOREACH cur_ml INTO m_ml[ m_ml.getLength() + 1 ].*
 --		LET m_ml[ m_ml.getLength() ].filepath = os.path.join(m_media_path, m_ml[ m_ml.getLength() ].filepath )
 		LET l_thumb = os.path.join( 
-					os.path.dirName(m_ml[ m_ml.getLength() ].filepath),
-					"tn_"||os.path.rootName( os.path.basename( m_ml[ m_ml.getLength() ].filepath ) ).append(".gif"))
+					os.path.dirName(m_ml[ m_ml.getLength() ].filename),
+					"tn_"||os.path.rootName( os.path.basename( m_ml[ m_ml.getLength() ].filename ) ).append(".gif"))
+		LET l_thumb = os.path.join(m_ml[ m_ml.getLength() ].id CLIPPED,m_ml[ m_ml.getLength() ].filename CLIPPED)
 		LET m_ml[ m_ml.getLength() ].img = os.path.join(m_media_path,l_thumb)
 		IF os.path.exists( m_ml[ m_ml.getLength() ].img ) THEN
 			DISPLAY m_ml[ m_ml.getLength() ].img||" Okay"
@@ -187,22 +196,45 @@ END FUNCTION
 -- @params
 -- @returns
 FUNCTION mediaLog()
+	DEFINE l_jobid LIKE ws_media_details.jobid
 	DEFINE l_ret, l_url STRING
-	CALL get_mediaLog()
 	OPEN WINDOW ml WITH FORM "mediaLog"
-	DISPLAY ARRAY m_ml TO arr.*
-		BEFORE ROW 
-			IF m_ml[arr_curr()].media_type = "P" THEN
-				DISPLAY "Filepath:",m_ml[arr_curr()].filepath
-				DISPLAY m_ml[arr_curr()].filepath TO f_img
-			END IF
-		ON ACTION select
-			LET l_url = getURL(m_ml[arr_curr()].filepath)
-			DISPLAY "URL:",l_url
-			CALL ui.Interface.frontCall("standard","launchURL",[l_url],[l_ret])
-		ON ACTION refresh CALL get_mediaLog()
-	END DISPLAY
+	LET l_jobid = "*"
+	CALL get_mediaLog(l_jobid)
+	DIALOG ATTRIBUTES(UNBUFFERED)
+		INPUT l_jobid FROM f_jobid ATTRIBUTES(WITHOUT DEFAULTS)
+			ON CHANGE f_jobid
+				CALL get_mediaLog(l_jobid)
+		END INPUT
+		DISPLAY ARRAY m_ml TO arr.*
+			BEFORE ROW 
+				DISPLAY arr_curr(),":",m_ml[arr_curr()].type
+				IF m_ml[arr_curr()].type = "Photo" THEN
+					DISPLAY "Filepath:",m_ml[arr_curr()].filename
+					DISPLAY os.path.join( m_ml[arr_curr()].id CLIPPED,m_ml[arr_curr()].filename CLIPPED) TO f_img
+				END IF
+			ON ACTION select
+				LET l_url = getURL(os.path.join( m_ml[arr_curr()].id CLIPPED,m_ml[arr_curr()].filename CLIPPED))
+				DISPLAY "URL:",l_url
+				CALL ui.Interface.frontCall("standard","launchURL",[l_url],[l_ret])
+			ON ACTION refresh CALL get_mediaLog(l_jobid)
+			ON ACTION delete
+				DELETE FROM ws_log_media WHERE key = m_ml[arr_curr()].key
+		END DISPLAY
+		ON ACTION back EXIT DIALOG
+	END DIALOG
 	CLOSE WINDOW ml
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION cb_jobid( l_cb ui.ComboBox )
+	DEFINE l_jobid LIKE ws_media_details.jobid
+	CALL l_cb.clear()
+	CALL l_cb.addItem("*","All")
+	DECLARE cb_jobid_cur CURSOR FOR SELECT UNIQUE jobid FROM ws_media_details ORDER BY jobid
+	FOREACH cb_jobid_cur INTO l_jobid
+		CALL l_cb.addItem(l_jobid CLIPPED, l_jobid CLIPPED)
+	END FOREACH
+	
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION showGallery()
@@ -231,10 +263,10 @@ FUNCTION showGallery()
 -- Add the images.
 	FOR x = 1 TO m_ml.getLength()
 --		CALL gl_lib.gl_logIt( SFMT("add image %1 to gallery",m_pics[x]))
-		DISPLAY "AddToGallery:", ui.Interface.filenameToURI(m_ml[x].img),":", os.path.baseName(m_ml[x].filepath)
+		DISPLAY "AddToGallery:", ui.Interface.filenameToURI(m_ml[x].img),":", os.path.baseName(m_ml[x].filename)
 		CALL fglgallery.addImage(l_id,
 						ui.Interface.filenameToURI(m_ml[x].img), 
-						os.path.basename(m_ml[x].filepath)
+						os.path.basename(m_ml[x].filename)
 					)
 	END FOR
 	DISPLAY "Added "|| m_ml.getLength()
@@ -260,7 +292,7 @@ FUNCTION showGallery()
 			ELSE
 				CALL util.JSON.parse( l_rec.gallery_wc, l_struct_value )
 				LET l_rec.current = l_struct_value.current
-				DISPLAY m_ml[ l_rec.current ].filepath TO f_img
+				DISPLAY os.path.join( m_ml[l_rec.current].id CLIPPED,m_ml[l_rec.current].filename CLIPPED) TO f_img
 			END IF
 
 		ON CHANGE gallery_type

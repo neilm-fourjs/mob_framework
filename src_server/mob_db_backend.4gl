@@ -56,6 +56,7 @@ FUNCTION db_connect()
 
 	TRY
 		CREATE TABLE ws_log_access (
+			key SERIAL,
 			username CHAR(30),
 			request VARCHAR(250),
 			access_date DATETIME YEAR TO SECOND
@@ -65,6 +66,7 @@ FUNCTION db_connect()
 
 	TRY
 		CREATE TABLE ws_log_media (
+			key SERIAL,
 			username CHAR(30),
 			media_type CHAR(1),
 			filepath VARCHAR(250),
@@ -75,6 +77,7 @@ FUNCTION db_connect()
 
 	TRY
 		CREATE TABLE ws_log_data (
+			key SERIAL,
 			username CHAR(30),
 			data TEXT,
 			access_date DATETIME YEAR TO SECOND
@@ -84,6 +87,7 @@ FUNCTION db_connect()
 
 	TRY
 		CREATE TABLE ws_media_details (
+			key SERIAL,
 			username CHAR(30),
 			custid INTEGER,
 			jobid CHAR(30),
@@ -120,13 +124,13 @@ END FUNCTION
 -- @params l_pass Password
 -- @returns the auth token or NULL if fails
 FUNCTION db_log_access(l_user STRING, l_request STRING)
-	DEFINE l_ts DATETIME YEAR TO SECOND
+	DEFINE l_ws_log_access RECORD LIKE ws_log_access.*
 
-	LET l_ts = CURRENT
-	LET l_user = l_user.trim()
-	LET l_request = l_request.trim()
-	CALL gl_lib.gl_logIt(SFMT("db_log_access:%1:%2",l_user,l_request))
-	INSERT INTO ws_log_access VALUES(l_user, l_request, l_ts)
+	LET l_ws_log_access.access_date = CURRENT
+	LET l_ws_log_access.username = l_user.trim()
+	LET l_ws_log_access.request = l_request.trim()
+	CALL gl_lib.gl_logIt(SFMT("db_log_access:%1:%2",l_ws_log_access.username,l_ws_log_access.request))
+	INSERT INTO ws_log_access VALUES l_ws_log_access.*
 
 END FUNCTION
 --------------------------------------------------------------------------------
@@ -136,13 +140,14 @@ END FUNCTION
 -- @params l_path File path
 -- @returns the auth token or NULL if fails
 FUNCTION db_log_media(l_type CHAR(1), l_path STRING)
-	DEFINE l_ts DATETIME YEAR TO SECOND
+	DEFINE l_ws_log_media RECORD LIKE ws_log_media.*
 
-	LET l_ts = CURRENT
-
-	LET l_path = l_path.trim()
-	CALL gl_lib.gl_logIt(SFMT("db_log_media:%1:%2:%3",g_user,l_type,l_path))
-	INSERT INTO ws_log_media VALUES(g_user, l_type, l_path, l_ts)
+	LET l_ws_log_media.access_date = CURRENT
+	LET l_ws_log_media.username = g_user
+	LET l_ws_log_media.media_type = l_type
+	LET l_ws_log_media.filepath = l_path.trim()
+	CALL gl_lib.gl_logIt(SFMT("db_log_media:%1:%2:%3",g_user, l_type, l_path.trim() ))
+	INSERT INTO ws_log_media VALUES l_ws_log_media.*
 
 END FUNCTION
 --------------------------------------------------------------------------------
@@ -152,21 +157,18 @@ END FUNCTION
 -- @params l_path File path
 -- @returns the auth token or NULL if fails
 FUNCTION db_log_data(l_user STRING, l_data STRING)
-	DEFINE l_text TEXT
-	DEFINE l_ts DATETIME YEAR TO SECOND
-	DEFINE l_info DYNAMIC ARRAY OF t_img_info
-	DEFINE l_info_rec t_img_info
+	DEFINE l_ws_log_data RECORD LIKE ws_log_data.*
+	DEFINE l_ws_media_details RECORD LIKE ws_media_details.*
+	DEFINE l_info DYNAMIC ARRAY OF RECORD LIKE ws_media_details.*
 	DEFINE l_media_path, l_media_uri STRING
 	DEFINE x SMALLINT
 
-	LOCATE l_text IN MEMORY
-	LET l_ts = CURRENT
-	LET l_user = l_user.trim()
-	LET l_data = l_data.trim()
-
-	CALL gl_lib.gl_logIt(SFMT("db_log_data:%1:%2",l_user,l_data))
-	LET l_text = l_data
-	INSERT INTO ws_log_data VALUES(l_user, l_text, l_ts)
+	LET l_ws_log_data.access_date = CURRENT
+	LET l_ws_log_data.username = l_user.trim()
+	LOCATE l_ws_log_data.data IN MEMORY
+	LET l_ws_log_data.data = l_data.trim()
+	CALL gl_lib.gl_logIt(SFMT("db_log_data:%1:%2",l_user,l_data.trim()))
+	INSERT INTO ws_log_data VALUES l_ws_log_data.*
 
 	IF l_data.getCharAt(1) = "[" THEN
 		TRY
@@ -182,10 +184,10 @@ FUNCTION db_log_data(l_user STRING, l_data STRING)
 	LET l_media_uri = fgl_getEnv("MEDIAURI")
 	IF l_media_uri IS NULL THEN LET l_media_uri = l_media_path END IF
 	FOR x = 1 TO l_info.getLength()
-		LET l_info_rec.* = l_info[x].*
-		LET l_info_rec.username = l_user
-		LET l_info_rec.uri = l_media_uri
-		INSERT INTO ws_media_details VALUES( l_info_rec.* )
+		LET l_ws_media_details.* = l_info[x].*
+		LET l_ws_media_details.username = l_user
+		LET l_ws_media_details.uri = l_media_uri
+		INSERT INTO ws_media_details VALUES l_ws_media_details.*
 	END FOR
 
 END FUNCTION
@@ -283,6 +285,7 @@ DEFINE l_list1 DYNAMIC ARRAY OF RECORD
 		line1 CHAR(50),
 		line2 CHAR(50)
 	END RECORD
+
 {
 	DEFINE x SMALLINT
 

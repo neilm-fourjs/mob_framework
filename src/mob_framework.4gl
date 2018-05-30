@@ -16,12 +16,13 @@ MAIN
 	CALL mob_lib.init_mob()
 	CALL mob_app_lib.init_app()
 
+	OPEN FORM main FROM "mob_framework"
+	DISPLAY FORM main
+
 	IF NOT mob_lib.login() THEN
 		EXIT PROGRAM
 	END IF
 
-	OPEN FORM main FROM "mob_framework"
-	DISPLAY FORM main
 	DISPLAY mob_app_lib.m_apptitle TO f_apptitle
 	DISPLAY IIF( mob_lib.check_network(), "Connected","No Connection") TO f_network
 	DISPLAY g_ws_uri TO f_server
@@ -33,6 +34,8 @@ MAIN
 			CALL mob_lib.send_media()
 		ON ACTION list_media1
 			CALL mob_lib.list_media1()
+		ON ACTION list_media2
+			CALL mob_lib.list_media2()
 		ON ACTION send_data
 			CALL send_data("This is some test data!")
 		ON ACTION check_token

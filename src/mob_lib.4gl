@@ -138,8 +138,8 @@ FUNCTION login() RETURNS BOOLEAN
 	DEFINE l_token, l_salt, l_pass_hash, l_xml_creds STRING
 	DEFINE l_now, l_token_date DATETIME YEAR TO SECOND 
 
-	OPEN FORM mob_login FROM "mob_login"
-	DISPLAY FORM mob_login
+	OPEN WINDOW mob_login WITH FORM "mob_login"
+
 	DISPLAY mob_app_lib.m_apptitle TO f_apptitle
 	DISPLAY mob_app_lib.m_welcome TO f_welcome
 	DISPLAY mob_app_lib.m_logo TO f_logo
@@ -170,12 +170,18 @@ FUNCTION login() RETURNS BOOLEAN
 -- encrypt the username and password attempt
 		IF NOT check_network() THEN
 			CALL gl_lib.gl_winMessage("Error","Invalid Login, a network connection required\nConnect to network and try again","exclamation")
-			RETURN FALSE
+			EXIT PROGRAM
 		END IF
 		LET l_xml_creds = lib_secure.glsec_encryptCreds(l_user, l_pass)
-		IF l_xml_creds IS NULL THEN RETURN FALSE END IF
+		IF l_xml_creds IS NULL THEN
+			CALL gl_lib.gl_winMessage("Error","Error in security routine\nTry again later","exclamation")
+			EXIT PROGRAM
+		END IF
 		LET l_token = ws_getSecurityToken( l_xml_creds ) 
-		IF l_token IS NULL THEN RETURN FALSE END IF
+		IF l_token IS NULL THEN
+			CALL gl_lib.gl_winMessage("Error","Unable to get security token\nTry again later","exclamation")
+			EXIT PROGRAM
+		END IF
 		IF l_salt IS NULL THEN
 			LET l_salt = lib_secure.glsec_genSalt( NULL )
 			LET l_pass_hash = lib_secure.glsec_genPasswordHash(l_pass, l_salt, NULL)
@@ -191,6 +197,7 @@ FUNCTION login() RETURNS BOOLEAN
 	LET mob_ws_lib.m_security_token = l_token
 	CALL gl_lib.gl_logIt(SFMT("Security Token: %1 From:%2",NVL(l_token.trim(),"NULL"),l_token_date))
 
+	CLOSE WINDOW mob_login
 	RETURN TRUE
 END FUNCTION
 --------------------------------------------------------------------------------
@@ -255,9 +262,9 @@ FUNCTION list_media1()
 	CALL util.JSON.parse( l_json, l_imgs )
 
 	FOR x = 1 TO l_imgs.getLength()
-		LET l_arr[x].img = l_imgs[x]
 		LET l_path = os.path.dirname(l_imgs[x])
 		LET l_name = os.path.rootName(os.Path.basename(l_imgs[x]))
+		LET l_arr[x].img = l_name
 		LET l_arr[x].tn = l_path||"/tn_"||l_name||".gif"
 		--DISPLAY "tn:",l_arr[x].tn
 	END FOR
@@ -266,7 +273,7 @@ FUNCTION list_media1()
 		BEFORE ROW 
 			DISPLAY l_arr[ arr_curr() ].tn TO f_img
 		ON ACTION select
-			CALL ui.Interface.frontCall("standard","launchURL",[ l_arr[ arr_curr() ].img ],[l_json])
+			CALL ui.Interface.frontCall("standard","launchURL",[ l_imgs[ arr_curr() ] ],[l_json])
 	END DISPLAY
 
 	CLOSE WINDOW list_media
@@ -434,3 +441,42 @@ FUNCTION send_data(l_data)
 	END IF
 END FUNCTION
 --------------------------------------------------------------------------------
+
+FUNCTION list_media2()
+	DEFINE l_imgs DYNAMIC ARRAY OF STRING
+	DEFINE l_arr DYNAMIC ARRAY OF RECORD
+		img STRING,
+		tn STRING
+	END RECORD
+	DEFINE l_name, l_path STRING
+	DEFINE i INT
+
+	OPEN WINDOW list_media WITH FORM "list_media"
+
+	LET i=0
+	LET l_imgs[i:=i+1] = "https://i.imgur.com/5qAiokY.png"
+	LET l_imgs[i:=i+1] = "https://i.imgur.com/p7Q7Pz5.png"
+--"https://i.imgur.com/xdmAnos.jpg" --NJM My big image
+	LET l_imgs[i:=i+1] = "https://i.imgur.com/IrEsnaK.gif"
+-- https://uk3.generocloud.net/ws_mob_media/B499E473-4570-4EC1-A192-49F462720FDB/tn_20180530_101754.gif"
+
+
+	FOR i = 1 TO l_imgs.getLength()
+		LET l_arr[i].img = l_imgs[i]
+		LET l_path = os.path.dirname(l_imgs[i])
+		LET l_name = os.path.rootName(os.Path.basename(l_imgs[i]))
+		LET l_arr[i].tn = l_path||"/"||l_name||".jpg"
+		DISPLAY "tn:",l_arr[i].tn
+	END FOR
+
+	DISPLAY ARRAY l_arr TO arr.* ATTRIBUTES( ACCEPT=FALSE )
+		BEFORE ROW
+			DISPLAY "Img:", l_arr[ arr_curr() ].img
+			DISPLAY l_arr[ arr_curr() ].tn TO f_img
+		ON ACTION select
+			CALL ui.Interface.frontCall("standard","launchURL",[ l_arr[ arr_curr() ].img ],[l_path])
+	END DISPLAY
+
+	CLOSE WINDOW list_media
+
+END FUNCTION

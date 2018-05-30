@@ -1,20 +1,25 @@
 SCHEMA njm_demo310
 LAYOUT ( TEXT="Media Log" )
 VBOX ( SPLITTER )
+GRID
+{
+Job Id:[jobid                ]
+}
+END -- GRID
 TABLE ( DOUBLECLICK=select )
 {
-[i     |a003                  |a2|a001       |a004               ]
-[      |                      |  |           |                   ]
-[      |                      |  |           |                   ]
-[i     |a003                  |a2|a001       |a004               ]
-[      |                      |  |           |                   ]
-[      |                      |  |           |                   ]
-[i     |a003                  |a2|a001       |a004               ]
-[      |                      |  |           |                   ]
-[      |                      |  |           |                   ]
-[i     |a003                  |a2|a001       |a004               ]
-[      |                      |  |           |                   ]
-[      |                      |  |           |                   ]
+[i     |a003                  |a2|a001       |a004               |a005               ]
+[      |                      |  |           |                   |                   ]
+[      |                      |  |           |                   |                   ]
+[i     |a003                  |a2|a001       |a004               |a005               ]
+[      |                      |  |           |                   |                   ]
+[      |                      |  |           |                   |                   ]
+[i     |a003                  |a2|a001       |a004               |a005               ]
+[      |                      |  |           |                   |                   ]
+[      |                      |  |           |                   |                   ]
+[i     |a003                  |a2|a001       |a004               |a005               ]
+[      |                      |  |           |                   |                   ]
+[      |                      |  |           |                   |                   ]
 }
 END -- TABLE
 GRID
@@ -35,17 +40,21 @@ END -- GRID
 END -- VBOX
 
 TABLES
-ws_log_media
+ws_media_details
 
 ATTRIBUTES
 
-a001 = ws_log_media.username, TITLE=%"User";
-COMBOBOX a2 = ws_log_media.media_type, TITLE=%"Typ", ITEMS=(("P","Photo"),("V","Video"));
-a003 = ws_log_media.filepath, TITLE=%"File Path";
-a004 = ws_log_media.access_date, TITLE=%"Timestamp";
+COMBOBOX jobid = FORMONLY.f_jobid, INITIALIZER=cb_jobid, NOT NULL;
+
+PHANTOM ws_media_details.key;
+a001 = ws_media_details.username, TITLE=%"User";
+a2 = ws_media_details.type, TITLE=%"Typ";
+a003 = ws_media_details.filename, TITLE=%"File";
+a004 = ws_media_details.id, TITLE=%"ID";
+a005 = ws_media_details.timestamp, TITLE=%"Timestamp";
 IMAGE i = FORMONLY.img, AUTOSCALE;
 
 IMAGE img = FORMONLY.f_img, STRETCH=BOTH, AUTOSCALE;
 
 INSTRUCTIONS
-SCREEN RECORD arr ( ws_log_media.username THRU FORMONLY.img )
+SCREEN RECORD arr ( ws_media_details.key THRU FORMONLY.img )

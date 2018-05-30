@@ -1,5 +1,5 @@
 
-CONSTANT WS_VER = 4
+CONSTANT WS_VER = 5
 
 TYPE t_param_rec RECORD
 	custid STRING,
@@ -15,6 +15,7 @@ TYPE  t_ws_reply_rec RECORD
 	END RECORD
 
 TYPE t_img_info RECORD
+		key INTEGER,
 		username STRING,
 		custid INTEGER,
 		jobid STRING,
