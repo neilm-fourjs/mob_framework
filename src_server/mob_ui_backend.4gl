@@ -179,7 +179,7 @@ FUNCTION get_mediaLog(l_jobid LIKE ws_media_details.jobid )
 --		LET m_ml[ m_ml.getLength() ].filepath = os.path.join(m_media_path, m_ml[ m_ml.getLength() ].filepath )
 		LET l_thumb = os.path.join( 
 					os.path.dirName(m_ml[ m_ml.getLength() ].filename),
-					"tn_"||os.path.rootName( os.path.basename( m_ml[ m_ml.getLength() ].filename ) ).append(".gif"))
+					getThumbFromImg( m_ml[ m_ml.getLength() ].filename))
 		LET l_thumb = os.path.join(m_ml[ m_ml.getLength() ].id CLIPPED,m_ml[ m_ml.getLength() ].filename CLIPPED)
 		LET m_ml[ m_ml.getLength() ].img = os.path.join(m_media_path,l_thumb)
 		IF os.path.exists( m_ml[ m_ml.getLength() ].img ) THEN
@@ -198,11 +198,11 @@ END FUNCTION
 -- @returns
 FUNCTION mediaLog()
 	DEFINE l_jobid LIKE ws_media_details.jobid
-	DEFINE l_ret, l_url, l_wc_url STRING
+	DEFINE l_ret, l_url, l_wc_url, l_file STRING
 	OPEN WINDOW ml WITH FORM "mediaLog"
 	LET l_jobid = "%"
 	CALL get_mediaLog(l_jobid)
-	LET l_wc_url = "http://localhost/media.html"
+--	LET l_wc_url = "http://localhost/media.html"
 	DIALOG ATTRIBUTES(UNBUFFERED)
 		INPUT l_jobid, l_wc_url FROM f_jobid, f_wc ATTRIBUTES(WITHOUT DEFAULTS)
 			ON CHANGE f_jobid
@@ -210,12 +210,13 @@ FUNCTION mediaLog()
 		END INPUT
 		DISPLAY ARRAY m_ml TO arr.*
 			BEFORE ROW 
-				LET l_url = getURL(os.path.join( m_ml[arr_curr()].id CLIPPED,m_ml[arr_curr()].filename CLIPPED))
+				LET l_file = os.path.join( m_ml[arr_curr()].id CLIPPED,m_ml[arr_curr()].filename CLIPPED)
+				LET l_url = getURL(l_file)
 				DISPLAY "URL:",l_url
 				DISPLAY arr_curr(),":",m_ml[arr_curr()].type
 				IF m_ml[arr_curr()].type = "Photo" THEN
 					DISPLAY "Filepath:",m_ml[arr_curr()].filename
-					DISPLAY os.path.join( m_ml[arr_curr()].id CLIPPED,m_ml[arr_curr()].filename CLIPPED) TO f_img
+					DISPLAY l_file TO f_img
 					CALL ui.Interface.frontCall("webcomponent", "call",
      				["formonly.f_wc", "setImage", l_url ], [l_ret] )
 				END IF
@@ -230,8 +231,28 @@ FUNCTION mediaLog()
 				CALL ui.Interface.frontCall("standard","launchURL",[l_url],[l_ret])
 			ON ACTION refresh CALL get_mediaLog(l_jobid)
 			ON DELETE
-				IF fgl_winQuestion("Delete","Confirm","No","Yes|No","question",0) = "Yes" THEN
-					DELETE FROM ws_media_details WHERE key = m_ml[arr_curr()].key
+				LET int_flag = FALSE
+				IF fgl_winQuestion("Delete","Confirm Media File Delete?","No","Yes|No","question",0) = "Yes" THEN
+					IF NOT os.path.delete( os.path.join(m_media_path, os.path.join( m_ml[arr_curr()].id CLIPPED,getThumbFromImg(l_file))) ) THEN
+						ERROR "Failed to delete local file:",STATUS,":",os.path.join(m_media_path, os.path.join( m_ml[arr_curr()].id CLIPPED,getThumbFromImg(l_file)))
+						LET int_flag = TRUE
+					END IF
+					IF NOT os.path.delete( os.path.join(m_media_path,l_file)) THEN
+						ERROR "Failed to delete local file:",STATUS,":",l_file
+						LET int_flag = TRUE
+					END IF
+					IF NOT os.path.delete( os.path.join(m_media_path, m_ml[arr_curr()].id CLIPPED) ) THEN
+						ERROR "Failed to delete local dir:",STATUS,":",os.path.join(m_media_path, m_ml[arr_curr()].id CLIPPED)
+						LET int_flag = TRUE
+					END IF
+					IF int_flag THEN
+						IF fgl_winQuestion("Delete","Confirm Data Delete?","No","Yes|No","question",0) = "Yes" THEN
+							LET int_flag = FALSE
+						END IF
+					END IF
+					IF NOT int_flag THEN
+						DELETE FROM ws_media_details WHERE key = m_ml[arr_curr()].key
+					END IF
 				ELSE
 					LET int_flag = TRUE
 				END IF
@@ -343,9 +364,7 @@ FUNCTION display_size_init(l_cb ui.ComboBox )
 	CALL l_cb.addItem(FGLGALLERY_SIZE_XLARGE, "X-Large")
 END FUNCTION
 --------------------------------------------------------------------------------
-FUNCTION getImgFromThumb( l_nam STRING )
-	IF l_nam.subString(1,3) = "tn_" THEN
-		LET l_nam = l_nam.subString(4, l_nam.getLength())
-	END IF
-	RETURN os.path.rootname( l_nam )
+FUNCTION getThumbFromImg( l_nam STRING )
+	RETURN "tn_"||os.path.rootName( os.path.basename( l_nam.trim() ))||".gif"
 END FUNCTION
+--------------------------------------------------------------------------------

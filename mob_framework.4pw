@@ -60,7 +60,7 @@
   </Settings>
   <LanguageList version="1.0"/>
   <PlatformList version="1.0"/>
-  <Group environment="value:DBDRIVER=dbmpgs,value:FORCEHTTP=yes,dir:MEDIAURI=ws_mob_media,value:MEDIAPATH=../ws_mob_media,value:FGLAPPSERVER=8090,value:FGLIMAGEPATH=$(FGLDIR)/lib:$(FGLDIR)/lib/image2font.txt:$(MEDIAPATH):$(ProjectDir)" label="mob_project" language="Genero">
+  <Group environment="value:DBDRIVER=dbmifx,value:FORCEHTTP=yes,dir:MEDIAURI=ws_mob_media,value:MEDIAPATH=../ws_mob_media,value:FGLAPPSERVER=8090,value:FGLIMAGEPATH=$(FGLDIR)/lib:$(FGLDIR)/lib/image2font.txt:$(MEDIAPATH):$(ProjectDir)" label="mob_project" language="Genero">
     <Group label="_Packages" language="Genero">
       <Package binaryName="mob_framework12" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin12" label="mob_framework12" platform="Android">
         <DynamicProperty name="gma-accent-color" value="#5555ff"/>
