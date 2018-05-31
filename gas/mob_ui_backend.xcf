@@ -8,7 +8,7 @@
 		<ENVIRONMENT_VARIABLE Id="MEDIAPATH">../ws_mob_media</ENVIRONMENT_VARIABLE>
 		<ENVIRONMENT_VARIABLE Id="MEDIAURI">ws_mob_media</ENVIRONMENT_VARIABLE>
 		<ENVIRONMENT_VARIABLE Id="PUBLICHOSTNAME">uk3.generocloud.net</ENVIRONMENT_VARIABLE>
-		<ENVIRONMENT_VARIABLE Id="FGLIMAGEPATH">../ws_mob_media:$(res.fgldir)/lib/image2font.txt</ENVIRONMENT_VARIABLE>
+		<ENVIRONMENT_VARIABLE Id="FGLIMAGEPATH">../ws_mob_media:$(res.fgldir)/lib/image2font.txt:..</ENVIRONMENT_VARIABLE>
 		<PATH>$(res.app.path)</PATH>
 		<MODULE>mob_ui_backend.42r</MODULE>
 	</EXECUTION>

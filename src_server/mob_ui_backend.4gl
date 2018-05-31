@@ -32,7 +32,11 @@ MAIN
 
 	CALL mob_db_backend.db_connect()
 
+--	RUN "env | sort > /tmp/env.txt"
+
 	CALL gl_lib.gl_logIt(SFMT("FGLIMAGEPATH=%1",fgl_getEnv("FGLIMAGEPATH")))
+
+	PREPARE pre_ml FROM "SELECT key, username, type, filename, id, timestamp FROM ws_media_details WHERE jobid LIKE ?"
 
 	OPEN FORM f1 FROM "mob_ui_backend"
 	DISPLAY FORM f1
@@ -169,12 +173,9 @@ END FUNCTION
 -- Get the Media log Data
 FUNCTION get_mediaLog(l_jobid LIKE ws_media_details.jobid )
 	DEFINE l_thumb STRING
-	DECLARE cur_ml CURSOR FOR SELECT
-			key, username, type, filename, id, timestamp
-		FROM ws_media_details
-	WHERE jobid MATCHES l_jobid
+	DECLARE cur_ml CURSOR FOR pre_ml 
 	CALL m_ml.clear()
-	FOREACH cur_ml INTO m_ml[ m_ml.getLength() + 1 ].*
+	FOREACH cur_ml USING l_jobid INTO m_ml[ m_ml.getLength() + 1 ].*
 --		LET m_ml[ m_ml.getLength() ].filepath = os.path.join(m_media_path, m_ml[ m_ml.getLength() ].filepath )
 		LET l_thumb = os.path.join( 
 					os.path.dirName(m_ml[ m_ml.getLength() ].filename),
@@ -199,7 +200,7 @@ FUNCTION mediaLog()
 	DEFINE l_jobid LIKE ws_media_details.jobid
 	DEFINE l_ret, l_url, l_wc_url STRING
 	OPEN WINDOW ml WITH FORM "mediaLog"
-	LET l_jobid = "*"
+	LET l_jobid = "%"
 	CALL get_mediaLog(l_jobid)
 	LET l_wc_url = "http://localhost/media.html"
 	DIALOG ATTRIBUTES(UNBUFFERED)
@@ -228,8 +229,12 @@ FUNCTION mediaLog()
 
 				CALL ui.Interface.frontCall("standard","launchURL",[l_url],[l_ret])
 			ON ACTION refresh CALL get_mediaLog(l_jobid)
-			ON ACTION delete
-				DELETE FROM ws_log_media WHERE key = m_ml[arr_curr()].key
+			ON DELETE
+				IF fgl_winQuestion("Delete","Confirm","No","Yes|No","question",0) = "Yes" THEN
+					DELETE FROM ws_media_details WHERE key = m_ml[arr_curr()].key
+				ELSE
+					LET int_flag = TRUE
+				END IF
 		END DISPLAY
 		ON ACTION back EXIT DIALOG
 	END DIALOG
@@ -239,12 +244,11 @@ END FUNCTION
 FUNCTION cb_jobid( l_cb ui.ComboBox )
 	DEFINE l_jobid LIKE ws_media_details.jobid
 	CALL l_cb.clear()
-	CALL l_cb.addItem("*","All")
+	CALL l_cb.addItem("%","All")
 	DECLARE cb_jobid_cur CURSOR FOR SELECT UNIQUE jobid FROM ws_media_details ORDER BY jobid
 	FOREACH cb_jobid_cur INTO l_jobid
 		CALL l_cb.addItem(l_jobid CLIPPED, l_jobid CLIPPED)
 	END FOREACH
-	
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION showGallery()

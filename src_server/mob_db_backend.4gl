@@ -15,10 +15,15 @@ END GLOBALS
 --------------------------------------------------------------------------------
 FUNCTION db_connect()
 	DEFINE l_dbname STRING
+	DEFINE l_dbdriver STRING
 	DEFINE l_ver INTEGER
 
 	LET l_dbname = fgl_getEnv("DBNAME")
 	IF l_dbname.getLength() < 2 THEN LET l_dbname = "njm_demo310" END IF
+	LET l_dbdriver = fgl_getEnv("DBDRIVER")
+	IF l_dbdriver = "dbmpgs" THEN
+		LET l_dbname = "db+driver='"||l_dbdriver||"',source='"||l_dbname||"'"
+	END IF
 
 	TRY
 		CONNECT TO l_dbname

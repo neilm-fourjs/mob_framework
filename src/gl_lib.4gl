@@ -695,9 +695,14 @@ END FUNCTION --}}}
 #+
 #+ @return hostname of the Unix/Linux machine
 FUNCTION gl_getHostName() RETURNS STRING --{{{
-	DEFINE l_hname STRING
+	DEFINE l_hname, fgl_webserver STRING
 	DEFINE c base.channel
 
+-- handle stupid machines that don't have public resolvable hostname!
+	LET l_hname = fgl_getEnv("FGL_WEBSERVER_HTTP_HOST")
+	IF l_hname.getLength() > 1 THEN RETURN l_hname END IF
+
+-- fail safe for machines that don't have public resolvable hostname!
 	LET l_hname = fgl_getEnv("PUBLICHOSTNAME")
 	IF l_hname.getLength() > 1 THEN RETURN l_hname END IF
 
