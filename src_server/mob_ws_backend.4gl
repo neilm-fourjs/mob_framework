@@ -28,6 +28,8 @@ MAIN
 
 	CALL STARTLOG( base.Application.getProgramName()||".err" )
 
+	RUN "env | sort > /tmp/"||base.Application.getProgramName()||".env"
+
 	LET m_ret.ver = WS_VER
 
 	CALL mob_db_backend.db_connect()

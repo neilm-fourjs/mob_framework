@@ -32,7 +32,7 @@ MAIN
 
 	CALL mob_db_backend.db_connect()
 
---	RUN "env | sort > /tmp/env.txt"
+	RUN "env | sort > /tmp/"||base.Application.getProgramName()||".env"
 
 	CALL gl_lib.gl_logIt(SFMT("FGLIMAGEPATH=%1",fgl_getEnv("FGLIMAGEPATH")))
 
@@ -153,7 +153,8 @@ FUNCTION dataLog()
 					ERROR "Invalid JSON!"
 				END TRY
 			END IF
-			IF m_dl[ arr_curr() ].data.subString(1,8) = "https://" THEN
+			IF m_dl[ arr_curr() ].data.subString(1,8) = "https://" 
+			OR m_dl[ arr_curr() ].data.subString(1,7) = "http://" THEN
 				LET l_url = m_dl[ arr_curr() ].data
 			END IF
 			IF l_url iS NOT NULL THEN

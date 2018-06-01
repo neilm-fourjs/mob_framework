@@ -266,7 +266,7 @@ FUNCTION list_media1()
 		LET l_name = os.path.rootName(os.Path.basename(l_imgs[x]))
 		LET l_arr[x].img = l_name
 		LET l_arr[x].tn = l_path||"/tn_"||l_name||".gif"
-		--DISPLAY "tn:",l_arr[x].tn
+--		DISPLAY "tn:",l_arr[x].tn
 	END FOR
 
 	DISPLAY ARRAY l_arr TO arr.* ATTRIBUTES( ACCEPT=FALSE )

@@ -1,20 +1,25 @@
 
-LAYOUT( TEXT="Mobile Demo Backend" )
+LAYOUT( TEXT="Mobile Demo Backend", STYLE="main2" )
 GRID
 {
-[""]
-[""]
-[""]
-[""]
-----------------------------------------------------------------------
-[titl                                                                ]
-----------------------------------------------------------------------
-[""]
-[""]
-[""]
-[""]
+[titl              ]
+--------------------
+[opt1              ]
+[opt2              ]
+[opt3              ]
+[opt4              ]
+[opt5              ]
+[quit              ]
 }
 END -- GRID
 
 ATTRIBUTES
 LABEL titl : titl, TEXT=%"A Simple UI for Mobile Demo Backend", JUSTIFY=CENTER, SIZEPOLICY=FIXED;
+
+BUTTON opt1 : users;
+BUTTON opt2 : accesslog;
+BUTTON opt3 : medialog;
+BUTTON opt4 : gallery;
+BUTTON opt5 : datalog;
+
+BUTTON quit : quit;
