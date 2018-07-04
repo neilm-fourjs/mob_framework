@@ -25,6 +25,7 @@ FUNCTION gl_initResources()
 	LET c = base.Channel.create()
 	TRY
 		CALL c.openFile(m_resourceFile,"r")
+		CALL gl_lib.gl_logIt( SFMT("ResourceFile:%1",m_resourceFile) )
 	CATCH
 		LET m_resourceFile = SFMT(%"Failed to find %1!",l_filename)
 		CALL gl_lib.gl_logIt( m_resourceFile )

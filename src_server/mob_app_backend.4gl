@@ -11,6 +11,7 @@ END GLOBALS
 
 PUBLIC DEFINE m_media_uri STRING
 PUBLIC DEFINE m_media_path STRING
+PUBLIC DEFINE m_files_path STRING
 
 FUNCTION init_app_backend()
 	DEFINE l_host STRING
@@ -22,6 +23,9 @@ FUNCTION init_app_backend()
 		END IF
 	END IF
 	CALL gl_lib.gl_logIt(SFMT("Media Path:%1",m_media_path))
+
+	LET m_files_path = fgl_getEnv("FILESPATH")
+	IF m_files_path.getLength() < 1 THEN LET m_files_path = "../mob_files" END IF
 
 	LET l_host = gl_lib.gl_getHostName()
 	IF DOWNSHIFT(fgl_getEnv("FORCEHTTP")) = "yes" THEN

@@ -23,6 +23,7 @@ GRID
 [ :                     : ]
 ---------------------------
 [lb2:nt                   ]
+[lb3:sv                   ]
 }
 END -- GRID
 END -- VBOX
@@ -32,7 +33,10 @@ LABEL titl = FORMONLY.f_apptitle, SIZEPOLICY=DYNAMIC, STYLE="apptitle";
 f001 = FORMONLY.l_user, PLACEHOLDER=%"Username", NOT NULL,REQUIRED, STYLE="big";
 f002 = FORMONLY.l_pass, PLACEHOLDER=%"Password", INVISIBLE, NOT NULL,REQUIRED, STYLE="big";
 
-TEXTEDIT tx = FORMONLY.f_welcome, STYLE="welcome";
+TEXTEDIT tx = FORMONLY.f_welcome, SCROLLBARS=NONE,STRETCH=BOTH, STYLE="welcome noborder";
 IMAGE logo = FORMONLY.f_logo, STYLE="noborder center";
-LABEL lb2 : lb2, TEXT=%"Network:";
-nt = FORMONLY.f_network;
+
+LABEL lb2 : lb2, TEXT=%"Network:", STYLE="small";
+nt = FORMONLY.f_network, STYLE="small noborder";
+LABEL lb3 : lb3, TEXT=%"Server:", STYLE="small";
+TEXTEDIT sv = FORMONLY.f_server, SCROLLBARS=NONE,STRETCH=BOTH, STYLE="small noborder";

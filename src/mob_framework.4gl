@@ -38,6 +38,8 @@ MAIN
 			CALL mob_lib.list_media2()
 		ON ACTION send_data
 			CALL send_data("This is some test data!")
+		ON ACTION get_file CALL mob_lib.copy_file(TRUE)
+		ON ACTION put_file CALL mob_lib.copy_file(FALSE)
 		ON ACTION check_token
 			CALL mob_lib.check_token()
 		ON ACTION about

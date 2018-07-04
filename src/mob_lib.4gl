@@ -11,6 +11,7 @@ IMPORT FGL mob_ws_lib
 IMPORT FGL mob_ws_lib_sc
 
 &include "mob_ws_lib.inc"
+&include "mob_lib.inc"
 
 CONSTANT DB_VER = 1
 
@@ -20,12 +21,12 @@ PUBLIC DEFINE m_user STRING
 PUBLIC DEFINE m_cli_ver STRING
 
 FUNCTION init_mob()
-	DEFINE l_dbname STRING
-
-	CALL gl_initResources()
+	DEFINE l_dbname, l_ret STRING
 
 	LET m_cli_ver = ui.Interface.getFrontEndVersion()
-	LET gl_lib.m_logName = gl_resources.gl_getResource("logname",base.Application.getProgramName()||"-"||m_cli_ver||".log")
+	LET gl_lib.m_logName = base.Application.getProgramName()||"-"||m_cli_ver
+
+	CALL gl_initResources()
 
 	LET l_dbname = "mob_database.db"
 	TRY
@@ -39,14 +40,20 @@ FUNCTION init_mob()
 		CALL gl_lib.gl_winMessage("Error",SFMT(%"Failed to initialize '%1'!\n%2",l_dbname, SQLERRMESSAGE),"exclamation")
 		RETURN
 	END IF
-	
+
+	TRY
+		CALL ui.Interface.frontCall("android", "askForPermission",	["android.permission.WRITE_EXTERNAL_STORAGE"],[l_ret] )
+	CATCH
+		CALL gl_lib.gl_winMessage("Error",SFMT("Failed 'askForPermission' %1",l_ret),"exclamation")
+	END TRY
+
 	CALL ui.form.setDefaultInitializer("init_form")
 
 	CALL gl_lib.gl_logIt("*** Started ***")
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION init_form(l_f ui.Form) 
-	DEFINE l_titl, l_ver STRING
+	DEFINE l_titl STRING
 
 	LET l_titl = l_f.getNode().getAttribute("text")
 	CALL l_f.getNode().setAttribute("text",l_titl||" "||m_cli_ver)
@@ -144,6 +151,7 @@ FUNCTION login() RETURNS BOOLEAN
 	DISPLAY mob_app_lib.m_welcome TO f_welcome
 	DISPLAY mob_app_lib.m_logo TO f_logo
 	DISPLAY IIF( check_network(), "Connected","No Connection") TO f_network
+	DISPLAY g_ws_uri TO f_server
 
 	IF m_init_db AND NOT check_network() THEN
 		CALL gl_lib.gl_winMessage("Error","First time Login requires a network connection\nConnect to network and try again","exclamation")
@@ -478,5 +486,135 @@ FUNCTION list_media2()
 	END DISPLAY
 
 	CLOSE WINDOW list_media
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION copy_file(l_to BOOLEAN)
+	DEFINE l_dir, l_tdir, l_file, l_newfile STRING
 
+	IF base.Application.isMobile() THEN
+		IF os.path.exists("/storage/emulated/Download") THEN LET l_dir = "/storage/emulated/Download" END IF
+		IF os.path.exists("/sdcard/Download") THEN LET l_dir = "/sdcard/Download" END IF
+		IF os.path.exists("/storage/sdcard0/download") THEN LET l_dir = "/storage/sdcard0/download" END IF
+	ELSE
+		LET l_dir = os.path.join( fgl_getEnv("HOME"),"Downloads" )
+	END IF
+
+	IF ui.Interface.getFrontEndName() MATCHES "GM*" THEN
+		IF os.path.exists("/storage/emulated/Download") THEN LET l_tdir = "/storage/emulated/Download" END IF
+		IF os.path.exists("/sdcard/Download") THEN LET l_tdir = "/sdcard/Download" END IF
+		IF os.path.exists("/storage/sdcard0/download") THEN LET l_tdir = "/storage/sdcard0/download" END IF
+	ELSE
+		CALL ui.interface.frontCall("standard","openDir",NULL,l_tdir)
+	END IF
+
+	IF l_to THEN
+		LET l_file = browse_local_files(l_dir)
+		IF l_file IS NULL THEN RETURN END IF
+		DISPLAY "Copy "||os.path.join(l_dir, l_file)||" to "||os.path.join(l_tdir, l_file)
+		CALL fgl_putFile(os.path.join(l_dir, l_file), os.path.join(l_tdir, l_file))
+	ELSE
+		LET l_file = browse_remote_files()
+		IF l_file IS NULL THEN RETURN END IF
+		LET l_file = mob_ws_lib.ws_getFile( l_file )
+-- Put the file we just got into the download folder
+		IF NOT os.path.exists(l_file) THEN
+			CALL gl_lib.gl_winMessage(%"Error", SFMT(%"File %1 Not Found",l_file), "exclamation")
+			RETURN
+		ELSE
+			CALL gl_lib.gl_logIt("Source:"||l_file||" OK")
+		END IF
+		IF NOT os.path.exists(l_tdir) THEN
+			CALL gl_lib.gl_winMessage(%"Error", SFMT(%"Folder %1 Not Found",l_tdir), "exclamation")
+			RETURN
+		ELSE
+			CALL gl_lib.gl_logIt("Target:"||l_tdir||" OK")
+		END IF
+		LET l_newfile = os.path.baseName(l_file)
+		CALL gl_lib.gl_logIt("Copy "||l_file||" to "||os.path.join(l_tdir, l_newfile))
+		TRY
+			--CALL fgl_putFile(l_file, os.path.join(l_tdir, l_newfile) )
+			IF NOT os.Path.copy(l_file, os.path.join(l_tdir, l_newfile)) THEN
+				CALL gl_lib.gl_winMessage(%"Error", SFMT(%"Failed to Copy from:\n%1\nto:\n%2",l_file,os.path.join(l_tdir, l_newfile)), "exclamation")
+			END IF
+		CATCH
+			CALL gl_lib.gl_winMessage(%"Error", SFMT(%"Failed Copy %1 to %2\nStatus:%3 %4",l_file,os.path.join(l_tdir, l_newfile),STATUS,ERR_GET(STATUS)), "exclamation")
+		END TRY
+	END IF
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION browse_local_files(l_dir STRING)
+	DEFINE l_file STRING
+	DEFINE l_size INTEGER
+	DEFINE l_files DYNAMIC ARRAY OF RECORD 
+		name STRING,
+		size STRING
+	END RECORD
+	DEFINE l_h INTEGER
+
+	IF NOT os.Path.chDir(l_dir) THEN
+		ERROR SFMT( %"Can't change to %1!", l_dir )
+		RETURN NULL
+	END IF
+
+	CALL os.Path.dirSort("name", 1)
+	LET l_h = os.Path.dirOpen(".")
+	WHILE l_h > 0
+		LET l_file = os.Path.dirNext(l_h)
+		IF l_file IS NULL THEN EXIT WHILE END IF
+		IF NOT os.path.isFile(l_file)THEN CONTINUE WHILE END IF
+		LET l_files[ l_files.getLength() + 1 ].name = l_file
+		LET l_size = os.path.size(l_file)
+		IF l_size < 1024 THEN
+			LET l_files[ l_files.getLength() ].size = l_size||"b"
+		ELSE
+			LET l_size = (l_size/1024)
+			IF l_size < 1024 THEN
+				LET l_files[ l_files.getLength() ].size = l_size||"kb"
+			ELSE
+				LET l_size = (l_size/1024)
+				LET l_files[ l_files.getLength() ].size = l_size||"mb"
+			END IF
+		END IF
+	END WHILE
+	CALL os.Path.dirClose(l_h)
+
+	IF l_files.getLength() = 0 THEN
+		ERROR "No Local Files!"
+		RETURN
+	END IF
+
+	OPEN WINDOW file_list WITH FORM "mob_files"
+	DISPLAY ARRAY l_files TO arr.*
+	CLOSE WINDOW file_list
+
+	IF int_flag THEN
+		LET int_flag = FALSE
+		ERROR %"Aborted"
+		RETURN NULL
+	END IF
+	RETURN l_files[ arr_curr() ].name
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION browse_remote_files()
+	DEFINE l_json STRING
+	DEFINE l_files DYNAMIC ARRAY OF RECORD 
+		name STRING,
+		size STRING
+	END RECORD
+
+	LET l_json = mob_ws_lib.ws_getFileList()
+	IF l_json IS NULL THEN RETURN NULL END IF
+
+	CALL util.JSON.parse( l_json, l_files )
+
+	OPEN WINDOW file_list WITH FORM "mob_files"
+	DISPLAY ARRAY l_files TO arr.*
+	CLOSE WINDOW file_list
+
+	IF int_flag THEN
+		LET int_flag = FALSE
+		ERROR %"Aborted"
+		RETURN NULL
+	END IF
+	RETURN l_files[ arr_curr() ].name
 END FUNCTION

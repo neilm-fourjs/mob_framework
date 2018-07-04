@@ -96,6 +96,25 @@ FUNCTION ws_getMediaList(l_jobId STRING) RETURNS STRING
 	RETURN l_json
 END FUNCTION
 --------------------------------------------------------------------------------
+-- Get a list of Files from the server
+--
+FUNCTION ws_getFileList() RETURNS STRING
+	IF NOT doRestRequest(SFMT("getFileList?token=%1",m_security_token)) THEN
+		RETURN NULL
+	END IF
+	RETURN m_ret.reply
+END FUNCTION
+--------------------------------------------------------------------------------
+-- Get a File from the server
+--
+-- @params l_fileName String
+FUNCTION ws_getFile(l_fileName STRING) RETURNS STRING
+	IF NOT doRestRequestFile(SFMT("getFile?token=%1&file=%2",m_security_token, l_fileName)) THEN
+		RETURN NULL
+	END IF
+	RETURN m_ret.reply
+END FUNCTION
+--------------------------------------------------------------------------------
 -- Send some json data back to server
 --
 -- @params l_data String JSON data
@@ -217,6 +236,45 @@ PRIVATE FUNCTION doRestRequestData(l_param STRING, l_data STRING)
 		LET l_stat = STATUS
 		LET m_ret.reply = ERR_GET( l_stat )
 	END TRY
+	CALL gl_lib.gl_logIt("m_ret reply:"||NVL(m_ret.stat,"NULL")||":"||NVL(m_ret.reply,"NULL"))
+	IF m_ret.stat != 200 THEN
+		CALL gl_lib.gl_winMessage("WS Error", m_ret.reply,"exclamation")
+		RETURN FALSE
+	END IF
+	RETURN TRUE
+END FUNCTION
+--------------------------------------------------------------------------------
+-- Do the web service REST call to GET a File
+PRIVATE FUNCTION doRestRequestFile(l_param STRING) RETURNS BOOLEAN
+	DEFINE l_url STRING
+	DEFINE l_req com.HttpRequest
+	DEFINE l_resp com.HttpResponse
+	DEFINE l_stat SMALLINT
+	DEFINE l_file STRING
+
+	LET l_url = g_ws_uri||l_param
+	CALL gl_lib.gl_logIt("doRestRequestFile URL:"||NVL(l_url,"NULL"))
+
+	TRY
+		LET l_req = com.HttpRequest.Create(l_url)
+		CALL l_req.setMethod("GET")
+		CALL l_req.setHeader("Accept", "application/json")
+		CALL l_req.setVersion("1.0")
+		CALL l_req.doRequest()
+		LET l_resp = l_req.getResponse()
+		LET l_stat = l_resp.getStatusCode()
+		IF l_stat = 200 THEN
+			LET l_file = l_resp.getFileResponse()
+			LET m_ret.reply = l_file
+		ELSE
+			LET m_ret.reply = SFMT("WS Call #4 Failed!\n%1-%2",l_stat, l_resp.getStatusDescription())
+			LET m_ret.stat = l_stat
+		END IF
+	CATCH
+		LET l_stat = STATUS
+		LET m_ret.reply = ERR_GET( l_stat )
+	END TRY
+	DISPLAY "doRestRequestFile - File:", m_ret.reply
 	CALL gl_lib.gl_logIt("m_ret reply:"||NVL(m_ret.stat,"NULL")||":"||NVL(m_ret.reply,"NULL"))
 	IF m_ret.stat != 200 THEN
 		CALL gl_lib.gl_winMessage("WS Error", m_ret.reply,"exclamation")

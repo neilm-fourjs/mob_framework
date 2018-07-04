@@ -32,7 +32,7 @@ MAIN
 
 	CALL mob_db_backend.db_connect()
 
-	RUN "env | sort > /tmp/"||base.Application.getProgramName()||".env"
+--	RUN "env | sort > /tmp/"||base.Application.getProgramName()||".env"
 
 	CALL gl_lib.gl_logIt(SFMT("FGLIMAGEPATH=%1",fgl_getEnv("FGLIMAGEPATH")))
 
@@ -200,6 +200,8 @@ END FUNCTION
 FUNCTION mediaLog()
 	DEFINE l_jobid LIKE ws_media_details.jobid
 	DEFINE l_ret, l_url, l_wc_url, l_file STRING
+	DEFINE l_d ui.Dialog
+	DEFINE l_dnd ui.DragDrop
 	OPEN WINDOW ml WITH FORM "mediaLog"
 	LET l_jobid = "%"
 	CALL get_mediaLog(l_jobid)
@@ -257,6 +259,19 @@ FUNCTION mediaLog()
 				ELSE
 					LET int_flag = TRUE
 				END IF
+			ON DROP(l_dnd)
+				CALL DIALOG.insertRow("arr", l_dnd.getLocationRow())
+				LET m_ml[ l_dnd.getLocationRow() ].filename = l_dnd.getBuffer()
+				DISPLAY "Dropped:",l_dnd.getBuffer()," into ",l_dnd.getLocationRow()		
+			ON DRAG_ENTER(l_dnd)
+				DISPLAY "Mime:",l_dnd.getSelectedMimeType()
+				CALL l_dnd.setOperation("copy")
+				{CASE
+					WHEN l_dnd.selectMimeType("binary/image")
+					OTHERWISE
+						CALL l_dnd.setOperation(NULL)
+				END CASE}
+
 		END DISPLAY
 		ON ACTION back EXIT DIALOG
 	END DIALOG

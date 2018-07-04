@@ -24,12 +24,12 @@ FUNCTION db_connect()
 	IF l_dbdriver = "dbmpgs" THEN
 		LET l_dbname = "db+driver='"||l_dbdriver||"',source='"||l_dbname||"'"
 	END IF
-
+	CALL gl_lib.gl_logIt(SFMT("Trying to connect to %1 ...",l_dbname))
 	TRY
 		CONNECT TO l_dbname
 		CALL gl_lib.gl_logIt(SFMT(%"Connected to %1",l_dbname))
 	CATCH
-		CALL gl_lib.gl_logIt(SFMT(%"ERROR: Failed to connect to %1",l_dbname))
+		CALL gl_lib.gl_logIt(SFMT(%"ERROR: Failed to connect to %1\n%2",l_dbname,SQLERRMESSAGE))
 		EXIT PROGRAM
 	END TRY
 
@@ -134,7 +134,7 @@ FUNCTION db_log_access(l_user STRING, l_request STRING)
 	LET l_ws_log_access.access_date = CURRENT
 	LET l_ws_log_access.username = l_user.trim()
 	LET l_ws_log_access.request = l_request.trim()
-	CALL gl_lib.gl_logIt(SFMT("db_log_access:%1:%2",l_ws_log_access.username,l_ws_log_access.request))
+	CALL gl_lib.gl_logIt(SFMT("db_log_access:%1 :%2",l_ws_log_access.username CLIPPED,l_ws_log_access.request))
 	INSERT INTO ws_log_access VALUES l_ws_log_access.*
 
 END FUNCTION

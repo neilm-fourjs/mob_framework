@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Project defaultApplication="400358049" gstVersion="30a07" version="3.2">
+<Project defaultApplication="400358049" gstVersion="30a09" version="3.2">
   <Settings>
     <DynamicProperties version="2">
       <DynamicProperty description="Accent color (Android 5.0 and later)" initialValue="#9575CD" isDefaultInherited="false" isHidden="false" label="Accent color" name="gma-accent-color" readOnly="false" type="COLOR"/>
@@ -16,6 +16,7 @@
       <DynamicProperty description="Medium-DPI Icon (48x48 px) path" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Icon-mdpi (48x48 px)" name="icon-mdpi" readOnly="false" type="FILE"/>
       <DynamicProperty description="Extra High-DPI Icon (96x96 px) path" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Icon-xhdpi (96x96 px)" name="icon-xhdpi" readOnly="false" type="FILE"/>
       <DynamicProperty description="Extra Extra High-DPI Icon (144x144 px) path" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Icon-xxhdpi (144x144 px)" name="icon-xxhdpi" readOnly="false" type="FILE"/>
+      <DynamicProperty description="1024x1024 pixel icon (used for App Store)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Icon (1024x1024 px)" name="icon1024x1024" readOnly="false" type="FILE"/>
       <DynamicProperty description="120x120 pixel icon (used for home screen)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Icon (120x120 px)" name="icon120x120" readOnly="false" type="FILE"/>
       <DynamicProperty description="152x152 pixel icon (used for home screen)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Icon (152x152 px)" name="icon152x152" readOnly="false" type="FILE"/>
       <DynamicProperty description="167x167 pixel icon (used for home screen)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Icon (167x167 px)" name="icon167x167" readOnly="false" type="FILE"/>
@@ -29,18 +30,20 @@
       <DynamicProperty description="87x87 pixel icon (used for home screen)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Icon (87x87 px)" name="icon87x87" readOnly="false" type="FILE"/>
       <DynamicProperty description="Launch screen for iPhone 5" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (640x1136 px)" name="launchScreen" readOnly="false" type="FILE"/>
       <DynamicProperty description="Launch screen for iPad (landcape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1024x768 px)" name="launchScreen1024x768" readOnly="false" type="FILE"/>
-      <DynamicProperty description="Launch screen for iPhone 6+ (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1242x2208 px)" name="launchScreen1242x2208" readOnly="false" type="FILE"/>
-      <DynamicProperty description="Launch screen for iPhone 6 (landscape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1334x750 px)" name="launchScreen1334x750" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen for iPhone X (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1125x2436 px)" name="launchScreen1125x2436" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen for iPhone 6+/6s+/7+/8+ (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1242x2208 px)" name="launchScreen1242x2208" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen for iPhone 6/6s/7/8 (landscape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1334x750 px)" name="launchScreen1334x750" readOnly="false" type="FILE"/>
       <DynamicProperty description="Launch screen for iPad (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1536x2048 px)" name="launchScreen1536x2048" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen for 10.5&quot; iPad Pro (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1668x2224 px)" name="launchScreen1668x2224" readOnly="false" type="FILE"/>
       <DynamicProperty description="Launch screen for iPad (landscape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (2048x1536 px)" name="launchScreen2048x1536" readOnly="false" type="FILE"/>
-      <DynamicProperty description="Launch screen for iPad (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (2048x2732 px)" name="launchScreen2048x2732" readOnly="false" type="FILE"/>
-      <DynamicProperty description="Launch screen for iPhone 6+ (landscape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (2208x1242 px)" name="launchScreen2208x1242" readOnly="false" type="FILE"/>
-      <DynamicProperty description="Launch screen for iPad (landscape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (2732x2048 px)" name="launchScreen2732x2048" readOnly="false" type="FILE"/>
-      <DynamicProperty description="Launch screen for iPhone" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (320x480 px)" name="launchScreen320x480" readOnly="false" type="FILE"/>
-      <DynamicProperty description="Launch screen for iPhone 4" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (640x960 px)" name="launchScreen640x960" readOnly="false" type="FILE"/>
-      <DynamicProperty description="Launch screen for iPhone 6 (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (750x1334 px)" name="launchScreen750x1334" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen for 12.9&quot; iPad Pro (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (2048x2732 px)" name="launchScreen2048x2732" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen for iPhone 6+/6s+/7+/8+ (landscape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (2208x1242 px)" name="launchScreen2208x1242" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen for 10.5&quot; iPad Pro (landscape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (2224x1668 px)" name="launchScreen2224x1668" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen for iPhone X (landscape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (2436x1125 px)" name="launchScreen2436x1125" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen for 12.9&quot; iPad Pro (landscape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (2732x2048 px)" name="launchScreen2732x2048" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen for iPhone 6/6s/7/8 (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (750x1334 px)" name="launchScreen750x1334" readOnly="false" type="FILE"/>
       <DynamicProperty description="Launch screen for iPad (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (768x1024 px)" name="launchScreen768x1024" readOnly="false" type="FILE"/>
-      <DynamicProperty description="Launch screen Screenboard file (Created from Xcode)" editorInfo="filters:*.storyboard *.xib;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen" name="launchScreenXib" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen Screenboard file (Created from Xcode)" editorInfo="filters:*.storyboard *.xib;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (Xib file)" name="launchScreenXib" readOnly="false" type="FILE"/>
       <DynamicProperty description="Package identifier" initialValue="" isDefaultInherited="false" isHidden="false" label="ID" name="packageId" readOnly="false" type="TEXT"/>
       <DynamicProperty description="Label of the package" initialValue="" isDefaultInherited="false" isHidden="false" label="Label" name="packageLabel" readOnly="false" type="TEXT"/>
       <DynamicProperty description="Version of the package" initialValue="1" isDefaultInherited="false" isHidden="false" label="Version" name="packageVersion" readOnly="false" type="TEXT"/>
@@ -52,16 +55,22 @@
       <DynamicProperty description="Extra High-DPI Status Icon (48x48 px) path" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Status Icon-xhdpi (48x48 px)" name="status-icon-xhdpi" readOnly="false" type="FILE"/>
       <DynamicPropertyGroup collapsed="false" description="Android" label="Android" name="AndroidGroup" properties="packageVersionName;gma-primary-color;gma-primary-dark-color;gma-accent-color;gma-actionbar-color;gma-primaryText-color;gma-windowBackground-color;gma-navigationBarBackground-color;icon-ldpi;icon-mdpi;icon-hdpi;icon-xhdpi;icon-xxhdpi;status-icon-mdpi;status-icon-hdpi;status-icon-xhdpi;permissions;gma-cordova"/>
       <DynamicPropertyGroup collapsed="false" description="Package" label="Package" name="PackageGroup" properties="packageId;packageLabel;packageVersion"/>
-      <DynamicPropertyGroup collapsed="false" description="iOS" label="iOS" name="iOSGroup" properties="launchScreen320x480;launchScreen640x960;launchScreen;launchScreen750x1334;launchScreen1334x750;launchScreen1242x2208;launchScreen2208x1242;launchScreen768x1024;launchScreen1024x768;launchScreen1536x2048;launchScreen2048x1536;launchScreen2048x2732;launchScreen2732x2048;launchScreenXib;icon29x29;icon40x40;icon58x58;icon60x60;icon76x76;icon80x80;icon87x87;icon120x120;icon152x152;icon167x167;icon180x180;required;gmi-cordova"/>
+      <DynamicPropertyGroup collapsed="false" description="iOS" label="iOS" name="iOSGroup" properties="launchScreen;launchScreen750x1334;launchScreen1334x750;launchScreen1242x2208;launchScreen2208x1242;launchScreen1125x2436;launchScreen2436x1125;launchScreen768x1024;launchScreen1024x768;launchScreen1536x2048;launchScreen2048x1536;launchScreen2224x1668;launchScreen1668x2224;launchScreen2048x2732;launchScreen2732x2048;launchScreenXib;icon29x29;icon40x40;icon58x58;icon60x60;icon76x76;icon80x80;icon87x87;icon120x120;icon152x152;icon167x167;icon180x180;icon1024x1024;required;gmi-cordova"/>
     </DynamicProperties>
     <NodeInfos version="1">
-      <NodeInfo mimeType="pm/package" properties="packageId;packageLabel;packageVersion;packageVersionName;launchScreen320x480;launchScreen640x960;launchScreen;launchScreen750x1334;launchScreen1334x750;launchScreen1242x2208;launchScreen2208x1242;launchScreen768x1024;launchScreen1024x768;launchScreen1536x2048;launchScreen2048x1536;launchScreen2048x2732;launchScreen2732x2048;launchScreenXib;icon29x29;icon40x40;icon58x58;icon60x60;icon76x76;icon80x80;icon87x87;icon120x120;icon152x152;icon167x167;icon180x180;gma-primary-color;gma-primary-dark-color;gma-accent-color;gma-actionbar-color;gma-primaryText-color;gma-windowBackground-color;gma-navigationBarBackground-color;icon-ldpi;icon-mdpi;icon-hdpi;icon-xhdpi;icon-xxhdpi;status-icon-mdpi;status-icon-hdpi;status-icon-xhdpi;permissions;required;gma-cordova;gmi-cordova"/>
+      <NodeInfo mimeType="pm/package" properties="packageId;packageLabel;packageVersion;packageVersionName;launchScreen;launchScreen750x1334;launchScreen1334x750;launchScreen1242x2208;launchScreen2208x1242;launchScreen1125x2436;launchScreen2436x1125;launchScreen768x1024;launchScreen1024x768;launchScreen1536x2048;launchScreen2048x1536;launchScreen2224x1668;launchScreen1668x2224;launchScreen2048x2732;launchScreen2732x2048;launchScreenXib;icon29x29;icon40x40;icon58x58;icon60x60;icon76x76;icon80x80;icon87x87;icon120x120;icon152x152;icon167x167;icon180x180;icon1024x1024;gma-primary-color;gma-primary-dark-color;gma-accent-color;gma-actionbar-color;gma-primaryText-color;gma-windowBackground-color;gma-navigationBarBackground-color;icon-ldpi;icon-mdpi;icon-hdpi;icon-xhdpi;icon-xxhdpi;status-icon-mdpi;status-icon-hdpi;status-icon-xhdpi;permissions;required;gma-cordova;gmi-cordova"/>
     </NodeInfos>
   </Settings>
   <LanguageList version="1.0"/>
   <PlatformList version="1.0"/>
   <Group environment="value:DBDRIVER=dbmifx,value:FORCEHTTP=yes,dir:MEDIAURI=ws_mob_media,value:MEDIAPATH=../ws_mob_media,value:FGLAPPSERVER=8090,value:FGLIMAGEPATH=$(FGLDIR)/lib:$(FGLDIR)/lib/image2font.txt:$(MEDIAPATH):$(ProjectDir)" label="mob_project" language="Genero">
     <Group label="_Packages" language="Genero">
+      <Library binaryName="gas_ifx" excludeFromBuild="true" id="1011122750" label="gas_ifx">
+        <File filePath="gas_ifx/mob_ui_be.xcf"/>
+      </Library>
+      <Library binaryName="gas_pgs" excludeFromBuild="true" id="401028987" label="gas_pgs">
+        <File filePath="gas_pgs/mob_ui_be.xcf"/>
+      </Library>
       <Package binaryName="mob_framework12" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin12" label="mob_framework12" platform="Android">
         <DynamicProperty name="gma-accent-color" value="#5555ff"/>
         <DynamicProperty name="gma-navigationBarBackground-color" value="#00007f"/>
@@ -124,7 +133,7 @@
         <Directory includedFiles="*.42?" label="Binaries" sourceDirectory="$(ProjectDir)/bin_srv_ui"/>
         <Directory includedFiles="*.42?" label="Binaries_common" sourceDirectory="$(ProjectDir)/bin_common"/>
         <Directory label="etc" sourceDirectory="$(ProjectDir)/etc"/>
-        <Directory includedFiles="mob_ui_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas"/>
+        <Directory includedFiles="mob_ui_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_ifx"/>
         <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
       </Package>
       <Package binaryName="mob_ui_backend_pgs" dependencies="-1031729630,1011122750,1804037942,455109296,1553065829,-994061721" label="mob_ui_backend_pgs" platform="Genero Application Server">
@@ -145,7 +154,7 @@
         <DynamicProperty name="packageVersionName" value="1000"/>
         <Directory label="Binaries" sourceDirectory="$(ProjectDir)/bin_srv_ws"/>
         <Directory label="Binaries_common" sourceDirectory="$(ProjectDir)/bin_common"/>
-        <Directory includedFiles="mob_ws_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas"/>
+        <Directory includedFiles="mob_ws_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_ifx"/>
         <Directory label="utils" sourceDirectory="$(ProjectDir)/utils"/>
       </Package>
       <Package binaryName="mob_ws_backend_pgs" dependencies="991859968,-1451902566,-994061721,300690543,455109296,1553065829" label="mob_ws_backend_pgs" platform="Genero Application Server">
@@ -186,12 +195,14 @@
         <File filePath="resources/default.4ad"/>
         <File filePath="resources/default.4st"/>
         <File filePath="config/fglprofile"/>
+        <File filePath="config/mob_framework.json"/>
       </Library>
       <Application binaryName="mob_framework" dependencies="159917928,212784684,362164715,455109296,-994061721,1065793016" environment="dirlist:FGLIMAGEPATH=$(ProjectDir)/images;$(FGLDIR)/lib/image2font.txt;$(ProjectDir)/webcomponents;$(FGLIMAGEPATH)" id="400358049" label="mob_framework">
         <VirtualFolder label="forms">
           <File filePath="src/cust_dets.per"/>
           <File filePath="src/cust_list.per"/>
           <File filePath="src/list_media.per"/>
+          <File filePath="src/mob_files.per"/>
           <File filePath="src/mob_framework.per"/>
           <File filePath="src/mob_login.per"/>
           <File filePath="src/show_media.per"/>
@@ -211,13 +222,7 @@
       <Library binaryName="etc" id="1804037942" label="etc">
         <File filePath="etc/default.4ad"/>
       </Library>
-      <Library binaryName="gas" excludeFromBuild="true" id="1011122750" label="gas">
-        <File filePath="gas/mob_ui_backend.xcf"/>
-      </Library>
-      <Library binaryName="gas_pgs" excludeFromBuild="true" id="401028987" label="gas_pgs">
-        <File filePath="gas_pgs/mob_ui_backend.xcf"/>
-      </Library>
-      <Application binaryName="mob_ui_backend" dependencies="-994061721,455109296,1011122750,1804037942,1553065829" id="-1031729630" label="mob_ui_backend">
+      <Application binaryName="mob_ui_backend" dependencies="-994061721,455109296,1804037942,1553065829" id="-1031729630" label="mob_ui_backend">
         <VirtualFolder label="forms">
           <File filePath="src_server/accessLog.per"/>
           <File filePath="src_server/dataLog.per"/>
@@ -229,8 +234,8 @@
       </Application>
     </Group>
     <Group environment="value:NEWUSERS=1" label="mob_ws_backend" language="Genero" targetDirectory="$(ProjectDir)/bin_srv_ws">
-      <Library binaryName="gas" excludeFromBuild="true" id="-1451902566" label="gas">
-        <File filePath="gas/mob_ws_backend.xcf"/>
+      <Library binaryName="gas_ifx" excludeFromBuild="true" id="-1451902566" label="gas_ifx">
+        <File filePath="gas_ifx/mob_ws_backend.xcf"/>
       </Library>
       <Library binaryName="gas_pgs" excludeFromBuild="true" id="684194033" label="gas_pgs">
         <File filePath="gas_pgs/mob_ws_backend.xcf"/>

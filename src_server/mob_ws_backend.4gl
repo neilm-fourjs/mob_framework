@@ -71,6 +71,10 @@ MAIN
 							CALL getList2()
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("getMediaList") 
 							CALL getMediaList()
+						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("getFileList") 
+							CALL getFileList()
+						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("getFile") 
+							CALL getFile(l_req)
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("getDets1") 
 							CALL getDets1()
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("getDets2") 
@@ -152,6 +156,7 @@ END FUNCTION
 FUNCTION checkToken(l_func STRING) RETURNS BOOLEAN
 	DEFINE l_token, l_res STRING
 
+	CALL gl_lib.gl_logIt(%"checkToken from %1r:"||NVL(l_func,"NULL"))
 	LET l_token = gl_lib_restful.gl_getParameterValueByKey("token")
 	IF l_token.subString(1,4) = "ERR:" THEN
 		CALL setReply(201,%"ERR",l_token)
@@ -213,6 +218,83 @@ FUNCTION getMediaList()
 	CALL gl_lib.gl_logIt(%"Return Media list for jobid:"||NVL(l_key,"NULL"))
 
 	LET l_data = mob_db_backend.db_get_media(l_key)
+	CALL setReply(200,%"OK",l_data)
+END FUNCTION
+--------------------------------------------------------------------------------
+-- A list of Files to send to client
+FUNCTION getFileList()
+	DEFINE l_data, l_file STRING
+	DEFINE l_files DYNAMIC ARRAY OF RECORD 
+		name STRING,
+		size STRING
+	END RECORD
+	DEFINE l_h INTEGER
+	DEFINE l_size INTEGER
+
+	IF NOT checkToken("getFileList") THEN RETURN END IF
+
+	IF NOT os.path.exists( mob_app_backend.m_files_path ) THEN
+		CALL gl_lib.gl_logIt( SFMT(%"Directory %1 from %2 - Not found.",mob_app_backend.m_files_path, os.path.pwd() ))
+		CALL setReply(201,%"ERR", SFMT(%"Directory '%1' not found!",mob_app_backend.m_files_path))
+		RETURN
+	END IF
+
+	CALL os.Path.dirSort("name", 1)
+	LET l_h = os.Path.dirOpen( mob_app_backend.m_files_path )
+	IF l_h = 0 THEN
+		CALL gl_lib.gl_logIt( SFMT(%"Directory %1 from %2 - Failed to Open.",mob_app_backend.m_files_path, os.path.pwd() ))
+		CALL setReply(201,%"ERR", SFMT(%"Directory '%1' Filed to open!",mob_app_backend.m_files_path))
+		RETURN
+	END IF
+	WHILE l_h > 0
+		LET l_file = os.Path.dirNext(l_h)
+		IF l_file IS NULL THEN EXIT WHILE END IF
+		IF l_file = "." OR l_file = ".." THEN CONTINUE WHILE END IF
+		--CALL gl_lib.gl_logIt( SFMT(%"File: %1 - %2", l_file, IIF(os.path.isFile( os.path.join( mob_app_backend.m_files_path, l_file)),"is File","Not File")))
+		IF NOT os.path.isFile(os.path.join( mob_app_backend.m_files_path, l_file))THEN CONTINUE WHILE END IF
+		LET l_files[ l_files.getLength() + 1 ].name = l_file
+		LET l_size = os.path.size(os.path.join( mob_app_backend.m_files_path, l_file))
+		IF l_size < 1024 THEN
+			LET l_files[ l_files.getLength() ].size = l_size||"b"
+		ELSE
+			LET l_size = (l_size/1024)
+			IF l_size < 1024 THEN
+				LET l_files[ l_files.getLength() ].size = l_size||"kb"
+			ELSE
+				LET l_size = (l_size/1024)
+				LET l_files[ l_files.getLength() ].size = l_size||"mb"
+			END IF
+		END IF
+	END WHILE
+	CALL os.Path.dirClose(l_h)
+
+	CALL gl_lib.gl_logIt( SFMT(%"File list of %1 from %2 found %3 files.",mob_app_backend.m_files_path, os.path.pwd() ,l_files.getLength()) )
+
+	IF l_files.getLength() = 0 THEN
+		CALL setReply(201,%"ERR", SFMT(%"Directory '%1' is empty!",mob_app_backend.m_files_path))
+		RETURN
+	END IF
+
+	LET l_data = util.JSON.stringify(l_files)
+	CALL setReply(200,%"OK",l_data)
+END FUNCTION
+--------------------------------------------------------------------------------
+-- Get a File from server
+FUNCTION getFile(l_req com.HTTPServiceRequest)
+	DEFINE l_data, l_file STRING
+
+	IF NOT checkToken("getFile") THEN RETURN END IF
+
+	LET l_file = gl_lib_restful.gl_getParameterValueByKey("file")
+	IF l_file.subString(1,4) = "ERR:" THEN
+		CALL setReply(201,%"ERR",l_file)
+		RETURN
+	END  IF
+
+	CALL gl_lib.gl_logIt(%"Send File:"||NVL(l_file,"NULL"))
+
+	CALL l_req.sendFileResponse(200, NULL , os.path.join(mob_app_backend.m_files_path,l_file) )
+
 	CALL setReply(200,%"OK",l_data)
 END FUNCTION
 --------------------------------------------------------------------------------

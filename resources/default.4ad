@@ -34,4 +34,6 @@
   <ActionDefault name="back" text="Back" image="fa-chevron-circle-left" />
   <ActionDefault name="send" text="Send" image="fa-sign-in" />
   <ActionDefault name="select" text="" image="fa-play-circle" />
+  <ActionDefault name="get_file" text="Get File" image="fa-upload" />
+  <ActionDefault name="put_file" text="Put File" image="fa-download" />
 </ActionDefaultList>
