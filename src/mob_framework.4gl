@@ -46,6 +46,8 @@ MAIN
 			CALL ui.interface.frontCall("Android","showAbout",[],[])
 		ON ACTION view_log
 			CALL mob_lib.view_log()
+		ON ACTION send_log
+			CALL mob_lib.send_log()
 		ON ACTION quit
 			EXIT MENU
 		ON TIMER 10

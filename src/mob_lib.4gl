@@ -24,6 +24,7 @@ FUNCTION init_mob()
 	DEFINE l_dbname, l_ret STRING
 
 	LET m_cli_ver = ui.Interface.getFrontEndVersion()
+	LET gl_lib.m_logDir = os.path.pwd()
 	LET gl_lib.m_logName = base.Application.getProgramName()||"-"||m_cli_ver
 
 	CALL gl_initResources()
@@ -104,6 +105,11 @@ FUNCTION init_db() RETURNS BOOLEAN
 	CALL mob_app_lib.init_app_db()
 
 	RETURN TRUE
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION send_log()
+	IF mob_ws_lib.ws_putFile( os.path.join(gl_lib.gl_getLogDir(),gl_lib.gl_getLogName()||".log") ) THEN
+	END IF
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION view_log()
@@ -493,26 +499,21 @@ FUNCTION copy_file(l_to BOOLEAN)
 
 	IF base.Application.isMobile() THEN
 		IF os.path.exists("/storage/emulated/Download") THEN LET l_dir = "/storage/emulated/Download" END IF
-		IF os.path.exists("/sdcard/Download") THEN LET l_dir = "/sdcard/Download" END IF
 		IF os.path.exists("/storage/sdcard0/download") THEN LET l_dir = "/storage/sdcard0/download" END IF
+		IF os.path.exists("/sdcard/Download") THEN LET l_dir = "/sdcard/Download" END IF
 	ELSE
 		LET l_dir = os.path.join( fgl_getEnv("HOME"),"Downloads" )
 	END IF
 
 	IF ui.Interface.getFrontEndName() MATCHES "GM*" THEN
 		IF os.path.exists("/storage/emulated/Download") THEN LET l_tdir = "/storage/emulated/Download" END IF
-		IF os.path.exists("/sdcard/Download") THEN LET l_tdir = "/sdcard/Download" END IF
 		IF os.path.exists("/storage/sdcard0/download") THEN LET l_tdir = "/storage/sdcard0/download" END IF
+		IF os.path.exists("/sdcard/Download") THEN LET l_tdir = "/sdcard/Download" END IF
 	ELSE
 		CALL ui.interface.frontCall("standard","openDir",NULL,l_tdir)
 	END IF
 
-	IF l_to THEN
-		LET l_file = browse_local_files(l_dir)
-		IF l_file IS NULL THEN RETURN END IF
-		DISPLAY "Copy "||os.path.join(l_dir, l_file)||" to "||os.path.join(l_tdir, l_file)
-		CALL fgl_putFile(os.path.join(l_dir, l_file), os.path.join(l_tdir, l_file))
-	ELSE
+	IF l_to THEN -- the device
 		LET l_file = browse_remote_files()
 		IF l_file IS NULL THEN RETURN END IF
 		LET l_file = mob_ws_lib.ws_getFile( l_file )
@@ -539,6 +540,13 @@ FUNCTION copy_file(l_to BOOLEAN)
 		CATCH
 			CALL gl_lib.gl_winMessage(%"Error", SFMT(%"Failed Copy %1 to %2\nStatus:%3 %4",l_file,os.path.join(l_tdir, l_newfile),STATUS,ERR_GET(STATUS)), "exclamation")
 		END TRY
+	ELSE -- from the device
+		LET l_file = browse_local_files(l_dir)
+		IF l_file IS NULL THEN RETURN END IF
+		CALL gl_lib.gl_logIt( "Copy "||os.path.join(l_dir, l_file)||" to "||l_file )
+		CALL fgl_getFile(os.path.join(l_dir, l_file), l_file)
+		IF NOT mob_ws_lib.ws_putFile( l_file ) THEN
+		END IF
 	END IF
 END FUNCTION
 --------------------------------------------------------------------------------
@@ -580,7 +588,7 @@ FUNCTION browse_local_files(l_dir STRING)
 
 	IF l_files.getLength() = 0 THEN
 		ERROR "No Local Files!"
-		RETURN
+		RETURN NULL
 	END IF
 
 	OPEN WINDOW file_list WITH FORM "mob_files"
@@ -605,7 +613,12 @@ FUNCTION browse_remote_files()
 	LET l_json = mob_ws_lib.ws_getFileList()
 	IF l_json IS NULL THEN RETURN NULL END IF
 
-	CALL util.JSON.parse( l_json, l_files )
+	TRY
+		CALL util.JSON.parse( l_json, l_files )
+	CATCH
+		CALL gl_lib.gl_winMessage("Error",SFMT("Error Parsing JSON\n%1",l_json),"exclamation")
+		RETURN NULL
+	END TRY
 
 	OPEN WINDOW file_list WITH FORM "mob_files"
 	DISPLAY ARRAY l_files TO arr.*

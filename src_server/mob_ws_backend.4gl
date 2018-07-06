@@ -86,11 +86,13 @@ MAIN
 				WHEN "POST"
 					CASE
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("putPhoto") 
-							CALL getMedia(l_req, FALSE)
+							CALL receiveMedia(l_req, FALSE)
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("putVideo") 
-							CALL getMedia(l_req, TRUE)
+							CALL receiveMedia(l_req, TRUE)
+						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("putFile") 
+							CALL receiveFile(l_req)
 						WHEN gl_lib_restful.m_reqInfo.path.equalsIgnoreCase("sendData")
-							CALL getData(l_req)
+							CALL receiveData(l_req)
 						OTHERWISE
 							CALL setReply(201,%"ERR",SFMT(%"POST Operation '%1' not found",gl_lib_restful.m_reqInfo.path))
 					END CASE
@@ -335,10 +337,10 @@ FUNCTION getDets2()
 END FUNCTION
 --------------------------------------------------------------------------------
 -- getMedia - handle a photo/video being received.
-FUNCTION getMedia(l_req com.HTTPServiceRequest, l_vid BOOLEAN)
+FUNCTION receiveMedia(l_req com.HTTPServiceRequest, l_vid BOOLEAN)
 	DEFINE l_media_file, l_ret, l_imgid STRING
 
-	IF NOT checkToken("getMedia") THEN RETURN END IF
+	IF NOT checkToken("receiveMedia") THEN RETURN END IF
 
 	LET l_imgid = gl_lib_restful.gl_getParameterValueByKey("imgid")
 	IF l_imgid.subString(1,4) = "ERR:" THEN
@@ -369,11 +371,40 @@ FUNCTION getMedia(l_req com.HTTPServiceRequest, l_vid BOOLEAN)
 
 END FUNCTION
 --------------------------------------------------------------------------------
+-- getFile - handle a file being received.
+FUNCTION receiveFile(l_req com.HTTPServiceRequest)
+	DEFINE l_file, l_ret STRING
+
+	IF NOT checkToken("receiveFile") THEN RETURN END IF
+
+	CALL gl_lib.gl_logIt(%"Getting a File ...")
+	TRY
+		LET l_file = l_req.readFileRequest()
+	CATCH
+		CALL setReply(200,%"ERR",SFMT(%"ERR: File receive Failed: %1:%2",STATUS,ERR_GET(STATUS)))
+		RETURN
+	END TRY
+
+	CALL gl_lib.gl_logIt(%"Got :"||NVL(l_file,"NULL"))
+	IF os.Path.exists( l_file ) THEN
+		CALL setReply(200,%"OK", SFMT(%"File %1 received",l_file))
+	ELSE
+		CALL setReply(200,%"OK",%"ERR: File Doesn't Exists!")
+		RETURN
+	END IF
+
+	LET l_ret = mob_app_backend.process_file(l_file)
+	IF l_ret.subString(1,4) = "ERR:" THEN
+		CALL setReply(200,%"OK", l_ret)
+	END IF
+
+END FUNCTION
+--------------------------------------------------------------------------------
 -- simple fetch data from the server.
-FUNCTION getData(l_req com.HTTPServiceRequest)
+FUNCTION receiveData(l_req com.HTTPServiceRequest)
 	DEFINE l_str STRING
 
-	IF NOT checkToken("getData") THEN RETURN END IF
+	IF NOT checkToken("receiveData") THEN RETURN END IF
 
 	CALL gl_lib.gl_logIt(%"Getting Text Data ...")
 	TRY

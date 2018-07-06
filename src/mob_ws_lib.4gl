@@ -43,7 +43,7 @@ FUNCTION ws_putMedia(l_files, l_custid, l_jobid, l_jobref) RETURNS STRING
 		vid BOOLEAN
 	END RECORD
 	DEFINE l_custid INTEGER
-	DEFINE l_jobid, l_jobref STRING
+	DEFINE l_jobid, l_jobref, l_type STRING
 	DEFINE x SMALLINT
 	DEFINE l_errors SMALLINT
 	DEFINE l_tS DATETIME YEAR TO SECOND
@@ -60,9 +60,11 @@ FUNCTION ws_putMedia(l_files, l_custid, l_jobid, l_jobref) RETURNS STRING
 		LET l_info[x].filesize = l_files[x].size
 		LET l_info[x].timestamp = l_ts
 		LET l_info[x].type = IIF(l_files[x].vid,"Video","Photo")
+		LET l_type = IIF( l_files[x].vid,"video/mp4","image/jpg")
 		LET l_info[x].id = security.RandomGenerator.CreateUUIDString()
 		LET l_param = SFMT("%1?token=%2&custid=%3&jobid=%4&imgid=%5",IIF(l_files[x].vid,"putVideo","putPhoto"),m_security_token, l_custid, l_jobid, l_info[x].id)
-		LET l_info[x].sent_ok =  doRestRequestMedia(l_param, l_files[x].filename, l_files[x].vid)
+--		LET l_info[x].sent_ok =  doRestRequestMedia(l_param, l_files[x].filename, l_files[x].vid)
+		LET l_info[x].sent_ok =  doRestRequestPutFile(l_param, l_files[x].filename, l_type)
 		IF NOT l_info[x].sent_ok THEN LET l_errors = l_errors + 1 END IF
 		LET l_info[x].send_reply = m_ret.reply
 	END FOR
@@ -105,11 +107,31 @@ FUNCTION ws_getFileList() RETURNS STRING
 	RETURN m_ret.reply
 END FUNCTION
 --------------------------------------------------------------------------------
+-- Put a File to the server
+--
+-- @params l_fileName String
+FUNCTION ws_putFile(l_fileName STRING) RETURNS BOOLEAN
+	DEFINE l_type STRING
+	CASE os.path.extension( l_fileName )
+		WHEN "jpg" LET l_type = "image/jpg"
+		WHEN "mp4" LET l_type = "video/mp4"
+		WHEN "json" LET l_type = "application/json"
+		WHEN "xml" LET l_type = "application/xml"
+		OTHERWISE
+			LET l_type = "text/plain"
+	END CASE
+	IF NOT doRestRequestPutFile(SFMT("putFile?token=%1",m_security_token), l_fileName, l_type) THEN
+		RETURN FALSE
+	END IF
+	MESSAGE "File Uploaded to Server"
+	RETURN TRUE
+END FUNCTION
+--------------------------------------------------------------------------------
 -- Get a File from the server
 --
 -- @params l_fileName String
 FUNCTION ws_getFile(l_fileName STRING) RETURNS STRING
-	IF NOT doRestRequestFile(SFMT("getFile?token=%1&file=%2",m_security_token, l_fileName)) THEN
+	IF NOT doRestRequestGetFile(SFMT("getFile?token=%1&file=%2",m_security_token, l_fileName)) THEN
 		RETURN NULL
 	END IF
 	RETURN m_ret.reply
@@ -164,29 +186,24 @@ PRIVATE FUNCTION doRestRequest(l_param STRING) RETURNS BOOLEAN
 	RETURN TRUE
 END FUNCTION
 --------------------------------------------------------------------------------
--- Do the web service REST call to POST a Photo
-PRIVATE FUNCTION doRestRequestMedia(l_param STRING, l_media_file STRING, l_vid BOOLEAN) RETURNS BOOLEAN
+-- Do the web service REST call to POST a File
+PRIVATE FUNCTION doRestRequestPutFile(l_param STRING, l_file STRING, l_type STRING) RETURNS BOOLEAN
 	DEFINE l_url STRING
 	DEFINE l_req com.HttpRequest
 	DEFINE l_resp com.HttpResponse
 	DEFINE l_stat SMALLINT
 
-
 	LET l_url = g_ws_uri||l_param
-	CALL gl_lib.gl_logIt("doRestRequest URL:"||NVL(l_url,"NULL"))
+	CALL gl_lib.gl_logIt("doRestRequestPutFile URL:"||NVL(l_url,"NULL"))
 
-	DISPLAY "Media File:",l_media_file
+	DISPLAY "File:",l_file
 	TRY
 		LET l_req = com.HttpRequest.Create(l_url)
 		CALL l_req.setMethod("POST")
-		IF l_vid THEN
-			CALL l_req.setHeader("Content-Type", "video/mp4")
-		ELSE
-			CALL l_req.setHeader("Content-Type", "image/jpg")
-		END IF
+		CALL l_req.setHeader("Content-Type", l_type)
 		CALL l_req.setHeader("Accept", "application/json")
 		CALL l_req.setVersion("1.0")
-		CALL l_req.doFileRequest(l_media_file)
+		CALL l_req.doFileRequest(l_file)
 		LET l_resp = l_req.getResponse()
 		LET l_stat = l_resp.getStatusCode()
 		IF l_stat = 200 THEN
@@ -245,7 +262,7 @@ PRIVATE FUNCTION doRestRequestData(l_param STRING, l_data STRING)
 END FUNCTION
 --------------------------------------------------------------------------------
 -- Do the web service REST call to GET a File
-PRIVATE FUNCTION doRestRequestFile(l_param STRING) RETURNS BOOLEAN
+PRIVATE FUNCTION doRestRequestGetFile(l_param STRING) RETURNS BOOLEAN
 	DEFINE l_url STRING
 	DEFINE l_req com.HttpRequest
 	DEFINE l_resp com.HttpResponse

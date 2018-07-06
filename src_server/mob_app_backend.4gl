@@ -13,7 +13,7 @@ PUBLIC DEFINE m_media_uri STRING
 PUBLIC DEFINE m_media_path STRING
 PUBLIC DEFINE m_files_path STRING
 
-FUNCTION init_app_backend()
+FUNCTION init_app_backend() RETURNS STRING
 	DEFINE l_host STRING
 
 	LET m_media_path = fgl_getEnv("MEDIAPATH")
@@ -38,7 +38,37 @@ FUNCTION init_app_backend()
 	RETURN NULL
 END FUNCTION
 --------------------------------------------------------------------------------
-FUNCTION process_media(l_file STRING, l_vid BOOLEAN, l_imgid STRING )
+FUNCTION process_file(l_file STRING) RETURNS STRING
+	DEFINE l_file_path, l_newpath STRING
+
+	LET l_file_path = os.path.join(m_files_path, g_user CLIPPED)
+	IF NOT os.path.exists(l_file_path) THEN
+		IF NOT os.path.mkdir( l_file_path ) THEN
+			CALL gl_lib.gl_logIt(SFMT(%"New Directory Create '%1' Failed!",l_file_path))
+			RETURN SFMT(%"ERR: Media Path Failed to create %1!",l_file_path)
+		ELSE
+			CALL gl_lib.gl_logIt(SFMT(%"New Directory Created '%1'",l_file_path))
+		END IF
+	END IF
+
+	LET l_newpath = os.path.join( l_file_path, os.path.basename(l_file) )
+
+	IF os.Path.copy(l_file, l_newpath) THEN
+		CALL gl_lib.gl_logIt(SFMT(%"File %1 copied to %2",l_file, l_newpath))
+		IF NOT os.path.delete(l_file) THEN
+			CALL gl_lib.gl_logIt(SFMT(%"Failed to delete %1",l_file))
+		END IF
+	ELSE
+		CALL gl_lib.gl_logIt(SFMT(%"Failed to copy %1 to %2",l_file,l_newpath))
+		RETURN %"ERR: File processing failed!"
+	END IF
+
+--	CALL mob_db_backend.db_log_file( l_file )
+
+	RETURN "Okay"
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION process_media(l_file STRING, l_vid BOOLEAN, l_imgid STRING ) RETURNS STRING
 	DEFINE l_media_path, l_newpath STRING
 
 	LET l_media_path = os.path.join(m_media_path,l_imgid)
@@ -65,6 +95,6 @@ FUNCTION process_media(l_file STRING, l_vid BOOLEAN, l_imgid STRING )
 	RETURN "Okay"
 END FUNCTION
 --------------------------------------------------------------------------------
-FUNCTION getURL( l_file STRING )
+FUNCTION getURL( l_file STRING ) RETURNS STRING
 	RETURN m_media_uri||"/"||l_file
 END FUNCTION
