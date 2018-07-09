@@ -179,15 +179,16 @@ FUNCTION get_mediaLog(l_jobid LIKE ws_media_details.jobid )
 	FOREACH cur_ml USING l_jobid INTO m_ml[ m_ml.getLength() + 1 ].*
 --		LET m_ml[ m_ml.getLength() ].filepath = os.path.join(m_media_path, m_ml[ m_ml.getLength() ].filepath )
 		LET l_thumb = os.path.join( 
-					os.path.dirName(m_ml[ m_ml.getLength() ].filename),
+					m_ml[ m_ml.getLength() ].id CLIPPED,
 					getThumbFromImg( m_ml[ m_ml.getLength() ].filename))
-		LET l_thumb = os.path.join(m_ml[ m_ml.getLength() ].id CLIPPED,m_ml[ m_ml.getLength() ].filename CLIPPED)
+		--LET l_thumb = os.path.join(m_ml[ m_ml.getLength() ].id CLIPPED,m_ml[ m_ml.getLength() ].filename CLIPPED)
 		LET m_ml[ m_ml.getLength() ].img = os.path.join(m_media_path,l_thumb)
 		IF os.path.exists( m_ml[ m_ml.getLength() ].img ) THEN
 			DISPLAY m_ml[ m_ml.getLength() ].img||" Okay"
 		ELSE
 			DISPLAY m_ml[ m_ml.getLength() ].img||" Missing"
 		END IF
+		DISPLAY m_ml.getLength()," Img:",m_ml[ m_ml.getLength() ].img, " File:",m_ml[ m_ml.getLength() ].filename
 	END FOREACH
 	CALL m_ml.deleteElement( m_ml.getLength() )
 	MESSAGE SFMT(%"Got %1 MediaLog Records",m_ml.getLength())
@@ -200,12 +201,12 @@ END FUNCTION
 FUNCTION mediaLog()
 	DEFINE l_jobid LIKE ws_media_details.jobid
 	DEFINE l_ret, l_url, l_wc_url, l_file STRING
-	DEFINE l_d ui.Dialog
 	DEFINE l_dnd ui.DragDrop
+
 	OPEN WINDOW ml WITH FORM "mediaLog"
 	LET l_jobid = "%"
 	CALL get_mediaLog(l_jobid)
---	LET l_wc_url = "http://localhost/media.html"
+
 	DIALOG ATTRIBUTES(UNBUFFERED)
 		INPUT l_jobid, l_wc_url FROM f_jobid, f_wc ATTRIBUTES(WITHOUT DEFAULTS)
 			ON CHANGE f_jobid
@@ -222,25 +223,36 @@ FUNCTION mediaLog()
 					DISPLAY l_file TO f_img
 					CALL ui.Interface.frontCall("webcomponent", "call",
      				["formonly.f_wc", "setImage", l_url ], [l_ret] )
+					CALL DIALOG.setActionActive("rotate_l",TRUE)
+					CALL DIALOG.setActionActive("rotate_r",TRUE)
 				END IF
 				IF m_ml[arr_curr()].type = "Video" THEN
 					DISPLAY "Filepath:",m_ml[arr_curr()].filename
 					CALL ui.Interface.frontCall("webcomponent", "call",
      				["formonly.f_wc", "setVideo", l_url ], [l_ret] )
+					CALL DIALOG.setActionActive("rotate_l",FALSE)
+					CALL DIALOG.setActionActive("rotate_r",FALSE)
 				END IF
 				DISPLAY "ret:",l_ret
-			ON ACTION select
 
+
+			ON ACTION select
 				CALL ui.Interface.frontCall("standard","launchURL",[l_url],[l_ret])
+
+			ON ACTION rotate_l	CALL img_rotate(os.path.join(m_media_path,l_file), TRUE)  CALL get_mediaLog(l_jobid)
+
+			ON ACTION rotate_r	CALL img_rotate(os.path.join(m_media_path,l_file), FALSE)  CALL get_mediaLog(l_jobid)
+
 			ON ACTION refresh CALL get_mediaLog(l_jobid)
+
 			ON DELETE
 				LET int_flag = FALSE
-				IF fgl_winQuestion("Delete","Confirm Media File Delete?","No","Yes|No","question",0) = "Yes" THEN
+				IF gl_lib.gl_winQuestion("Delete","Confirm Media File Delete?","No","Yes|No","question") = "Yes" THEN
 					IF NOT os.path.delete( os.path.join(m_media_path, os.path.join( m_ml[arr_curr()].id CLIPPED,getThumbFromImg(l_file))) ) THEN
 						ERROR "Failed to delete local file:",STATUS,":",os.path.join(m_media_path, os.path.join( m_ml[arr_curr()].id CLIPPED,getThumbFromImg(l_file)))
 						LET int_flag = TRUE
 					END IF
-					IF NOT os.path.delete( os.path.join(m_media_path,l_file)) THEN
+					IF NOT os.path.delete( os.path.join(m_media_path,l_file) ) THEN
 						ERROR "Failed to delete local file:",STATUS,":",l_file
 						LET int_flag = TRUE
 					END IF
@@ -249,7 +261,7 @@ FUNCTION mediaLog()
 						LET int_flag = TRUE
 					END IF
 					IF int_flag THEN
-						IF fgl_winQuestion("Delete","Confirm Data Delete?","No","Yes|No","question",0) = "Yes" THEN
+						IF gl_lib.gl_winQuestion("Delete","Confirm Data Delete?","No","Yes|No","question") = "Yes" THEN
 							LET int_flag = FALSE
 						END IF
 					END IF
@@ -384,3 +396,28 @@ FUNCTION getThumbFromImg( l_nam STRING )
 	RETURN "tn_"||os.path.rootName( os.path.basename( l_nam.trim() ))||".gif"
 END FUNCTION
 --------------------------------------------------------------------------------
+FUNCTION img_rotate(l_file STRING, l_dir BOOLEAN)
+	DEFINE l_path, l_cwd STRING
+	LET l_path = os.path.dirName( l_file )
+	LET l_file = os.path.baseName( l_file )
+	DISPLAY "Rotate - Path:", l_path," File:",l_file
+	LET l_cwd = os.path.pwd()
+	IF NOT os.path.chDir( l_path ) THEN
+		CALL gl_lib.gl_winMessage("Error",SFMT("Change Directory to %1 Failed!","exclamation", l_path),"exclamation")
+		RETURN
+	END IF
+	IF NOT os.path.exists( l_file ) THEN
+		CALL gl_lib.gl_winMessage("Error",SFMT("Image not found %1!","exclamation", l_file),"exclamation")
+		RETURN
+	END IF
+
+	DISPLAY 'mogrify -rotate "'||IIF( l_dir, "90","-90")||'" '||l_file
+	RUN 'mogrify -rotate "'||IIF( l_dir, "90","-90")||'" '||l_file
+
+	LET l_file = getThumbFromImg( l_file )
+	DISPLAY 'mogrify -rotate "'||IIF( l_dir, "90","-90")||'" '||l_file
+	RUN 'mogrify -rotate "'||IIF( l_dir, "90","-90")||'" '||l_file
+
+	LET l_dir = os.path.chDir( l_cwd ) -- change back to original dir.
+END FUNCTION
+-------------------------------------------------------------------------------

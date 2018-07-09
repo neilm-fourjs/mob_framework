@@ -40,4 +40,6 @@
   <ActionDefault name="quit" text="Quit" image="fa-power-off" validate="no" defaultView="yes"  contextMenu="no"/>
   <ActionDefault name="select" text="Open" image="fa-chrome" validate="no" defaultView="yes"  contextMenu="no"/>
   <ActionDefault name="back" text="Back" image="fa-chevron-circle-left" />
+  <ActionDefault name="rotate_l" text="Rotate" image="fa-rotate-left" />
+  <ActionDefault name="rotate_r" text="Rotate" image="fa-rotate-right" />
 </ActionDefaultList>

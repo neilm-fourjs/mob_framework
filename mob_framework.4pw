@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Project defaultApplication="400358049" gstVersion="30a09" version="3.2">
+<Project defaultApplication="-1031729630" gstVersion="30a09" version="3.2">
   <Settings>
     <DynamicProperties version="2">
       <DynamicProperty description="Accent color (Android 5.0 and later)" initialValue="#9575CD" isDefaultInherited="false" isHidden="false" label="Accent color" name="gma-accent-color" readOnly="false" type="COLOR"/>
@@ -134,7 +134,7 @@
         <Directory includedFiles="*.42?" label="Binaries" sourceDirectory="$(ProjectDir)/bin_srv_ui"/>
         <Directory includedFiles="*.42?" label="Binaries_common" sourceDirectory="$(ProjectDir)/bin_common"/>
         <Directory label="etc" sourceDirectory="$(ProjectDir)/etc"/>
-        <Directory includedFiles="mob_ui_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_ifx"/>
+        <Directory includedFiles="mob_ui_be.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_ifx"/>
         <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
       </Package>
       <Package binaryName="mob_ui_backend_pgs" dependencies="-1031729630,1011122750,1804037942,455109296,1553065829,-994061721" label="mob_ui_backend_pgs" platform="Genero Application Server">
@@ -145,7 +145,7 @@
         <Directory includedFiles="*.42?" label="Binaries" sourceDirectory="$(ProjectDir)/bin_srv_ui"/>
         <Directory includedFiles="*.42?" label="Binaries_common" sourceDirectory="$(ProjectDir)/bin_common"/>
         <Directory label="etc" sourceDirectory="$(ProjectDir)/etc"/>
-        <Directory includedFiles="mob_ui_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_pgs"/>
+        <Directory includedFiles="mob_ui_be.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_pgs"/>
         <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
       </Package>
       <Package binaryName="mob_ws_backend_ifx" dependencies="991859968,-1451902566,-994061721,300690543,455109296,1553065829" label="mob_ws_backend_ifx" platform="Genero Application Server">
