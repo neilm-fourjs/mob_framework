@@ -42,7 +42,6 @@ PUBLIC DEFINE m_apptitle STRING
 PUBLIC DEFINE m_logo STRING
 PUBLIC DEFINE m_param t_param_rec
 
-
 FUNCTION init_app()
 
 	LET m_apptitle = gl_resources.gl_getResource("mob_apptitle","Genero Mobile Demo")

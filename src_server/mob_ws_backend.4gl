@@ -374,6 +374,7 @@ END FUNCTION
 -- getFile - handle a file being received.
 FUNCTION receiveFile(l_req com.HTTPServiceRequest)
 	DEFINE l_file, l_ret STRING
+	DEFINE l_size INTEGER
 
 	IF NOT checkToken("receiveFile") THEN RETURN END IF
 
@@ -387,15 +388,22 @@ FUNCTION receiveFile(l_req com.HTTPServiceRequest)
 
 	CALL gl_lib.gl_logIt(%"Got :"||NVL(l_file,"NULL"))
 	IF os.Path.exists( l_file ) THEN
-		CALL setReply(200,%"OK", SFMT(%"File %1 received",l_file))
+		LET l_size = os.path.size( l_file )
+		CALL setReply(200,%"OK", SFMT(%"File %1 received, size=%2",l_file,l_size))
 	ELSE
-		CALL setReply(200,%"OK",%"ERR: File Doesn't Exists!")
+		CALL setReply(200,%"ERR",%"ERR: File Doesn't Exists!")
+		RETURN
+	END IF
+	IF l_size = 0 THEN
+		CALL setReply(200,%"ERR",%"ERR: File 0 Size!")
+		IF os.path.delete( l_file ) THEN
+		END IF
 		RETURN
 	END IF
 
 	LET l_ret = mob_app_backend.process_file(l_file)
 	IF l_ret.subString(1,4) = "ERR:" THEN
-		CALL setReply(200,%"OK", l_ret)
+		CALL setReply(200,%"ERR", l_ret)
 	END IF
 
 END FUNCTION

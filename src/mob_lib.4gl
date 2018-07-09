@@ -496,6 +496,7 @@ END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION copy_file(l_to BOOLEAN)
 	DEFINE l_dir, l_tdir, l_file, l_newfile STRING
+	DEFINE l_size INTEGER
 
 	IF base.Application.isMobile() THEN
 		IF os.path.exists("/storage/emulated/Download") THEN LET l_dir = "/storage/emulated/Download" END IF
@@ -513,7 +514,7 @@ FUNCTION copy_file(l_to BOOLEAN)
 		CALL ui.interface.frontCall("standard","openDir",NULL,l_tdir)
 	END IF
 
-	IF l_to THEN -- the device
+	IF l_to THEN -- to the device from the server
 		LET l_file = browse_remote_files()
 		IF l_file IS NULL THEN RETURN END IF
 		LET l_file = mob_ws_lib.ws_getFile( l_file )
@@ -540,18 +541,26 @@ FUNCTION copy_file(l_to BOOLEAN)
 		CATCH
 			CALL gl_lib.gl_winMessage(%"Error", SFMT(%"Failed Copy %1 to %2\nStatus:%3 %4",l_file,os.path.join(l_tdir, l_newfile),STATUS,ERR_GET(STATUS)), "exclamation")
 		END TRY
-	ELSE -- from the device
+	ELSE -- from the device to server
 		LET l_file = browse_local_files(l_dir)
 		IF l_file IS NULL THEN RETURN END IF
-		CALL gl_lib.gl_logIt( "Copy "||os.path.join(l_dir, l_file)||" to "||l_file )
+		LET l_size = os.path.size( os.path.join(l_dir, l_file) )
+		LET l_newFile =  SFMT( "Copy %1(%2) to %3",os.path.join(l_dir, l_file), l_size, l_file )
+		CALL gl_lib.gl_winMessage("Info",l_newFile,"information")
+		CALL gl_lib.gl_logIt(l_newFile)
 		CALL fgl_getFile(os.path.join(l_dir, l_file), l_file)
-		IF NOT mob_ws_lib.ws_putFile( l_file ) THEN
+		SLEEP 1
+		IF os.path.size( l_file ) = 0 THEN
+			CALL gl_lib.gl_winMessage("Error","Not sending 0 size file!","exclamation")
+		ELSE
+			IF NOT mob_ws_lib.ws_putFile( l_file ) THEN
+			END IF
 		END IF
 	END IF
 END FUNCTION
 --------------------------------------------------------------------------------
 FUNCTION browse_local_files(l_dir STRING)
-	DEFINE l_file STRING
+	DEFINE l_file, l_fullFile STRING
 	DEFINE l_size INTEGER
 	DEFINE l_files DYNAMIC ARRAY OF RECORD 
 		name STRING,
@@ -559,19 +568,20 @@ FUNCTION browse_local_files(l_dir STRING)
 	END RECORD
 	DEFINE l_h INTEGER
 
-	IF NOT os.Path.chDir(l_dir) THEN
+{	IF NOT os.Path.chDir(l_dir) THEN
 		ERROR SFMT( %"Can't change to %1!", l_dir )
 		RETURN NULL
-	END IF
+	END IF}
 
 	CALL os.Path.dirSort("name", 1)
-	LET l_h = os.Path.dirOpen(".")
+	LET l_h = os.Path.dirOpen(l_dir) --".")
 	WHILE l_h > 0
 		LET l_file = os.Path.dirNext(l_h)
 		IF l_file IS NULL THEN EXIT WHILE END IF
-		IF NOT os.path.isFile(l_file)THEN CONTINUE WHILE END IF
+		LET l_fullFile = os.path.join( l_dir, l_file )
+		IF NOT os.path.isFile(l_fullFile)THEN CONTINUE WHILE END IF
 		LET l_files[ l_files.getLength() + 1 ].name = l_file
-		LET l_size = os.path.size(l_file)
+		LET l_size = os.path.size(l_fullFile)
 		IF l_size < 1024 THEN
 			LET l_files[ l_files.getLength() ].size = l_size||"b"
 		ELSE
@@ -592,6 +602,7 @@ FUNCTION browse_local_files(l_dir STRING)
 	END IF
 
 	OPEN WINDOW file_list WITH FORM "mob_files"
+	DISPLAY l_dir TO dir
 	DISPLAY ARRAY l_files TO arr.*
 	CLOSE WINDOW file_list
 
@@ -621,6 +632,7 @@ FUNCTION browse_remote_files()
 	END TRY
 
 	OPEN WINDOW file_list WITH FORM "mob_files"
+	DISPLAY "Remote Files:" TO dir
 	DISPLAY ARRAY l_files TO arr.*
 	CLOSE WINDOW file_list
 

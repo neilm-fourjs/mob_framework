@@ -1,11 +1,20 @@
 LAYOUT (TEXT="File List")
+VBOX
+GRID
+{
+[dir                                    ]
+}
+END -- GRID
 TABLE ( DOUBLECLICK=ACCEPT )
 {
 [f001                      |f002        ]
 }
 END -- TABLE
+END -- VBOX
 
 ATTRIBUTES
+dir = FORMONLY.dir;
+
 f001 = FORMONLY.name;
 f002 = FORMONLY.size;
 

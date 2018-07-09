@@ -793,9 +793,12 @@ END FUNCTION --}}}
 -- also check for and create the log folder if it doesn't exist.
 --	normally not required as it's created during package install.
 FUNCTION gl_getLogDir() RETURNS STRING
-	LET m_logDir = fgl_getEnv("LOGDIR")
 	LET m_logDate = TRUE
 	IF fgl_getEnv("LOGFILEDATE") = "false" THEN LET m_logDate = FALSE END IF
+
+	IF m_logDir IS NULL THEN
+		LET m_logDir = fgl_getEnv("LOGDIR")
+	END IF
 	IF m_logDir.getLength() < 1 THEN
 		LET m_logDir = "../logs/" -- default logdir
 	END IF

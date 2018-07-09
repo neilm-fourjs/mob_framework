@@ -99,10 +99,11 @@
         <Directory description="Web Components" destinationDirectory="$(RootDir)/webcomponents" label="Webcomponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
       </Package>
       <Package binaryName="mob_framework13" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin13" label="mob_framework13" platform="Android">
-        <DynamicProperty name="gma-accent-color" value="#5555ff"/>
-        <DynamicProperty name="gma-navigationBarBackground-color" value="#00007f"/>
-        <DynamicProperty name="gma-primary-color" value="#5500ff"/>
-        <DynamicProperty name="gma-primary-dark-color" value="#00007f"/>
+        <DynamicProperty name="gma-accent-color" value="#466d88"/>
+        <DynamicProperty name="gma-navigationBarBackground-color" value="#466d88"/>
+        <DynamicProperty name="gma-primary-color" value="#215178"/>
+        <DynamicProperty name="gma-primary-dark-color" value="#284646"/>
+        <DynamicProperty name="gma-primaryText-color" value="#083d9e"/>
         <DynamicProperty name="icon-hdpi" value="$(ProjectDir)/resources/hdpi.png"/>
         <DynamicProperty name="icon-ldpi" value="$(ProjectDir)/resources/ldpi.png"/>
         <DynamicProperty name="icon-mdpi" value="$(ProjectDir)/resources/mdpi.png"/>

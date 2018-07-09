@@ -221,6 +221,10 @@ PRIVATE FUNCTION doRestRequestPutFile(l_param STRING, l_file STRING, l_type STRI
 		CALL gl_lib.gl_winMessage("WS Error", m_ret.reply,"exclamation")
 		RETURN FALSE
 	END IF
+	IF m_ret.stat = "ERR" THEN
+		CALL gl_lib.gl_winMessage("WS Error", m_ret.reply,"exclamation")
+		RETURN FALSE
+	END IF
 	RETURN TRUE
 END FUNCTION
 --------------------------------------------------------------------------------
