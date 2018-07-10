@@ -2,6 +2,7 @@ SCHEMA njm_demo310
 
 TOOLBAR
 	ITEM select
+	ITEM open
 	ITEM refresh
 	ITEM delete
 	ITEM rotate_l
@@ -35,21 +36,6 @@ END -- TABLE
 HBOX
 GRID
 {
-[img                                    ]
-[                                       ]
-[                                       ]
-[                                       ]
-[                                       ]
-[                                       ]
-[                                       ]
-[                                       ]
-[                                       ]
-[                                       ]
-[                                       ]
-}
-END -- GRID
-GRID
-{
 [wc                                     ]
 [                                       ]
 [                                       ]
@@ -80,8 +66,6 @@ a003 = ws_media_details.filename, TITLE=%"File";
 a004 = ws_media_details.id, TITLE=%"ID";
 a005 = ws_media_details.timestamp, TITLE=%"Timestamp";
 IMAGE i = FORMONLY.img, AUTOSCALE;
-
-IMAGE img = FORMONLY.f_img, STRETCH=BOTH, AUTOSCALE, HIDDEN;
 
 WEBCOMPONENT wc = FORMONLY.f_wc, STRETCH=BOTH,COMPONENTTYPE="media";
 

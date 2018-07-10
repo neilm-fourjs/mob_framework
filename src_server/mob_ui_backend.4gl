@@ -200,7 +200,7 @@ END FUNCTION
 -- @returns
 FUNCTION mediaLog()
 	DEFINE l_jobid LIKE ws_media_details.jobid
-	DEFINE l_ret, l_url, l_wc_url, l_file STRING
+	DEFINE l_ret, l_url, l_wc_url, l_file, l_filePath STRING
 	DEFINE l_dnd ui.DragDrop
 
 	OPEN WINDOW ml WITH FORM "mediaLog"
@@ -216,18 +216,16 @@ FUNCTION mediaLog()
 			BEFORE ROW 
 				LET l_file = os.path.join( m_ml[arr_curr()].id CLIPPED,m_ml[arr_curr()].filename CLIPPED)
 				LET l_url = getURL(l_file)
+				LET l_filePath = os.path.join(m_media_path,l_file)
+				DISPLAY arr_curr(),":",m_ml[arr_curr()].type, " Filepath:",l_filePath
 				DISPLAY "URL:",l_url
-				DISPLAY arr_curr(),":",m_ml[arr_curr()].type
 				IF m_ml[arr_curr()].type = "Photo" THEN
-					DISPLAY "Filepath:",m_ml[arr_curr()].filename
-					DISPLAY l_file TO f_img
 					CALL ui.Interface.frontCall("webcomponent", "call",
      				["formonly.f_wc", "setImage", l_url ], [l_ret] )
 					CALL DIALOG.setActionActive("rotate_l",TRUE)
 					CALL DIALOG.setActionActive("rotate_r",TRUE)
 				END IF
 				IF m_ml[arr_curr()].type = "Video" THEN
-					DISPLAY "Filepath:",m_ml[arr_curr()].filename
 					CALL ui.Interface.frontCall("webcomponent", "call",
      				["formonly.f_wc", "setVideo", l_url ], [l_ret] )
 					CALL DIALOG.setActionActive("rotate_l",FALSE)
@@ -235,13 +233,21 @@ FUNCTION mediaLog()
 				END IF
 				DISPLAY "ret:",l_ret
 
-
 			ON ACTION select
 				CALL ui.Interface.frontCall("standard","launchURL",[l_url],[l_ret])
 
-			ON ACTION rotate_l	CALL img_rotate(os.path.join(m_media_path,l_file), TRUE)  CALL get_mediaLog(l_jobid)
+			ON ACTION open
+				CALL gl_lib.gl_openFileOnClient( l_filePath )
 
-			ON ACTION rotate_r	CALL img_rotate(os.path.join(m_media_path,l_file), FALSE)  CALL get_mediaLog(l_jobid)
+			ON ACTION rotate_l	
+				CALL img_rotate(l_filePath, TRUE)
+				CALL ui.Interface.frontCall("webcomponent", "call",
+     				["formonly.f_wc", "setImage", l_url ], [l_ret] )
+
+			ON ACTION rotate_r
+				CALL img_rotate(l_filePath, FALSE)
+				CALL ui.Interface.frontCall("webcomponent", "call",
+     				["formonly.f_wc", "setImage", l_url ], [l_ret] )
 
 			ON ACTION refresh CALL get_mediaLog(l_jobid)
 
@@ -271,6 +277,7 @@ FUNCTION mediaLog()
 				ELSE
 					LET int_flag = TRUE
 				END IF
+
 			ON DROP(l_dnd)
 				CALL DIALOG.insertRow("arr", l_dnd.getLocationRow())
 				LET m_ml[ l_dnd.getLocationRow() ].filename = l_dnd.getBuffer()
@@ -286,6 +293,10 @@ FUNCTION mediaLog()
 
 		END DISPLAY
 		ON ACTION back EXIT DIALOG
+		BEFORE DIALOG
+			IF ui.Interface.getFrontEndName() = "GBC" THEN
+				CALL DIALOG.setActionActive("open", FALSE)
+			END IF
 	END DIALOG
 	CLOSE WINDOW ml
 END FUNCTION

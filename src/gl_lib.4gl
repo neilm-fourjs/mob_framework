@@ -848,6 +848,26 @@ FUNCTION gl_getLogName() RETURNS STRING
 	RETURN m_logName
 END FUNCTION
 --------------------------------------------------------------------------------
+#+ Open File on Client
+#+
+#+ @param l_file File to open
+FUNCTION gl_openFileOnClient( l_file STRING )
+	DEFINE l_rDir, l_rOS, l_rFile, l_sep STRING
+	IF ui.interface.getFrontEndName() = "GBC" THEN RETURN END IF
+
+	CALL ui.interface.frontcall("standard", "feinfo",  ["datadirectory"],[l_rDir])
+	CALL ui.interface.frontcall("standard", "feinfo",  ["ostype"],[l_rOS])
+	LET l_sep = IIF(l_rOS == "WINDOWS","\\","/")
+	LET l_rFile = l_rDir||l_sep||os.path.basename(l_file)
+	TRY
+		CALL fgl_putFile( l_file, l_rFile )
+	CATCH
+		CALL gl_errPopup(SFMT(%"Failed to copy file to client\n%1 to %2\n%4:%5",l_file,l_rFile,STATUS,ERR_GET(STATUS)))
+		RETURN
+	END TRY
+	CALL ui.Interface.frontCall("standard","shellexec",[l_rFile],[l_sep])
+END FUNCTION
+--------------------------------------------------------------------------------
 #+ Gets sourcefile.module:line from a stacktrace.
 #+
 FUNCTION gl_getCallingModuleName() RETURNS STRING --{{{
