@@ -2,6 +2,7 @@
 -- Application Specific backend Code
 
 IMPORT os
+IMPORT util
 IMPORT FGL gl_lib
 IMPORT FGL mob_db_backend
 
@@ -95,6 +96,16 @@ FUNCTION process_media(l_file STRING, l_vid BOOLEAN, l_imgid STRING ) RETURNS ST
 	RETURN "Okay"
 END FUNCTION
 --------------------------------------------------------------------------------
-FUNCTION getURL( l_file STRING ) RETURNS STRING
-	RETURN m_media_uri||"/"||l_file
+#+ A get url to a media file
+#+ 
+#+ @param l_file File Name
+#+ @param l_mtime Optional file mod time
+FUNCTION getURL( l_file STRING, l_mtime STRING) RETURNS STRING
+	DEFINE l_mtime_i INTEGER
+	IF l_mtime IS NOT NULL THEN
+		LET l_mtime_i = util.Datetime.toSecondsSinceEpoch( util.Datetime.parse( l_mtime, "%Y-%m-%d %H:%M:%S" ) )
+		RETURN m_media_uri||"/"||l_file||"?m="||l_mtime_i
+	ELSE
+		RETURN m_media_uri||"/"||l_file
+	END IF
 END FUNCTION

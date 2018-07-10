@@ -375,7 +375,7 @@ FUNCTION db_get_media(l_key STRING)
 
 	DECLARE media_cur CURSOR FOR SELECT filename,id FROM ws_media_details WHERE jobid = l_key
 	FOREACH media_cur INTO l_file, l_id
-		LET l_media[ l_media.getLength() + 1 ] = getURL(l_id.trim()||"/"||l_file.trim())
+		LET l_media[ l_media.getLength() + 1 ] = getURL(l_id.trim()||"/"||l_file.trim(),NULL)
 	END FOREACH
 
 	RETURN util.JSON.stringify(l_media)

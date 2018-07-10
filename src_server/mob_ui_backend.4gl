@@ -215,8 +215,8 @@ FUNCTION mediaLog()
 		DISPLAY ARRAY m_ml TO arr.*
 			BEFORE ROW 
 				LET l_file = os.path.join( m_ml[arr_curr()].id CLIPPED,m_ml[arr_curr()].filename CLIPPED)
-				LET l_url = getURL(l_file)
 				LET l_filePath = os.path.join(m_media_path,l_file)
+				LET l_url = mob_app_backend.getURL(l_file, os.path.mtime( l_filePath ))
 				DISPLAY arr_curr(),":",m_ml[arr_curr()].type, " Filepath:",l_filePath
 				DISPLAY "URL:",l_url
 				IF m_ml[arr_curr()].type = "Photo" THEN
@@ -241,11 +241,13 @@ FUNCTION mediaLog()
 
 			ON ACTION rotate_l	
 				CALL img_rotate(l_filePath, TRUE)
+				LET l_url = mob_app_backend.getURL(l_file, os.path.mtime( l_filePath ))
 				CALL ui.Interface.frontCall("webcomponent", "call",
      				["formonly.f_wc", "setImage", l_url ], [l_ret] )
 
 			ON ACTION rotate_r
 				CALL img_rotate(l_filePath, FALSE)
+				LET l_url = mob_app_backend.getURL(l_file, os.path.mtime( l_filePath ))
 				CALL ui.Interface.frontCall("webcomponent", "call",
      				["formonly.f_wc", "setImage", l_url ], [l_ret] )
 
@@ -422,12 +424,12 @@ FUNCTION img_rotate(l_file STRING, l_dir BOOLEAN)
 		RETURN
 	END IF
 
-	DISPLAY 'mogrify -rotate "'||IIF( l_dir, "90","-90")||'" '||l_file
-	RUN 'mogrify -rotate "'||IIF( l_dir, "90","-90")||'" '||l_file
+	DISPLAY 'mogrify -rotate "'||IIF( l_dir, "-90","90")||'" '||l_file
+	RUN 'mogrify -rotate "'||IIF( l_dir, "-90","90")||'" '||l_file
 
 	LET l_file = getThumbFromImg( l_file )
-	DISPLAY 'mogrify -rotate "'||IIF( l_dir, "90","-90")||'" '||l_file
-	RUN 'mogrify -rotate "'||IIF( l_dir, "90","-90")||'" '||l_file
+	DISPLAY 'mogrify -rotate "'||IIF( l_dir, "-90","90")||'" '||l_file
+	RUN 'mogrify -rotate "'||IIF( l_dir, "-90","90")||'" '||l_file
 
 	LET l_dir = os.path.chDir( l_cwd ) -- change back to original dir.
 END FUNCTION
