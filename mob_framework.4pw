@@ -63,14 +63,59 @@
   </Settings>
   <LanguageList version="1.0"/>
   <PlatformList version="1.0"/>
-  <Group environment="value:DBDRIVER=dbmifx,value:FORCEHTTP=yes,dir:MEDIAURI=ws_mob_media,value:MEDIAPATH=../ws_mob_media,value:FGLAPPSERVER=8090,value:FGLIMAGEPATH=$(FGLDIR)/lib:$(FGLDIR)/lib/image2font.txt:$(MEDIAPATH):$(ProjectDir)" label="mob_project" language="Genero">
+  <Group environment="value:DBUSER=dbuser,value:DBDRIVER=dbmmdb,value:FORCEHTTP=yes,dir:MEDIAURI=ws_mob_media,value:MEDIAPATH=../ws_mob_media,value:FGLAPPSERVER=8090,value:FGLIMAGEPATH=$(FGLDIR)/lib:$(FGLDIR)/lib/image2font.txt:$(MEDIAPATH):$(ProjectDir)" label="mob_project" language="Genero">
     <Group label="_Packages" language="Genero">
       <Library binaryName="gas_ifx" excludeFromBuild="true" id="1011122750" label="gas_ifx">
         <File filePath="gas_ifx/mob_ui_be.xcf"/>
+        <File filePath="gas_ifx/mob_ws_backend.xcf"/>
+      </Library>
+      <Library binaryName="gas_mdb" excludeFromBuild="true" id="-35242948" label="gas_mdb">
+        <File filePath="gas_mdb/mob_ui_be.xcf"/>
+        <File filePath="gas_mdb/mob_ws_backend.xcf"/>
       </Library>
       <Library binaryName="gas_pgs" excludeFromBuild="true" id="401028987" label="gas_pgs">
         <File filePath="gas_pgs/mob_ui_be.xcf"/>
+        <File filePath="gas_pgs/mob_ws_backend.xcf"/>
       </Library>
+      <Package binaryName="mob_backend_ifx" dependencies="455109296,1553065829,-2026345039,-1031729630,300690543,-994061721,991859968,-1895871880,1011122750,1804037942" label="mob_backend_ifx" platform="Genero Application Server">
+        <DynamicProperty name="packageId" value="mob_backend"/>
+        <DynamicProperty name="packageLabel" value="mob_backend"/>
+        <DynamicProperty name="packageVersion" value="1000"/>
+        <DynamicProperty name="packageVersionName" value="1000"/>
+        <Directory includedFiles="*.42?" label="Binaries UI" sourceDirectory="$(ProjectDir)/bin_srv_ui"/>
+        <Directory includedFiles="*.42?" label="Binaries WS" sourceDirectory="$(ProjectDir)/bin_srv_ws"/>
+        <Directory includedFiles="*.42?" label="Binaries Common" sourceDirectory="$(ProjectDir)/bin_common"/>
+        <Directory label="Etc" sourceDirectory="$(ProjectDir)/etc"/>
+        <Directory includedFiles="*.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_ifx"/>
+        <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
+        <Directory label="Utils" sourceDirectory="$(ProjectDir)/utils"/>
+      </Package>
+      <Package binaryName="mob_backend_mdb" dependencies="455109296,1553065829,-2026345039,-35242948,-1031729630,300690543,-994061721,991859968,-1895871880,1804037942" label="mob_backend_mdb" platform="Genero Application Server">
+        <DynamicProperty name="packageId" value="mob_backend"/>
+        <DynamicProperty name="packageLabel" value="mob_backend"/>
+        <DynamicProperty name="packageVersion" value="1000"/>
+        <DynamicProperty name="packageVersionName" value="1000"/>
+        <Directory includedFiles="*.42?" label="Binaries UI" sourceDirectory="$(ProjectDir)/bin_srv_ui"/>
+        <Directory includedFiles="*.42?" label="Binaries WS" sourceDirectory="$(ProjectDir)/bin_srv_ws"/>
+        <Directory includedFiles="*.42?" label="Binaries Common" sourceDirectory="$(ProjectDir)/bin_common"/>
+        <Directory label="Etc" sourceDirectory="$(ProjectDir)/etc"/>
+        <Directory includedFiles="*.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_mdb"/>
+        <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
+        <Directory label="Utils" sourceDirectory="$(ProjectDir)/utils"/>
+      </Package>
+      <Package binaryName="mob_backend_pgs" dependencies="455109296,1553065829,-2026345039,-1031729630,300690543,-994061721,991859968,-1895871880,1804037942,401028987" label="mob_backend_pgs" platform="Genero Application Server">
+        <DynamicProperty name="packageId" value="mob_backend"/>
+        <DynamicProperty name="packageLabel" value="mob_backend"/>
+        <DynamicProperty name="packageVersion" value="1000"/>
+        <DynamicProperty name="packageVersionName" value="1000"/>
+        <Directory includedFiles="*.42?" label="Binaries UI" sourceDirectory="$(ProjectDir)/bin_srv_ui"/>
+        <Directory includedFiles="*.42?" label="Binaries WS" sourceDirectory="$(ProjectDir)/bin_srv_ws"/>
+        <Directory includedFiles="*.42?" label="Binaries Common" sourceDirectory="$(ProjectDir)/bin_common"/>
+        <Directory label="Etc" sourceDirectory="$(ProjectDir)/etc"/>
+        <Directory includedFiles="*.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_pgs"/>
+        <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
+        <Directory label="Utils" sourceDirectory="$(ProjectDir)/utils"/>
+      </Package>
       <Package binaryName="mob_framework12" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin12" label="mob_framework12" platform="Android">
         <DynamicProperty name="gma-accent-color" value="#5555ff"/>
         <DynamicProperty name="gma-navigationBarBackground-color" value="#00007f"/>
@@ -126,48 +171,6 @@
         <Directory description="Resources" includedFiles="*.4ad,*.4st,*.4tm,*.4tb,*.4sm,*.42s,*.iem" label="Resources" recursive="false" sourceDirectory="$(ProjectDir)/resources"/>
         <Directory description="Web Components" destinationDirectory="$(RootDir)/webcomponents" label="Webcomponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
       </Package>
-      <Package binaryName="mob_ui_backend_ifx" dependencies="-1031729630,1011122750,1804037942,455109296,1553065829,-994061721" label="mob_ui_backend_ifx" platform="Genero Application Server">
-        <DynamicProperty name="packageId" value="mob_ui_backend"/>
-        <DynamicProperty name="packageLabel" value="mob_ui_backend"/>
-        <DynamicProperty name="packageVersion" value="1000"/>
-        <DynamicProperty name="packageVersionName" value="1000"/>
-        <Directory includedFiles="*.42?" label="Binaries" sourceDirectory="$(ProjectDir)/bin_srv_ui"/>
-        <Directory includedFiles="*.42?" label="Binaries_common" sourceDirectory="$(ProjectDir)/bin_common"/>
-        <Directory label="etc" sourceDirectory="$(ProjectDir)/etc"/>
-        <Directory includedFiles="mob_ui_be.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_ifx"/>
-        <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
-      </Package>
-      <Package binaryName="mob_ui_backend_pgs" dependencies="-1031729630,1011122750,1804037942,455109296,1553065829,-994061721" label="mob_ui_backend_pgs" platform="Genero Application Server">
-        <DynamicProperty name="packageId" value="mob_ui_backend"/>
-        <DynamicProperty name="packageLabel" value="mob_ui_backend"/>
-        <DynamicProperty name="packageVersion" value="1000"/>
-        <DynamicProperty name="packageVersionName" value="1000"/>
-        <Directory includedFiles="*.42?" label="Binaries" sourceDirectory="$(ProjectDir)/bin_srv_ui"/>
-        <Directory includedFiles="*.42?" label="Binaries_common" sourceDirectory="$(ProjectDir)/bin_common"/>
-        <Directory label="etc" sourceDirectory="$(ProjectDir)/etc"/>
-        <Directory includedFiles="mob_ui_be.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_pgs"/>
-        <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
-      </Package>
-      <Package binaryName="mob_ws_backend_ifx" dependencies="991859968,-1451902566,-994061721,300690543,455109296,1553065829" label="mob_ws_backend_ifx" platform="Genero Application Server">
-        <DynamicProperty name="packageId" value="mob_ws_backend"/>
-        <DynamicProperty name="packageLabel" value="mob_ws_backend"/>
-        <DynamicProperty name="packageVersion" value="1000"/>
-        <DynamicProperty name="packageVersionName" value="1000"/>
-        <Directory label="Binaries" sourceDirectory="$(ProjectDir)/bin_srv_ws"/>
-        <Directory label="Binaries_common" sourceDirectory="$(ProjectDir)/bin_common"/>
-        <Directory includedFiles="mob_ws_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_ifx"/>
-        <Directory label="utils" sourceDirectory="$(ProjectDir)/utils"/>
-      </Package>
-      <Package binaryName="mob_ws_backend_pgs" dependencies="991859968,-1451902566,-994061721,300690543,455109296,1553065829" label="mob_ws_backend_pgs" platform="Genero Application Server">
-        <DynamicProperty name="packageId" value="mob_ws_backend"/>
-        <DynamicProperty name="packageLabel" value="mob_ws_backend"/>
-        <DynamicProperty name="packageVersion" value="1000"/>
-        <DynamicProperty name="packageVersionName" value="1000"/>
-        <Directory label="Binaries" sourceDirectory="$(ProjectDir)/bin_srv_ws"/>
-        <Directory label="Binaries_common" sourceDirectory="$(ProjectDir)/bin_common"/>
-        <Directory includedFiles="mob_ws_backend.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_pgs"/>
-        <Directory label="utils" sourceDirectory="$(ProjectDir)/utils"/>
-      </Package>
     </Group>
     <Group label="Common" targetDirectory="$(ProjectDir)/bin_common">
       <Library binaryName="backend" dependencies="-994061721,455109296" id="1553065829" label="backend">
@@ -207,6 +210,7 @@
           <File filePath="src/mob_framework.per"/>
           <File filePath="src/mob_login.per"/>
           <File filePath="src/show_media.per"/>
+          <File filePath="src/view_log.per"/>
         </VirtualFolder>
         <File filePath="src/mob_framework.4gl"/>
       </Application>
@@ -216,7 +220,6 @@
         <File filePath="src/mob_lib.inc"/>
         <File filePath="src/mob_ws_lib.4gl"/>
         <File filePath="src/mob_ws_lib_sc.4gl"/>
-        <File filePath="src/view_log.per"/>
       </Library>
     </Group>
     <Group label="mob_ui_backend" targetDirectory="$(ProjectDir)/bin_srv_ui">
@@ -235,12 +238,6 @@
       </Application>
     </Group>
     <Group environment="value:NEWUSERS=1" label="mob_ws_backend" language="Genero" targetDirectory="$(ProjectDir)/bin_srv_ws">
-      <Library binaryName="gas_ifx" excludeFromBuild="true" id="-1451902566" label="gas_ifx">
-        <File filePath="gas_ifx/mob_ws_backend.xcf"/>
-      </Library>
-      <Library binaryName="gas_pgs" excludeFromBuild="true" id="684194033" label="gas_pgs">
-        <File filePath="gas_pgs/mob_ws_backend.xcf"/>
-      </Library>
       <Application binaryName="mob_ws_backend" dependencies="-994061721,455109296,-1850712431,-1451902566,1553065829,-1895871880" id="991859968" label="mob_ws_backend">
         <File filePath="src_server/gl_lib_restful.4gl"/>
         <File filePath="src_server/mob_ws_backend.4gl"/>

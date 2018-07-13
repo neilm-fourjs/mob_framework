@@ -32,7 +32,7 @@ MAIN
 
 	LET m_ret.ver = WS_VER
 
-	CALL mob_db_backend.db_connect()
+	CALL mob_db_backend.db_connect(FALSE)
 
 	LET l_str = mob_app_backend.init_app_backend()
 

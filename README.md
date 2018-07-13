@@ -21,3 +21,13 @@ From the server:
 * accept photo and video files and produce a thumbnail for the photos.
 * provide a simple ui program to view the access / media / data captured by the service.
 * provide a simple gallery view for the photos send
+
+Backend Databases:
+* Informix
+* PostgreSQL
+* Maria DB
+
+For MariaDB added a user of 'dbuser' to connect to the database.
+MariaDB [(none)]> CREATE USER 'dbuser'@'%';
+MariaDB [(none)]> GRANT ALL PRIVILEGES ON *.* TO 'dbuser'@'%';
+

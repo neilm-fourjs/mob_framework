@@ -30,13 +30,13 @@ MAIN
 	DEFINE l_ret STRING
 	CALL STARTLOG( base.Application.getProgramName()||".err" )
 
-	CALL mob_db_backend.db_connect()
+	CALL mob_db_backend.db_connect(TRUE)
 
 --	RUN "env | sort > /tmp/"||base.Application.getProgramName()||".env"
 
 	CALL gl_lib.gl_logIt(SFMT("FGLIMAGEPATH=%1",fgl_getEnv("FGLIMAGEPATH")))
 
-	PREPARE pre_ml FROM "SELECT key, username, type, filename, id, timestamp FROM ws_media_details WHERE jobid LIKE ?"
+	PREPARE pre_ml FROM "SELECT md_key, username, type, filename, id, timestamp FROM ws_media_details WHERE jobid LIKE ?"
 
 	OPEN FORM f1 FROM "mob_ui_backend"
 	DISPLAY FORM f1
@@ -163,7 +163,7 @@ FUNCTION dataLog()
 		ON ACTION select
 				CALL ui.Interface.frontCall("standard", "launchURL", [ l_url ], l_ret)
 		ON ACTION delete
-			DELETE FROM ws_log_data WHERE key = m_dl[arr_curr()].key
+			DELETE FROM ws_log_data WHERE ld_key = m_dl[arr_curr()].key
 		ON ACTION refresh CALL get_dataLog()
 	END DISPLAY
 
@@ -213,6 +213,11 @@ FUNCTION mediaLog()
 				CALL get_mediaLog(l_jobid)
 		END INPUT
 		DISPLAY ARRAY m_ml TO arr.*
+			BEFORE DISPLAY
+				IF ui.Interface.getFrontEndName() = "GBC" THEN
+					CALL DIALOG.setActionActive("open", FALSE)
+				END IF
+
 			BEFORE ROW 
 				LET l_file = os.path.join( m_ml[arr_curr()].id CLIPPED,m_ml[arr_curr()].filename CLIPPED)
 				LET l_filePath = os.path.join(m_media_path,l_file)
@@ -274,7 +279,7 @@ FUNCTION mediaLog()
 						END IF
 					END IF
 					IF NOT int_flag THEN
-						DELETE FROM ws_media_details WHERE key = m_ml[arr_curr()].key
+						DELETE FROM ws_media_details WHERE md_key = m_ml[arr_curr()].key
 					END IF
 				ELSE
 					LET int_flag = TRUE
@@ -295,10 +300,6 @@ FUNCTION mediaLog()
 
 		END DISPLAY
 		ON ACTION back EXIT DIALOG
-		BEFORE DIALOG
-			IF ui.Interface.getFrontEndName() = "GBC" THEN
-				CALL DIALOG.setActionActive("open", FALSE)
-			END IF
 	END DIALOG
 	CLOSE WINDOW ml
 END FUNCTION

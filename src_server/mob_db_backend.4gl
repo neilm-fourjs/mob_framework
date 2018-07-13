@@ -12,17 +12,27 @@ SCHEMA njm_demo310
 GLOBALS
 	DEFINE g_user STRING
 END GLOBALS
+PUBLIC DEFINE m_ui BOOLEAN
 --------------------------------------------------------------------------------
-FUNCTION db_connect()
+FUNCTION db_connect(l_ui BOOLEAN)
 	DEFINE l_dbname STRING
-	DEFINE l_dbdriver STRING
+	DEFINE l_dbdriver, l_dbuser STRING
 	DEFINE l_ver INTEGER
+	DEFINE l_existsError INTEGER
 
+	LET m_ui = l_ui
 	LET l_dbname = fgl_getEnv("DBNAME")
 	IF l_dbname.getLength() < 2 THEN LET l_dbname = "njm_demo310" END IF
 	LET l_dbdriver = fgl_getEnv("DBDRIVER")
-	IF l_dbdriver = "dbmpgs" THEN
+	LET l_dbuser = fgl_getEnv("DBUSER")
+	IF l_dbdriver != "dbmifx" THEN
 		LET l_dbname = "db+driver='"||l_dbdriver||"',source='"||l_dbname||"'"
+		IF l_dbuser.getLength() > 1 THEN
+			LET l_dbname = l_dbname.append(",username='"||l_dbuser||"'")
+		END IF
+		LET l_existsError = -743
+	ELSE
+		LET l_existsError = -310
 	END IF
 	CALL gl_lib.gl_logIt(SFMT("Trying to connect to %1 ...",l_dbname))
 	TRY
@@ -39,6 +49,10 @@ FUNCTION db_connect()
 		)
 		INSERT INTO ws_backend_ver VALUES( WS_VER )
 	CATCH
+		IF STATUS != l_existsError THEN
+			CALL db_error(SFMT("CREATE TABLE ws_backend_ver Failed!\n%1:%2",STATUS,SQLERRMESSAGE))
+			EXIT PROGRAM
+		END IF
 		SELECT ver INTO l_ver FROM ws_backend_ver
 		IF l_ver != WS_VER THEN
 			CALL db_drops()
@@ -57,42 +71,58 @@ FUNCTION db_connect()
 			token_date DATETIME YEAR TO SECOND
 		)
 	CATCH
+		IF STATUS != l_existsError THEN
+			CALL db_error(SFMT("CREATE TABLE ws_users Failed!\n%1:%2",STATUS,SQLERRMESSAGE))
+			EXIT PROGRAM
+		END IF
 	END TRY
 
 	TRY
 		CREATE TABLE ws_log_access (
-			key SERIAL,
+			la_key SERIAL,
 			username CHAR(30),
 			request VARCHAR(250),
 			access_date DATETIME YEAR TO SECOND
 		)
 	CATCH
+		IF STATUS != l_existsError THEN
+			CALL db_error(SFMT("CREATE TABLE ws_log_access Failed!\n%1:%2",STATUS,SQLERRMESSAGE))
+			EXIT PROGRAM
+		END IF
 	END TRY
 
 	TRY
 		CREATE TABLE ws_log_media (
-			key SERIAL,
+			lm_key SERIAL,
 			username CHAR(30),
 			media_type CHAR(1),
 			filepath VARCHAR(250),
 			access_date DATETIME YEAR TO SECOND
 		)
 	CATCH
+		IF STATUS != l_existsError THEN
+			CALL db_error(SFMT("CREATE TABLE ws_log_media Failed!\n%1:%2",STATUS,SQLERRMESSAGE))
+			EXIT PROGRAM
+		END IF
 	END TRY
 
 	TRY
 		CREATE TABLE ws_log_data (
-			key SERIAL,
+			ld_key SERIAL,
 			username CHAR(30),
 			data TEXT,
 			access_date DATETIME YEAR TO SECOND
 		)
 	CATCH
+		IF STATUS != l_existsError THEN
+			CALL db_error(SFMT("CREATE TABLE ws_log_data Failed!\n%1:%2",STATUS,SQLERRMESSAGE))
+			EXIT PROGRAM
+		END IF
 	END TRY
 
 	TRY
 		CREATE TABLE ws_media_details (
-			key SERIAL,
+			md_key SERIAL,
 			username CHAR(30),
 			custid INTEGER,
 			jobid CHAR(30),
@@ -107,6 +137,10 @@ FUNCTION db_connect()
 			send_reply VARCHAR(100)
 		)
 	CATCH
+		IF STATUS != l_existsError THEN
+			CALL db_error(SFMT("CREATE TABLE ws_media_details Failed!\n%1:%2",STATUS,SQLERRMESSAGE))
+			EXIT PROGRAM
+		END IF
 	END TRY
 
 END FUNCTION
@@ -116,11 +150,13 @@ END FUNCTION
 -- 
 FUNCTION db_drops()
 	CALL gl_lib.gl_logIt(%"Dropping Backend DB Tables")
+	WHENEVER ERROR CONTINUE
 	DROP TABLE ws_users
 	DROP TABLE ws_log_access
 	DROP TABLE ws_log_media
 	DROP TABLE ws_log_data
 	DROP TABLE ws_media_details
+	WHENEVER ERROR STOP
 END FUNCTION
 --------------------------------------------------------------------------------
 -- Log the access to the service
@@ -379,4 +415,12 @@ FUNCTION db_get_media(l_key STRING)
 	END FOREACH
 
 	RETURN util.JSON.stringify(l_media)
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION db_error(l_msg STRING)
+	CALL gl_lib.gl_logIt(l_msg)
+	IF m_ui THEN
+		CALL gl_lib.gl_errPopup(l_msg)
+	END IF
+	EXIT PROGRAM
 END FUNCTION
