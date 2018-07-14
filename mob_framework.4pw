@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Project defaultApplication="-1031729630" gstVersion="30a09" version="3.2">
+<Project defaultApplication="400358049" gstVersion="30a09" version="3.2">
   <Settings>
     <DynamicProperties version="2">
       <DynamicProperty description="Accent color (Android 5.0 and later)" initialValue="#9575CD" isDefaultInherited="false" isHidden="false" label="Accent color" name="gma-accent-color" readOnly="false" type="COLOR"/>
@@ -168,7 +168,7 @@
         <Directory description="Database" includedFiles="*.db" label="Database" recursive="false" sourceDirectory="$(ProjectDir)/database"/>
         <Directory description="Images" includedFiles="*.png,*.jpg,*.ttf,image2font.txt" label="Images" sourceDirectory="$(ProjectDir)/images"/>
         <Directory description="Studio Library" includedFiles="*.42?" label="libgst" recursive="false" sourceDirectory="$(GSTLIBRARYDIR)/bin"/>
-        <Directory description="Resources" includedFiles="*.4ad,*.4st,*.4tm,*.4tb,*.4sm,*.42s,*.iem" label="Resources" recursive="false" sourceDirectory="$(ProjectDir)/resources"/>
+        <Directory description="Resources" includedFiles="*.4ad,*.4st,*.4tm,*.4tb,*.4sm,*.42s,*.iem,*.pem" label="Resources" recursive="false" sourceDirectory="$(ProjectDir)/resources"/>
         <Directory description="Web Components" destinationDirectory="$(RootDir)/webcomponents" label="Webcomponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
       </Package>
     </Group>

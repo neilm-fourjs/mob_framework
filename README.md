@@ -27,6 +27,19 @@ Backend Databases:
 * PostgreSQL
 * Maria DB
 
+
+For PostgreSQL
+        sudo -u postgres createuser <appuser>
+        sudo -u postgres createdb njm_demo310
+        sudo -u postgres psql
+        psql (9.6.7)
+        Type "help" for help.
+
+        postgres=# grant all privileges on database njm_demo310 to <appuser>;
+        GRANT
+        postgres=# \q
+
+
 For MariaDB added a user of 'dbuser' to connect to the database.
 MariaDB [(none)]> CREATE USER 'dbuser'@'%';
 MariaDB [(none)]> GRANT ALL PRIVILEGES ON *.* TO 'dbuser'@'%';

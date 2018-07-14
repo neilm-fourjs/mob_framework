@@ -2,3 +2,5 @@
 dbi.default.driver = "dbmsqt"
 
 mobile.environment.fglimagepath = "."
+
+security.global.ca = "letEncrpytCAList.pem"
