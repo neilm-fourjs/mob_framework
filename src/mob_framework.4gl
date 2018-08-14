@@ -43,7 +43,7 @@ MAIN
 		ON ACTION check_token
 			CALL mob_lib.check_token()
 		ON ACTION about
-			CALL ui.interface.frontCall("Android","showAbout",[],[])
+			CALL mob_lib.mobile_about()
 		ON ACTION view_log
 			CALL mob_lib.view_log()
 		ON ACTION send_log

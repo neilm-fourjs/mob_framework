@@ -27,7 +27,7 @@ FUNCTION init_mob()
 	LET gl_lib.m_logDir = os.path.pwd()
 	LET gl_lib.m_logName = base.Application.getProgramName()||"-"||m_cli_ver
 
-	CALL gl_initResources()
+	CALL gl_initResources() -- find and open the json confg file.
 
 	LET l_dbname = "mob_database.db"
 	TRY
@@ -166,6 +166,8 @@ FUNCTION login() RETURNS BOOLEAN
 
 	WHILE TRUE
 		INPUT BY NAME l_user, l_pass
+			ON ACTION about CALL mobile_about()
+		END INPUT
 		IF int_flag THEN EXIT PROGRAM END IF
 
 		LET l_now = CURRENT
@@ -642,4 +644,23 @@ FUNCTION browse_remote_files()
 		RETURN NULL
 	END IF
 	RETURN l_files[ arr_curr() ].name
+END FUNCTION
+--------------------------------------------------------------------------------
+FUNCTION mobile_about()
+	DEFINE l_info STRING
+	DEFINE l_sqlite STRING
+	PREPARE getver FROM "SELECT sqlite_version()"
+	EXECUTE getver INTO l_sqlite
+	LET l_info = ui.Interface.getFrontEndName()||"-"||ui.Interface.getFrontEndVersion()||"\nWS Ver:"||WS_VER||"\nSQLiteDB:"||l_sqlite
+	MENU "About" ATTRIBUTES(STYLE="dialog",IMAGE="fa-question", COMMENT=l_info)
+		BEFORE MENU
+			IF ui.Interface.getFrontEndName() != "GMA" THEN
+				CALL DIALOG.setActionHidden("gmaabout",TRUE)
+			END IF
+		ON ACTION gmaabout
+			CALL ui.interface.frontCall("Android","showAbout",[],[])
+		ON ACTION view_resource
+			CALL gl_resources.gl_showResourceFile("Resource File:")
+		ON ACTION close EXIT MENU
+	END MENU
 END FUNCTION

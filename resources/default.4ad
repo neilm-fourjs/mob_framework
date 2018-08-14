@@ -31,6 +31,8 @@
   <ActionDefault name="prevtab" text="Previous Folder Tab" acceleratorName="Control-Shift-Tab" contextMenu="no"/>
   <ActionDefault name="dialogtouched" validate="no" defaultView="no"  contextMenu="no"/>
 
+  <ActionDefault name="gmaabout" text="GMA About" image="gma_ic_genero" />
+  <ActionDefault name="about" text="About" image="fa-info" />
   <ActionDefault name="back" text="Back" image="fa-chevron-circle-left" />
   <ActionDefault name="send" text="Send" image="fa-sign-in" />
   <ActionDefault name="select" text="" image="fa-play-circle" />
