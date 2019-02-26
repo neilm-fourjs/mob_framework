@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Project defaultApplication="400358049" gstVersion="30a0a" version="3.2">
+<Project defaultApplication="400358049" gstVersion="31402" version="3.3">
   <Settings>
     <DynamicProperties version="2">
       <DynamicProperty description="Accent color (Android 5.0 and later)" initialValue="#9575CD" isDefaultInherited="false" isHidden="false" label="Accent color" name="gma-accent-color" readOnly="false" type="COLOR"/>
@@ -28,9 +28,10 @@
       <DynamicProperty description="76x76 pixel icon (used for home screen)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Icon (76x76 px)" name="icon76x76" readOnly="false" type="FILE"/>
       <DynamicProperty description="80x80 pixel icon (used for home screen)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Icon (80x80 px)" name="icon80x80" readOnly="false" type="FILE"/>
       <DynamicProperty description="87x87 pixel icon (used for home screen)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Icon (87x87 px)" name="icon87x87" readOnly="false" type="FILE"/>
-      <DynamicProperty description="Launch screen for iPhone 5" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (640x1136 px)" name="launchScreen" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen for iPhone 5/5S/SE (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (640x1136 px)" name="launchScreen" readOnly="false" type="FILE"/>
       <DynamicProperty description="Launch screen for iPad (landcape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1024x768 px)" name="launchScreen1024x768" readOnly="false" type="FILE"/>
       <DynamicProperty description="Launch screen for iPhone X (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1125x2436 px)" name="launchScreen1125x2436" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen for iPhone 5/5S/SE (landscape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1136x640 px)" name="launchScreen1136x640" readOnly="false" type="FILE"/>
       <DynamicProperty description="Launch screen for iPhone 6+/6s+/7+/8+ (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1242x2208 px)" name="launchScreen1242x2208" readOnly="false" type="FILE"/>
       <DynamicProperty description="Launch screen for iPhone 6/6s/7/8 (landscape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1334x750 px)" name="launchScreen1334x750" readOnly="false" type="FILE"/>
       <DynamicProperty description="Launch screen for iPad (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (1536x2048 px)" name="launchScreen1536x2048" readOnly="false" type="FILE"/>
@@ -43,28 +44,28 @@
       <DynamicProperty description="Launch screen for 12.9&quot; iPad Pro (landscape)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (2732x2048 px)" name="launchScreen2732x2048" readOnly="false" type="FILE"/>
       <DynamicProperty description="Launch screen for iPhone 6/6s/7/8 (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (750x1334 px)" name="launchScreen750x1334" readOnly="false" type="FILE"/>
       <DynamicProperty description="Launch screen for iPad (portrait)" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (768x1024 px)" name="launchScreen768x1024" readOnly="false" type="FILE"/>
-      <DynamicProperty description="Launch screen Screenboard file (Created from Xcode)" editorInfo="filters:*.storyboard *.xib;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (Xib file)" name="launchScreenXib" readOnly="false" type="FILE"/>
+      <DynamicProperty description="Launch screen Storyboard file (Created from Xcode)" editorInfo="filters:*.storyboard *.xib;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Launch Screen (Storyboard file)" name="launchScreenXib" readOnly="false" type="FILE"/>
       <DynamicProperty description="Package identifier" initialValue="" isDefaultInherited="false" isHidden="false" label="ID" name="packageId" readOnly="false" type="TEXT"/>
       <DynamicProperty description="Label of the package" initialValue="" isDefaultInherited="false" isHidden="false" label="Label" name="packageLabel" readOnly="false" type="TEXT"/>
       <DynamicProperty description="Version of the package" initialValue="1" isDefaultInherited="false" isHidden="false" label="Version" name="packageVersion" readOnly="false" type="TEXT"/>
       <DynamicProperty description="Version of the package displayed to the user" initialValue="1" isDefaultInherited="false" isHidden="false" label="VersionName" name="packageVersionName" readOnly="false" type="TEXT"/>
-      <DynamicProperty editorInfo="title:Permissions;description:Android permissions;icon:checkbox_checked;contains:ACCESS_CHECKIN_PROPERTIES|ACCESS_COARSE_LOCATION|ACCESS_FINE_LOCATION|ACCESS_LOCATION_EXTRA_COMMANDS|ACCESS_NETWORK_STATE|ACCESS_NOTIFICATION_POLICY|ACCESS_WIFI_STATE|ACCOUNT_MANAGER|ADD_VOICEMAIL|ALLOCATE_AGGRESSIVE|BATTERY_STATS|BIND_ACCESSIBILITY_SERVICE|BIND_APPWIDGET|BIND_AUTO_FILL|BIND_CARRIER_MESSAGING_SERVICE|BIND_CARRIER_SERVICES|BIND_CHOOSER_TARGET_SERVICE|BIND_CONDITION_PROVIDER_SERVICE|BIND_DEVICE_ADMIN|BIND_DREAM_SERVICE|BIND_INCALL_SERVICE|BIND_INPUT_METHOD|BIND_MIDI_DEVICE_SERVICE|BIND_NFC_SERVICE|BIND_NOTIFICATION_LISTENER_SERVICE|BIND_QUICK_SETTINGS_TILE|BIND_PRINT_SERVICE|BIND_REMOTEVIEWS|BIND_SCREENING_SERVICE|BIND_TELECOM_CONNECTION_SERVICE|BIND_TEXT_SERVICE|BIND_TV_INPUT|BIND_VISUAL_VOICEMAIL_SERVICE|BIND_VOICE_INTERACTION|BIND_VPN_SERVICE|BIND_VR_LISTENER_SERVICE|BIND_WALLPAPER|BLUETOOTH|BLUETOOTH_ADMIN|BLUETOOTH_PRIVILEGED|BODY_SENSORS|BROADCAST_PACKAGE_REMOVED|BROADCAST_SMS|BROADCAST_STICKY|BROADCAST_WAP_PUSH|C2DM_RECEIVE|C2D_MESSAGE|CALL_PHONE|CALL_PRIVILEGED|CAMERA|CAPTURE_AUDIO_OUTPUT|CAPTURE_SECURE_VIDEO_OUTPUT|CAPTURE_VIDEO_OUTPUT|CHANGE_COMPONENT_ENABLED_STATE|CHANGE_CONFIGURATION|CHANGE_NETWORK_STATE|CHANGE_WIFI_MULTICAST_STATE|CHANGE_WIFI_STATE|CLEAR_APP_CACHE|CONTROL_LOCATION_UPDATES|DELETE_CACHE_FILES|DELETE_PACKAGES|DIAGNOSTIC|DISABLE_KEYGUARD|DUMP|EXPAND_STATUS_BAR|FACTORY_TEST|GET_ACCOUNTS|GET_ACCOUNTS_PRIVILEGED|GET_PACKAGE_SIZE|GET_TASKS|GLOBAL_SEARCH|INSTALL_LOCATION_PROVIDER|INSTALL_PACKAGES|INSTALL_SHORTCUT|INSTANT_APP_FOREGROUND_SERVICE|INTERNET|KILL_BACKGROUND_PROCESSES|LOCATION_HARDWARE|MANAGE_DOCUMENTS|MANAGE_OWN_CALLS|MASTER_CLEAR|MEDIA_CONTENT_CONTROL|MODIFY_AUDIO_SETTINGS|MODIFY_PHONE_STATE|MOUNT_FORMAT_FILESYSTEMS|MOUNT_UNMOUNT_FILESYSTEMS|NFC|PACKAGE_USAGE_STATS|PERSISTENT_ACTIVITY|PROCESS_OUTGOING_CALLS|READ_CALENDAR|READ_CALL_LOG|READ_CONTACTS|READ_EXTERNAL_STORAGE|READ_FRAME_BUFFER|READ_INPUT_STATE|READ_LOGS|READ_PHONE_NUMBER|READ_PHONE_STATE|READ_SMS|READ_SYNC_SETTINGS|READ_SYNC_STATS|READ_VOICEMAIL|REBOOT|RECEIVE_BOOT_COMPLETED|RECEIVE_MMS|RECEIVE_SMS|RECEIVE_WAP_PUSH|RECORD_AUDIO|REORDER_TASKS|REQUEST_DELETE_PACKAGES|REQUEST_IGNORE_BATTERY_OPTIMIZATIONS|REQUEST_INSTALL_PACKAGES|RESTART_PACKAGES|RESTRICTED_VR_ACCESS|RUN_IN_BACKGROUND|SEND_RESPOND_VIA_MESSAGE|SEND_SMS|SET_ALARM|SET_ALWAYS_FINISH|SET_ANIMATION_SCALE|SET_DEBUG_APP|SET_PREFERRED_APPLICATIONS|SET_PROCESS_LIMIT|SET_TIME|SET_TIME_ZONE|SET_WALLPAPER|SET_WALLPAPER_HINTS|SIGNAL_PERSISTENT_PROCESSES|STATUS_BAR|SYSTEM_ALERT_WINDOW|TRANSMIT_IR|UNINSTALL_SHORTCUT|UPDATE_DEVICE_STATS|USE_DATA_IN_BACKGROUND|USE_FINGERPRINT|USE_SIP|VIBRATE|WAKE_LOCK|WRITE_APN_SETTINGS|WRITE_CALENDAR|WRITE_CALL_LOG|WRITE_CONTACTS|WRITE_EXTERNAL_STORAGE|WRITE_GSERVICES|WRITE_SECURE_SETTINGS|WRITE_SETTINGS|WRITE_SYNC_SETTINGS|WRITE_VOICEMAIL" initialValue="ACCESS_NETWORK_STATE||ACCESS_WIFI_STATE||CHANGE_NETWORK_STATE||INSTALL_SHORTCUT||INTERNET||MOUNT_FORMAT_FILESYSTEMS||READ_LOGS" isDefaultInherited="false" isHidden="false" label="Permissions" name="permissions" readOnly="false" type="MULTIPLEBOOLEAN"/>
+      <DynamicProperty editorInfo="title:Permissions;description:Android permissions;icon:checkbox_checked;contains:ACCEPT_HANDOVER|ACCESS_CHECKIN_PROPERTIES|ACCESS_COARSE_LOCATION|ACCESS_FINE_LOCATION|ACCESS_LOCATION_EXTRA_COMMANDS|ACCESS_NETWORK_STATE|ACCESS_NOTIFICATION_POLICY|ACCESS_WIFI_STATE|ACCOUNT_MANAGER|ADD_VOICEMAIL|ANSWER_PHONE_CALLS|BATTERY_STATS|BIND_ACCESSIBILITY_SERVICE|BIND_APPWIDGET|BIND_AUTOFILL_SERVICE|BIND_CARRIER_MESSAGING_SERVICE|BIND_CARRIER_SERVICES|BIND_CHOOSER_TARGET_SERVICE|BIND_CONDITION_PROVIDER_SERVICE|BIND_DEVICE_ADMIN|BIND_DREAM_SERVICE|BIND_INCALL_SERVICE|BIND_INPUT_METHOD|BIND_MIDI_DEVICE_SERVICE|BIND_NFC_SERVICE|BIND_NOTIFICATION_LISTENER_SERVICE|BIND_QUICK_SETTINGS_TILE|BIND_PRINT_SERVICE|BIND_REMOTEVIEWS|BIND_SLICE|BIND_SCREENING_SERVICE|BIND_TELECOM_CONNECTION_SERVICE|BIND_TEXT_SERVICE|BIND_TV_INPUT|BIND_VISUAL_VOICEMAIL_SERVICE|BIND_VOICE_INTERACTION|BIND_VPN_SERVICE|BIND_VR_LISTENER_SERVICE|BIND_WALLPAPER|BLUETOOTH|BLUETOOTH_ADMIN|BLUETOOTH_PRIVILEGED|BODY_SENSORS|BROADCAST_PACKAGE_REMOVED|BROADCAST_SMS|BROADCAST_STICKY|BROADCAST_WAP_PUSH|C2DM_RECEIVE|C2D_MESSAGE|CALL_PHONE|CALL_PRIVILEGED|CAMERA|CAPTURE_AUDIO_OUTPUT|CAPTURE_SECURE_VIDEO_OUTPUT|CAPTURE_VIDEO_OUTPUT|CHANGE_COMPONENT_ENABLED_STATE|CHANGE_CONFIGURATION|CHANGE_NETWORK_STATE|CHANGE_WIFI_MULTICAST_STATE|CHANGE_WIFI_STATE|CLEAR_APP_CACHE|CONTROL_LOCATION_UPDATES|DELETE_CACHE_FILES|DELETE_PACKAGES|DIAGNOSTIC|DISABLE_KEYGUARD|DUMP|EXPAND_STATUS_BAR|FACTORY_TEST|GET_ACCOUNTS|GET_ACCOUNTS_PRIVILEGED|GET_PACKAGE_SIZE|GET_TASKS|GLOBAL_SEARCH|INSTALL_LOCATION_PROVIDER|INSTALL_PACKAGES|INSTALL_SHORTCUT|INSTANT_APP_FOREGROUND_SERVICE|INTERNET|KILL_BACKGROUND_PROCESSES|LOCATION_HARDWARE|MANAGE_DOCUMENTS|MANAGE_OWN_CALLS|MASTER_CLEAR|MEDIA_CONTENT_CONTROL|MODIFY_AUDIO_SETTINGS|MODIFY_PHONE_STATE|MOUNT_FORMAT_FILESYSTEMS|MOUNT_UNMOUNT_FILESYSTEMS|NFC|NFC_TRANSACTION_EVENT|PACKAGE_USAGE_STATS|PERSISTENT_ACTIVITY|PROCESS_OUTGOING_CALLS|READ_CALENDAR|READ_CALL_LOG|READ_CONTACTS|READ_EXTERNAL_STORAGE|READ_FRAME_BUFFER|READ_INPUT_STATE|READ_LOGS|READ_PHONE_NUMBER|READ_PHONE_NUMBERS|READ_PHONE_STATE|READ_SMS|READ_SYNC_SETTINGS|READ_SYNC_STATS|READ_VOICEMAIL|REBOOT|RECEIVE_BOOT_COMPLETED|RECEIVE_MMS|RECEIVE_SMS|RECEIVE_WAP_PUSH|RECORD_AUDIO|REORDER_TASKS|REQUEST_COMPANION_RUN_IN_BACKGROUND|REQUEST_COMPANION_USE_DATA_IN_BACKGROUND|REQUEST_DELETE_PACKAGES|REQUEST_IGNORE_BATTERY_OPTIMIZATIONS|REQUEST_INSTALL_PACKAGES|RESTART_PACKAGES|SEND_RESPOND_VIA_MESSAGE|SEND_SMS|SET_ALARM|SET_ALWAYS_FINISH|SET_ANIMATION_SCALE|SET_DEBUG_APP|SET_PREFERRED_APPLICATIONS|SET_PROCESS_LIMIT|SET_TIME|SET_TIME_ZONE|SET_WALLPAPER|SET_WALLPAPER_HINTS|SIGNAL_PERSISTENT_PROCESSES|STATUS_BAR|SYSTEM_ALERT_WINDOW|TRANSMIT_IR|UNINSTALL_SHORTCUT|UPDATE_DEVICE_STATS|USE_FINGERPRINT|USE_SIP|VIBRATE|WAKE_LOCK|WRITE_APN_SETTINGS|WRITE_CALENDAR|WRITE_CALL_LOG|WRITE_CONTACTS|WRITE_EXTERNAL_STORAGE|WRITE_GSERVICES|WRITE_SECURE_SETTINGS|WRITE_SETTINGS|WRITE_SYNC_SETTINGS|WRITE_VOICEMAIL" initialValue="ACCESS_NETWORK_STATE||ACCESS_WIFI_STATE||CHANGE_NETWORK_STATE||INSTALL_SHORTCUT||INTERNET||MOUNT_FORMAT_FILESYSTEMS||READ_LOGS" isDefaultInherited="false" isHidden="false" label="Permissions" name="permissions" readOnly="false" type="MULTIPLEBOOLEAN"/>
       <DynamicProperty description="Requirements" editorInfo="title:Requirements;description:iOS Requirements;icon:checkbox_checked;contains:accelerometer|auto-focus-camera|armv6|armv7|bluetooth-le|camera-flash|front-facing-camera|gamekit|gps|gyroscope|healthkit|magnetometer|metal|microphone|location-services|opengles-1|opengles-2|opengles-3|peer-peer|sms|still-camera|telephony|video-camera|wifi" initialValue="wifi" isDefaultInherited="false" isHidden="true" label="Requirements" name="required" readOnly="false" type="MULTIPLEBOOLEAN"/>
       <DynamicProperty description="High-DPI Status Icon (36x36 px) path" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Status Icon-hdpi (36x36 px)" name="status-icon-hdpi" readOnly="false" type="FILE"/>
       <DynamicProperty description="Medium-DPI Status Icon (24x24 px) path" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Status Icon-mdpi (24x24 px)" name="status-icon-mdpi" readOnly="false" type="FILE"/>
       <DynamicProperty description="Extra High-DPI Status Icon (48x48 px) path" editorInfo="filters:*.png;openDirDialog:true;replaceDocPath:$(ProjectDir)" initialValue="" isDefaultInherited="false" isHidden="false" label="Status Icon-xhdpi (48x48 px)" name="status-icon-xhdpi" readOnly="false" type="FILE"/>
       <DynamicPropertyGroup collapsed="false" description="Android" label="Android" name="AndroidGroup" properties="packageVersionName;gma-primary-color;gma-primary-dark-color;gma-accent-color;gma-actionbar-color;gma-primaryText-color;gma-windowBackground-color;gma-navigationBarBackground-color;icon-ldpi;icon-mdpi;icon-hdpi;icon-xhdpi;icon-xxhdpi;status-icon-mdpi;status-icon-hdpi;status-icon-xhdpi;permissions;gma-cordova"/>
       <DynamicPropertyGroup collapsed="false" description="Package" label="Package" name="PackageGroup" properties="packageId;packageLabel;packageVersion"/>
-      <DynamicPropertyGroup collapsed="false" description="iOS" label="iOS" name="iOSGroup" properties="launchScreen;launchScreen750x1334;launchScreen1334x750;launchScreen1242x2208;launchScreen2208x1242;launchScreen1125x2436;launchScreen2436x1125;launchScreen768x1024;launchScreen1024x768;launchScreen1536x2048;launchScreen2048x1536;launchScreen2224x1668;launchScreen1668x2224;launchScreen2048x2732;launchScreen2732x2048;launchScreenXib;icon29x29;icon40x40;icon58x58;icon60x60;icon76x76;icon80x80;icon87x87;icon120x120;icon152x152;icon167x167;icon180x180;icon1024x1024;required;gmi-cordova"/>
+      <DynamicPropertyGroup collapsed="false" description="iOS" label="iOS" name="iOSGroup" properties="launchScreen;launchScreen1136x640;launchScreen750x1334;launchScreen1334x750;launchScreen1242x2208;launchScreen2208x1242;launchScreen1125x2436;launchScreen2436x1125;launchScreen768x1024;launchScreen1024x768;launchScreen1536x2048;launchScreen2048x1536;launchScreen2224x1668;launchScreen1668x2224;launchScreen2048x2732;launchScreen2732x2048;launchScreenXib;icon29x29;icon40x40;icon58x58;icon60x60;icon76x76;icon80x80;icon87x87;icon120x120;icon152x152;icon167x167;icon180x180;icon1024x1024;required;gmi-cordova"/>
     </DynamicProperties>
     <NodeInfos version="1">
-      <NodeInfo mimeType="pm/package" properties="packageId;packageLabel;packageVersion;packageVersionName;launchScreen;launchScreen750x1334;launchScreen1334x750;launchScreen1242x2208;launchScreen2208x1242;launchScreen1125x2436;launchScreen2436x1125;launchScreen768x1024;launchScreen1024x768;launchScreen1536x2048;launchScreen2048x1536;launchScreen2224x1668;launchScreen1668x2224;launchScreen2048x2732;launchScreen2732x2048;launchScreenXib;icon29x29;icon40x40;icon58x58;icon60x60;icon76x76;icon80x80;icon87x87;icon120x120;icon152x152;icon167x167;icon180x180;icon1024x1024;gma-primary-color;gma-primary-dark-color;gma-accent-color;gma-actionbar-color;gma-primaryText-color;gma-windowBackground-color;gma-navigationBarBackground-color;icon-ldpi;icon-mdpi;icon-hdpi;icon-xhdpi;icon-xxhdpi;status-icon-mdpi;status-icon-hdpi;status-icon-xhdpi;permissions;required;gma-cordova;gmi-cordova"/>
+      <NodeInfo mimeType="pm/package" properties="packageId;packageLabel;packageVersion;packageVersionName;launchScreen;launchScreen1136x640;launchScreen750x1334;launchScreen1334x750;launchScreen1242x2208;launchScreen2208x1242;launchScreen1125x2436;launchScreen2436x1125;launchScreen768x1024;launchScreen1024x768;launchScreen1536x2048;launchScreen2048x1536;launchScreen2224x1668;launchScreen1668x2224;launchScreen2048x2732;launchScreen2732x2048;launchScreenXib;icon29x29;icon40x40;icon58x58;icon60x60;icon76x76;icon80x80;icon87x87;icon120x120;icon152x152;icon167x167;icon180x180;icon1024x1024;gma-primary-color;gma-primary-dark-color;gma-accent-color;gma-actionbar-color;gma-primaryText-color;gma-windowBackground-color;gma-navigationBarBackground-color;icon-ldpi;icon-mdpi;icon-hdpi;icon-xhdpi;icon-xxhdpi;status-icon-mdpi;status-icon-hdpi;status-icon-xhdpi;permissions;required;gma-cordova;gmi-cordova"/>
     </NodeInfos>
   </Settings>
   <LanguageList version="1.0"/>
   <PlatformList version="1.0"/>
-  <Group environment="value:DBUSER=dbuser,value:DBDRIVER=dbmmdb,value:FORCEHTTP=yes,dir:MEDIAURI=ws_mob_media,value:MEDIAPATH=../ws_mob_media,value:FGLAPPSERVER=8090,value:FGLIMAGEPATH=$(FGLDIR)/lib:$(FGLDIR)/lib/image2font.txt:$(MEDIAPATH):$(ProjectDir)" label="mob_project" language="Genero">
-    <Group label="_Packages" language="Genero">
+  <Group environment="value:DBUSER=dbuser,value:DBDRIVER=dbmmdb,value:FORCEHTTP=yes,dir:MEDIAURI=ws_mob_media,value:MEDIAPATH=../ws_mob_media,value:FGLAPPSERVER=8090,value:FGLIMAGEPATH=$(FGLDIR)/lib:$(FGLDIR)/lib/image2font.txt:$(MEDIAPATH):$(ProjectDir)" id="1182990552" label="mob_project" language="Genero" targetDirectory="$(ProjectDir)/bin320">
+    <Group id="-726399032" label="_Packages" language="Genero">
       <Library binaryName="gas_ifx" excludeFromBuild="true" id="1011122750" label="gas_ifx">
         <File filePath="gas_ifx/mob_ui_be.xcf"/>
         <File filePath="gas_ifx/mob_ws_backend.xcf"/>
@@ -77,7 +78,7 @@
         <File filePath="gas_pgs/mob_ui_be.xcf"/>
         <File filePath="gas_pgs/mob_ws_backend.xcf"/>
       </Library>
-      <Package binaryName="mob_backend_ifx" dependencies="455109296,1553065829,-2026345039,-1031729630,300690543,-994061721,991859968,-1895871880,1011122750,1804037942" label="mob_backend_ifx" platform="Genero Application Server">
+      <Package binaryName="mob_backend_ifx" dependencies="455109296,1553065829,-2026345039,-1031729630,300690543,-994061721,991859968,-1895871880,1011122750,1804037942" id="1989927688" label="mob_backend_ifx" platform="Genero Application Server">
         <DynamicProperty name="packageId" value="mob_backend"/>
         <DynamicProperty name="packageLabel" value="mob_backend"/>
         <DynamicProperty name="packageVersion" value="1000"/>
@@ -90,7 +91,7 @@
         <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
         <Directory label="Utils" sourceDirectory="$(ProjectDir)/utils"/>
       </Package>
-      <Package binaryName="mob_backend_mdb" dependencies="455109296,1553065829,-2026345039,-35242948,-1031729630,300690543,-994061721,991859968,-1895871880,1804037942" label="mob_backend_mdb" platform="Genero Application Server">
+      <Package binaryName="mob_backend_mdb" dependencies="455109296,1553065829,-2026345039,-35242948,-1031729630,300690543,-994061721,991859968,-1895871880,1804037942" id="-83722863" label="mob_backend_mdb" platform="Genero Application Server">
         <DynamicProperty name="packageId" value="mob_backend"/>
         <DynamicProperty name="packageLabel" value="mob_backend"/>
         <DynamicProperty name="packageVersion" value="1000"/>
@@ -103,7 +104,7 @@
         <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
         <Directory label="Utils" sourceDirectory="$(ProjectDir)/utils"/>
       </Package>
-      <Package binaryName="mob_backend_pgs" dependencies="455109296,1553065829,-2026345039,-1031729630,300690543,-994061721,991859968,-1895871880,1804037942,401028987" label="mob_backend_pgs" platform="Genero Application Server">
+      <Package binaryName="mob_backend_pgs" dependencies="455109296,1553065829,-2026345039,-1031729630,300690543,-994061721,991859968,-1895871880,1804037942,401028987" id="84246928" label="mob_backend_pgs" platform="Genero Application Server">
         <DynamicProperty name="packageId" value="mob_backend"/>
         <DynamicProperty name="packageLabel" value="mob_backend"/>
         <DynamicProperty name="packageVersion" value="1000"/>
@@ -116,63 +117,7 @@
         <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
         <Directory label="Utils" sourceDirectory="$(ProjectDir)/utils"/>
       </Package>
-      <Package binaryName="mob_framework_15" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin15" label="mob_framework_15" platform="Android">
-        <DynamicProperty name="gma-accent-color" value="#466d88"/>
-        <DynamicProperty name="gma-navigationBarBackground-color" value="#466d88"/>
-        <DynamicProperty name="gma-primary-color" value="#215178"/>
-        <DynamicProperty name="gma-primary-dark-color" value="#284646"/>
-        <DynamicProperty name="gma-primaryText-color" value="#083d9e"/>
-        <DynamicProperty name="icon-hdpi" value="$(ProjectDir)/resources/hdpi.png"/>
-        <DynamicProperty name="icon-ldpi" value="$(ProjectDir)/resources/ldpi.png"/>
-        <DynamicProperty name="icon-mdpi" value="$(ProjectDir)/resources/mdpi.png"/>
-        <DynamicProperty name="icon-xhdpi" value="$(ProjectDir)/resources/xhdpi.png"/>
-        <DynamicProperty name="icon-xxhdpi" value="$(ProjectDir)/resources/xxhdpi.png"/>
-        <DynamicProperty name="packageId" value="com.fourjs.mobframework15"/>
-        <DynamicProperty name="packageLabel" value="MobFramework15"/>
-        <DynamicProperty name="packageVersion" value="100015"/>
-        <DynamicProperty name="packageVersionName" value="1000.15"/>
-        <DynamicProperty name="permissions" value="ACCESS_NETWORK_STATE;ACCESS_WIFI_STATE;CHANGE_NETWORK_STATE;INSTALL_SHORTCUT;INTERNET;MOUNT_FORMAT_FILESYSTEMS;READ_LOGS;WRITE_EXTERNAL_STORAGE"/>
-        <DynamicProperty name="status-icon-hdpi" value="$(ProjectDir)/resources/ldpi.png"/>
-        <DynamicProperty name="status-icon-mdpi" value="$(ProjectDir)/resources/sdpi.png"/>
-        <DynamicProperty name="status-icon-xhdpi" value="$(ProjectDir)/resources/mdpi.png"/>
-        <Directory description="Binaries" excludedFiles="Test.42r" includedFiles="*.42?" label="Binaries" recursive="false" sourceDirectory="$(ProjectDir)/bin"/>
-        <Directory description="Binaries" excludedFiles="Test.42r" includedFiles="*.42?" label="Binaries_common" recursive="false" sourceDirectory="$(ProjectDir)/bin_common"/>
-        <Directory description="Configuration Files" includedFiles="fglprofile,*.json" label="Config" recursive="false" sourceDirectory="$(ProjectDir)/config"/>
-        <Directory description="Database" includedFiles="*.db" label="Database" recursive="false" sourceDirectory="$(ProjectDir)/database"/>
-        <Directory description="Images" includedFiles="*.png,*.jpg,*.ttf,image2font.txt" label="Images" sourceDirectory="$(ProjectDir)/images"/>
-        <Directory description="Studio Library" includedFiles="*.42?" label="libgst" recursive="false" sourceDirectory="$(GSTLIBRARYDIR)/bin"/>
-        <Directory description="Resources" includedFiles="*.4ad,*.4st,*.4tm,*.4tb,*.4sm,*.42s,*.iem,*.pem" label="Resources" recursive="false" sourceDirectory="$(ProjectDir)/resources"/>
-        <Directory description="Web Components" destinationDirectory="$(RootDir)/webcomponents" label="Webcomponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
-      </Package>
-      <Package binaryName="mob_framework_17" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin17" label="mob_framework_17" platform="Android">
-        <DynamicProperty name="gma-accent-color" value="#466d88"/>
-        <DynamicProperty name="gma-navigationBarBackground-color" value="#466d88"/>
-        <DynamicProperty name="gma-primary-color" value="#215178"/>
-        <DynamicProperty name="gma-primary-dark-color" value="#284646"/>
-        <DynamicProperty name="gma-primaryText-color" value="#083d9e"/>
-        <DynamicProperty name="icon-hdpi" value="$(ProjectDir)/resources/hdpi.png"/>
-        <DynamicProperty name="icon-ldpi" value="$(ProjectDir)/resources/ldpi.png"/>
-        <DynamicProperty name="icon-mdpi" value="$(ProjectDir)/resources/mdpi.png"/>
-        <DynamicProperty name="icon-xhdpi" value="$(ProjectDir)/resources/xhdpi.png"/>
-        <DynamicProperty name="icon-xxhdpi" value="$(ProjectDir)/resources/xxhdpi.png"/>
-        <DynamicProperty name="packageId" value="com.fourjs.mobframework17"/>
-        <DynamicProperty name="packageLabel" value="MobFramework17"/>
-        <DynamicProperty name="packageVersion" value="100017"/>
-        <DynamicProperty name="packageVersionName" value="1000.17"/>
-        <DynamicProperty name="permissions" value="ACCESS_NETWORK_STATE;ACCESS_WIFI_STATE;CHANGE_NETWORK_STATE;INSTALL_SHORTCUT;INTERNET;MOUNT_FORMAT_FILESYSTEMS;READ_LOGS;WRITE_EXTERNAL_STORAGE"/>
-        <DynamicProperty name="status-icon-hdpi" value="$(ProjectDir)/resources/ldpi.png"/>
-        <DynamicProperty name="status-icon-mdpi" value="$(ProjectDir)/resources/sdpi.png"/>
-        <DynamicProperty name="status-icon-xhdpi" value="$(ProjectDir)/resources/mdpi.png"/>
-        <Directory description="Binaries" excludedFiles="Test.42r" includedFiles="*.42?" label="Binaries" recursive="false" sourceDirectory="$(ProjectDir)/bin"/>
-        <Directory description="Binaries" excludedFiles="Test.42r" includedFiles="*.42?" label="Binaries_common" recursive="false" sourceDirectory="$(ProjectDir)/bin_common"/>
-        <Directory description="Configuration Files" includedFiles="fglprofile,*.json" label="Config" recursive="false" sourceDirectory="$(ProjectDir)/config"/>
-        <Directory description="Database" includedFiles="*.db" label="Database" recursive="false" sourceDirectory="$(ProjectDir)/database"/>
-        <Directory description="Images" includedFiles="*.png,*.jpg,*.ttf,image2font.txt" label="Images" sourceDirectory="$(ProjectDir)/images"/>
-        <Directory description="Studio Library" includedFiles="*.42?" label="libgst" recursive="false" sourceDirectory="$(GSTLIBRARYDIR)/bin"/>
-        <Directory description="Resources" includedFiles="*.4ad,*.4st,*.4tm,*.4tb,*.4sm,*.42s,*.iem,*.pem" label="Resources" recursive="false" sourceDirectory="$(ProjectDir)/resources"/>
-        <Directory description="Web Components" destinationDirectory="$(RootDir)/webcomponents" label="Webcomponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
-      </Package>
-      <Package binaryName="mob_framework_19" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin19" label="mob_framework_19" platform="Android">
+      <Package binaryName="mob_framework_19" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin19" id="991157208" label="mob_framework_19" platform="Android">
         <DynamicProperty name="gma-accent-color" value="#466d88"/>
         <DynamicProperty name="gma-navigationBarBackground-color" value="#466d88"/>
         <DynamicProperty name="gma-primary-color" value="#215178"/>
@@ -200,8 +145,36 @@
         <Directory description="Resources" includedFiles="*.4ad,*.4st,*.4tm,*.4tb,*.4sm,*.42s,*.iem,*.pem" label="Resources" recursive="false" sourceDirectory="$(ProjectDir)/resources"/>
         <Directory description="Web Components" destinationDirectory="$(RootDir)/webcomponents" label="Webcomponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
       </Package>
+      <Package binaryName="mob_framework_32001" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin32001" id="2039257117" label="mob_framework_32001" platform="Android">
+        <DynamicProperty name="gma-accent-color" value="#466d88"/>
+        <DynamicProperty name="gma-navigationBarBackground-color" value="#466d88"/>
+        <DynamicProperty name="gma-primary-color" value="#215178"/>
+        <DynamicProperty name="gma-primary-dark-color" value="#284646"/>
+        <DynamicProperty name="gma-primaryText-color" value="#083d9e"/>
+        <DynamicProperty name="icon-hdpi" value="$(ProjectDir)/resources/hdpi.png"/>
+        <DynamicProperty name="icon-ldpi" value="$(ProjectDir)/resources/ldpi.png"/>
+        <DynamicProperty name="icon-mdpi" value="$(ProjectDir)/resources/mdpi.png"/>
+        <DynamicProperty name="icon-xhdpi" value="$(ProjectDir)/resources/xhdpi.png"/>
+        <DynamicProperty name="icon-xxhdpi" value="$(ProjectDir)/resources/xxhdpi.png"/>
+        <DynamicProperty name="packageId" value="com.fourjs.mobframework32001"/>
+        <DynamicProperty name="packageLabel" value="MobFramework32001"/>
+        <DynamicProperty name="packageVersion" value="132001"/>
+        <DynamicProperty name="packageVersionName" value="1230.01"/>
+        <DynamicProperty name="permissions" value="ACCESS_NETWORK_STATE;ACCESS_WIFI_STATE;CHANGE_NETWORK_STATE;INSTALL_SHORTCUT;INTERNET;MOUNT_FORMAT_FILESYSTEMS;READ_LOGS;WRITE_EXTERNAL_STORAGE"/>
+        <DynamicProperty name="status-icon-hdpi" value="$(ProjectDir)/resources/ldpi.png"/>
+        <DynamicProperty name="status-icon-mdpi" value="$(ProjectDir)/resources/sdpi.png"/>
+        <DynamicProperty name="status-icon-xhdpi" value="$(ProjectDir)/resources/mdpi.png"/>
+        <Directory description="Binaries" excludedFiles="Test.42r" includedFiles="*.42?" label="Binaries" recursive="false" sourceDirectory="$(ProjectDir)/bin320"/>
+        <Directory description="Binaries" excludedFiles="Test.42r" includedFiles="*.42?" label="Binaries_common" recursive="false" sourceDirectory="$(ProjectDir)/bin_common320"/>
+        <Directory description="Configuration Files" includedFiles="fglprofile,*.json" label="Config" recursive="false" sourceDirectory="$(ProjectDir)/config"/>
+        <Directory description="Database" includedFiles="*.db" label="Database" recursive="false" sourceDirectory="$(ProjectDir)/database"/>
+        <Directory description="Images" includedFiles="*.png,*.jpg,*.ttf,image2font.txt" label="Images" sourceDirectory="$(ProjectDir)/images"/>
+        <Directory description="Studio Library" includedFiles="*.42?" label="libgst" recursive="false" sourceDirectory="$(GSTLIBRARYDIR)/bin"/>
+        <Directory description="Resources" includedFiles="*.4ad,*.4st,*.4tm,*.4tb,*.4sm,*.42s,*.iem,*.pem" label="Resources" recursive="false" sourceDirectory="$(ProjectDir)/resources"/>
+        <Directory description="Web Components" destinationDirectory="$(RootDir)/webcomponents" label="Webcomponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
+      </Package>
     </Group>
-    <Group label="Common" targetDirectory="$(ProjectDir)/bin_common">
+    <Group id="1545910474" label="Common" targetDirectory="$(ProjectDir)/bin_common320">
       <Library binaryName="backend" dependencies="-994061721,455109296" id="1553065829" label="backend">
         <File filePath="src_server/mob_app_backend.4gl"/>
         <File filePath="src_server/mob_db_backend.4gl"/>
@@ -223,7 +196,7 @@
         <File filePath="webcomponents/media/media.html"/>
       </Library>
     </Group>
-    <Group environment="filelist:FGLPROFILE=$(ProjectDir)/config/fglprofile,dirlist:DBPATH=$(ProjectDir)/database;$(DBPATH)" label="mob_framework" language="Genero">
+    <Group environment="filelist:FGLPROFILE=$(ProjectDir)/config/fglprofile,dirlist:DBPATH=$(ProjectDir)/database;$(DBPATH)" id="-962518030" label="mob_framework" language="Genero">
       <Library binaryName="Config" excludeFromBuild="true" id="362164715" label="Config">
         <File filePath="resources/default.4ad"/>
         <File filePath="resources/default.4st"/>
@@ -251,7 +224,7 @@
         <File filePath="src/mob_ws_lib_sc.4gl"/>
       </Library>
     </Group>
-    <Group label="mob_ui_backend" targetDirectory="$(ProjectDir)/bin_srv_ui">
+    <Group id="984214074" label="mob_ui_backend" targetDirectory="$(ProjectDir)/bin_srv_ui320">
       <Library binaryName="etc" id="1804037942" label="etc">
         <File filePath="etc/default.4ad"/>
       </Library>
@@ -266,7 +239,7 @@
         <File filePath="src_server/mob_ui_backend.4gl"/>
       </Application>
     </Group>
-    <Group environment="value:NEWUSERS=1" label="mob_ws_backend" language="Genero" targetDirectory="$(ProjectDir)/bin_srv_ws">
+    <Group environment="value:NEWUSERS=1" id="-410428576" label="mob_ws_backend" language="Genero" targetDirectory="$(ProjectDir)/bin_srv_ws320">
       <Application binaryName="mob_ws_backend" dependencies="-994061721,455109296,-1850712431,-1451902566,1553065829,-1895871880" id="991859968" label="mob_ws_backend">
         <File filePath="src_server/gl_lib_restful.4gl"/>
         <File filePath="src_server/mob_ws_backend.4gl"/>
