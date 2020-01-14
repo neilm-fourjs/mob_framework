@@ -12,6 +12,10 @@ GRID
 [bt6          |bt7        ]
 [bt8          |bt9        ]
 <                          >
+<G wcmenu                  >
+[menu                     ]
+[                         ]
+<                          >
 [lb2:nt                   ]
 [lb3:sv                   ]
 }
@@ -20,8 +24,7 @@ END -- GRID
 ATTRIBUTES
 LABEL titl = FORMONLY.f_apptitle, SIZEPOLICY=DYNAMIC, STYLE="apptitle";
 
-GROUP opts : opts, TEXT=%"Options:";
-
+GROUP opts : opts, TEXT=%"Options:", HIDDEN;
 BUTTON bt1 : list_custs, TEXT=%"View Customers", IMAGE="fa-users";
 BUTTON bt2 : send_media, TEXT=%"Send Media", IMAGE="fa-camera";
 BUTTON bt2a : list_media1, TEXT=%"View Media", IMAGE="fa-photo";
@@ -34,6 +37,13 @@ BUTTON bt6 : get_file;
 BUTTON bt7 : put_file;
 BUTTON bt8 : about;
 BUTTON bt9 : quit, TEXT=%"Logout", IMAGE="fa-power-off";
+
+GROUP wcmenu : wcmenu, TEXT=%"";
+WEBCOMPONENT menu=FORMONLY.l_iconmenu, TABINDEX=0,
+   COMPONENTTYPE="iconMenu",
+   SIZEPOLICY=FIXED,
+   STRETCH=BOTH,
+   SCROLLBARS=NONE;
 
 LABEL lb2 : lb2, TEXT=%"Network:", STYLE="small";
 nt = FORMONLY.f_network, STYLE="small";

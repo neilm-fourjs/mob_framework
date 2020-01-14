@@ -1,0 +1,64 @@
+{
+  "menu": [
+		{
+			"text": "List Custs",
+      "image": "test.png",
+      "action": "list_custs"
+    },
+    {
+			"text": "Send Media",
+      "image": "test.png",
+      "action": "send_media"
+    },
+    {
+			"text": "Media 1",
+      "image": "test.png",
+      "action": "list_media1"
+    },
+    {
+			"text": "Media 2",
+      "image": "test.png",
+      "action": "list_media2"
+    },
+    {
+			"text": "Send Data",
+      "image": "test.png",
+      "action": "send_data"
+    },
+    {
+			"text": "get_file",
+      "image": "test.png",
+      "action": "get_file"
+    },
+    {
+			"text": "put_file",
+      "image": "test.png",
+      "action": "put_file"
+    },
+    {
+			"text": "Check Token",
+      "image": "test.png",
+      "action": "check_token"
+    },
+    {
+			"text": "About",
+      "image": "test.png",
+      "action": "about"
+    },
+    {
+			"text": "View Log",
+      "image": "test.png",
+      "action": "view_log"
+    },
+    {
+			"text": "Send Log",
+      "image": "test.png",
+      "action": "send_log"
+    },
+    {
+      "text": "Quit",
+      "image": "poweroff.png",
+      "action": "quit"
+    }
+  ]
+}

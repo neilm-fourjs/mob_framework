@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Project defaultApplication="400358049" gstVersion="31402" version="3.3">
+<Project defaultApplication="400358049" gstVersion="31408" version="3.3">
   <Settings>
     <DynamicProperties version="2">
       <DynamicProperty description="Accent color (Android 5.0 and later)" initialValue="#9575CD" isDefaultInherited="false" isHidden="false" label="Accent color" name="gma-accent-color" readOnly="false" type="COLOR"/>
@@ -78,7 +78,7 @@
         <File filePath="gas_pgs/mob_ui_be.xcf"/>
         <File filePath="gas_pgs/mob_ws_backend.xcf"/>
       </Library>
-      <Package binaryName="mob_backend_ifx" dependencies="455109296,1553065829,-2026345039,-1031729630,300690543,-994061721,991859968,-1895871880,1011122750,1804037942" id="1989927688" label="mob_backend_ifx" platform="Genero Application Server">
+      <Package binaryName="mob_backend320_ifx" dependencies="455109296,1553065829,-2026345039,-1031729630,300690543,-994061721,991859968,-1895871880,1011122750,1804037942" id="1989927688" label="mob_backend320_ifx" platform="Genero Application Server">
         <DynamicProperty name="packageId" value="mob_backend"/>
         <DynamicProperty name="packageLabel" value="mob_backend"/>
         <DynamicProperty name="packageVersion" value="1000"/>
@@ -91,33 +91,33 @@
         <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
         <Directory label="Utils" sourceDirectory="$(ProjectDir)/utils"/>
       </Package>
-      <Package binaryName="mob_backend_mdb" dependencies="455109296,1553065829,-2026345039,-35242948,-1031729630,300690543,-994061721,991859968,-1895871880,1804037942" id="-83722863" label="mob_backend_mdb" platform="Genero Application Server">
+      <Package binaryName="mob_backend320_mdb" dependencies="455109296,1553065829,-2026345039,-35242948,-1031729630,300690543,-994061721,991859968,-1895871880,1804037942" id="-83722863" label="mob_backend320_mdb" platform="Genero Application Server">
         <DynamicProperty name="packageId" value="mob_backend"/>
         <DynamicProperty name="packageLabel" value="mob_backend"/>
         <DynamicProperty name="packageVersion" value="1000"/>
         <DynamicProperty name="packageVersionName" value="1000"/>
-        <Directory includedFiles="*.42?" label="Binaries UI" sourceDirectory="$(ProjectDir)/bin_srv_ui"/>
-        <Directory includedFiles="*.42?" label="Binaries WS" sourceDirectory="$(ProjectDir)/bin_srv_ws"/>
-        <Directory includedFiles="*.42?" label="Binaries Common" sourceDirectory="$(ProjectDir)/bin_common"/>
+        <Directory includedFiles="*.42?" label="Binaries UI" sourceDirectory="$(ProjectDir)/bin_srv_ui320"/>
+        <Directory includedFiles="*.42?" label="Binaries WS" sourceDirectory="$(ProjectDir)/bin_srv_ws320"/>
+        <Directory includedFiles="*.42?" label="Binaries Common" sourceDirectory="$(ProjectDir)/bin_common320"/>
         <Directory label="Etc" sourceDirectory="$(ProjectDir)/etc"/>
         <Directory includedFiles="*.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_mdb"/>
         <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
         <Directory label="Utils" sourceDirectory="$(ProjectDir)/utils"/>
       </Package>
-      <Package binaryName="mob_backend_pgs" dependencies="455109296,1553065829,-2026345039,-1031729630,300690543,-994061721,991859968,-1895871880,1804037942,401028987" id="84246928" label="mob_backend_pgs" platform="Genero Application Server">
+      <Package binaryName="mob_backend320_pgs" dependencies="455109296,1553065829,-2026345039,-1031729630,300690543,-994061721,991859968,-1895871880,1804037942,401028987" id="84246928" label="mob_backend320_pgs" platform="Genero Application Server">
         <DynamicProperty name="packageId" value="mob_backend"/>
         <DynamicProperty name="packageLabel" value="mob_backend"/>
         <DynamicProperty name="packageVersion" value="1000"/>
         <DynamicProperty name="packageVersionName" value="1000"/>
-        <Directory includedFiles="*.42?" label="Binaries UI" sourceDirectory="$(ProjectDir)/bin_srv_ui"/>
-        <Directory includedFiles="*.42?" label="Binaries WS" sourceDirectory="$(ProjectDir)/bin_srv_ws"/>
-        <Directory includedFiles="*.42?" label="Binaries Common" sourceDirectory="$(ProjectDir)/bin_common"/>
+        <Directory includedFiles="*.42?" label="Binaries UI" sourceDirectory="$(ProjectDir)/bin_srv_ui320"/>
+        <Directory includedFiles="*.42?" label="Binaries WS" sourceDirectory="$(ProjectDir)/bin_srv_ws320"/>
+        <Directory includedFiles="*.42?" label="Binaries Common" sourceDirectory="$(ProjectDir)/bin_common320"/>
         <Directory label="Etc" sourceDirectory="$(ProjectDir)/etc"/>
         <Directory includedFiles="*.xcf" label="Gas" sourceDirectory="$(ProjectDir)/gas_pgs"/>
         <Directory destinationDirectory="$(RootDir)/webcomponents" label="WebComponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
         <Directory label="Utils" sourceDirectory="$(ProjectDir)/utils"/>
       </Package>
-      <Package binaryName="mob_framework_19" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin19" id="991157208" label="mob_framework_19" platform="Android">
+      <Package binaryName="mob_framework_14003" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin14003" id="2039257117" label="mob_framework_14003" platform="Android">
         <DynamicProperty name="gma-accent-color" value="#466d88"/>
         <DynamicProperty name="gma-navigationBarBackground-color" value="#466d88"/>
         <DynamicProperty name="gma-primary-color" value="#215178"/>
@@ -128,38 +128,10 @@
         <DynamicProperty name="icon-mdpi" value="$(ProjectDir)/resources/mdpi.png"/>
         <DynamicProperty name="icon-xhdpi" value="$(ProjectDir)/resources/xhdpi.png"/>
         <DynamicProperty name="icon-xxhdpi" value="$(ProjectDir)/resources/xxhdpi.png"/>
-        <DynamicProperty name="packageId" value="com.fourjs.mobframework19"/>
-        <DynamicProperty name="packageLabel" value="MobFramework19"/>
-        <DynamicProperty name="packageVersion" value="100019"/>
-        <DynamicProperty name="packageVersionName" value="1000.19"/>
-        <DynamicProperty name="permissions" value="ACCESS_NETWORK_STATE;ACCESS_WIFI_STATE;CHANGE_NETWORK_STATE;INSTALL_SHORTCUT;INTERNET;MOUNT_FORMAT_FILESYSTEMS;READ_LOGS;WRITE_EXTERNAL_STORAGE"/>
-        <DynamicProperty name="status-icon-hdpi" value="$(ProjectDir)/resources/ldpi.png"/>
-        <DynamicProperty name="status-icon-mdpi" value="$(ProjectDir)/resources/sdpi.png"/>
-        <DynamicProperty name="status-icon-xhdpi" value="$(ProjectDir)/resources/mdpi.png"/>
-        <Directory description="Binaries" excludedFiles="Test.42r" includedFiles="*.42?" label="Binaries" recursive="false" sourceDirectory="$(ProjectDir)/bin"/>
-        <Directory description="Binaries" excludedFiles="Test.42r" includedFiles="*.42?" label="Binaries_common" recursive="false" sourceDirectory="$(ProjectDir)/bin_common"/>
-        <Directory description="Configuration Files" includedFiles="fglprofile,*.json" label="Config" recursive="false" sourceDirectory="$(ProjectDir)/config"/>
-        <Directory description="Database" includedFiles="*.db" label="Database" recursive="false" sourceDirectory="$(ProjectDir)/database"/>
-        <Directory description="Images" includedFiles="*.png,*.jpg,*.ttf,image2font.txt" label="Images" sourceDirectory="$(ProjectDir)/images"/>
-        <Directory description="Studio Library" includedFiles="*.42?" label="libgst" recursive="false" sourceDirectory="$(GSTLIBRARYDIR)/bin"/>
-        <Directory description="Resources" includedFiles="*.4ad,*.4st,*.4tm,*.4tb,*.4sm,*.42s,*.iem,*.pem" label="Resources" recursive="false" sourceDirectory="$(ProjectDir)/resources"/>
-        <Directory description="Web Components" destinationDirectory="$(RootDir)/webcomponents" label="Webcomponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
-      </Package>
-      <Package binaryName="mob_framework_32001" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin32001" id="2039257117" label="mob_framework_32001" platform="Android">
-        <DynamicProperty name="gma-accent-color" value="#466d88"/>
-        <DynamicProperty name="gma-navigationBarBackground-color" value="#466d88"/>
-        <DynamicProperty name="gma-primary-color" value="#215178"/>
-        <DynamicProperty name="gma-primary-dark-color" value="#284646"/>
-        <DynamicProperty name="gma-primaryText-color" value="#083d9e"/>
-        <DynamicProperty name="icon-hdpi" value="$(ProjectDir)/resources/hdpi.png"/>
-        <DynamicProperty name="icon-ldpi" value="$(ProjectDir)/resources/ldpi.png"/>
-        <DynamicProperty name="icon-mdpi" value="$(ProjectDir)/resources/mdpi.png"/>
-        <DynamicProperty name="icon-xhdpi" value="$(ProjectDir)/resources/xhdpi.png"/>
-        <DynamicProperty name="icon-xxhdpi" value="$(ProjectDir)/resources/xxhdpi.png"/>
-        <DynamicProperty name="packageId" value="com.fourjs.mobframework32001"/>
-        <DynamicProperty name="packageLabel" value="MobFramework32001"/>
-        <DynamicProperty name="packageVersion" value="132001"/>
-        <DynamicProperty name="packageVersionName" value="1230.01"/>
+        <DynamicProperty name="packageId" value="com.fourjs.mobframework14003"/>
+        <DynamicProperty name="packageLabel" value="MobDemo14003"/>
+        <DynamicProperty name="packageVersion" value="14003"/>
+        <DynamicProperty name="packageVersionName" value="14003"/>
         <DynamicProperty name="permissions" value="ACCESS_NETWORK_STATE;ACCESS_WIFI_STATE;CHANGE_NETWORK_STATE;INSTALL_SHORTCUT;INTERNET;MOUNT_FORMAT_FILESYSTEMS;READ_LOGS;WRITE_EXTERNAL_STORAGE"/>
         <DynamicProperty name="status-icon-hdpi" value="$(ProjectDir)/resources/ldpi.png"/>
         <DynamicProperty name="status-icon-mdpi" value="$(ProjectDir)/resources/sdpi.png"/>
@@ -170,6 +142,33 @@
         <Directory description="Database" includedFiles="*.db" label="Database" recursive="false" sourceDirectory="$(ProjectDir)/database"/>
         <Directory description="Images" includedFiles="*.png,*.jpg,*.ttf,image2font.txt" label="Images" sourceDirectory="$(ProjectDir)/images"/>
         <Directory description="Studio Library" includedFiles="*.42?" label="libgst" recursive="false" sourceDirectory="$(GSTLIBRARYDIR)/bin"/>
+        <Directory description="Resources" includedFiles="*.4ad,*.4st,*.4tm,*.4tb,*.4sm,*.42s,*.iem,*.pem" label="Resources" recursive="false" sourceDirectory="$(ProjectDir)/resources"/>
+        <Directory description="Web Components" destinationDirectory="$(RootDir)/webcomponents" label="Webcomponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
+      </Package>
+      <Package binaryName="mob_framework_14008" dependencies="400358049,781919164,159917928,212784684,715422167,362164715,313644474,-994061721,455109296" description="Android Package" distDirectory="$(ProjectDir)/distbin14008" id="991157208" label="mob_framework_14008" platform="Android">
+        <DynamicProperty name="gma-accent-color" value="#466d88"/>
+        <DynamicProperty name="gma-navigationBarBackground-color" value="#466d88"/>
+        <DynamicProperty name="gma-primary-color" value="#215178"/>
+        <DynamicProperty name="gma-primary-dark-color" value="#284646"/>
+        <DynamicProperty name="gma-primaryText-color" value="#083d9e"/>
+        <DynamicProperty name="icon-hdpi" value="$(ProjectDir)/resources/hdpi.png"/>
+        <DynamicProperty name="icon-ldpi" value="$(ProjectDir)/resources/ldpi.png"/>
+        <DynamicProperty name="icon-mdpi" value="$(ProjectDir)/resources/mdpi.png"/>
+        <DynamicProperty name="icon-xhdpi" value="$(ProjectDir)/resources/xhdpi.png"/>
+        <DynamicProperty name="icon-xxhdpi" value="$(ProjectDir)/resources/xxhdpi.png"/>
+        <DynamicProperty name="packageId" value="com.fourjs.mobframework14008"/>
+        <DynamicProperty name="packageLabel" value="MobFramework14008"/>
+        <DynamicProperty name="packageVersion" value="101408"/>
+        <DynamicProperty name="packageVersionName" value="1014.08"/>
+        <DynamicProperty name="permissions" value="ACCESS_NETWORK_STATE;ACCESS_WIFI_STATE;CAMERA;CHANGE_NETWORK_STATE;INSTALL_SHORTCUT;INTERNET;MOUNT_FORMAT_FILESYSTEMS;READ_EXTERNAL_STORAGE;READ_LOGS;WRITE_EXTERNAL_STORAGE"/>
+        <DynamicProperty name="status-icon-hdpi" value="$(ProjectDir)/resources/ldpi.png"/>
+        <DynamicProperty name="status-icon-mdpi" value="$(ProjectDir)/resources/sdpi.png"/>
+        <DynamicProperty name="status-icon-xhdpi" value="$(ProjectDir)/resources/mdpi.png"/>
+        <Directory description="Binaries" excludedFiles="Test.42r" includedFiles="*.42?" label="Binaries" recursive="false" sourceDirectory="$(ProjectDir)/bin320"/>
+        <Directory description="Binaries" excludedFiles="Test.42r" includedFiles="*.42?" label="Binaries_common" recursive="false" sourceDirectory="$(ProjectDir)/bin_common320"/>
+        <Directory description="Configuration Files" includedFiles="fglprofile,*.json" label="Config" recursive="false" sourceDirectory="$(ProjectDir)/config"/>
+        <Directory description="Database" includedFiles="*.db" label="Database" recursive="false" sourceDirectory="$(ProjectDir)/database"/>
+        <Directory description="Images" includedFiles="*.png,*.jpg,*.ttf,image2font.txt" label="Images" sourceDirectory="$(ProjectDir)/images"/>
         <Directory description="Resources" includedFiles="*.4ad,*.4st,*.4tm,*.4tb,*.4sm,*.42s,*.iem,*.pem" label="Resources" recursive="false" sourceDirectory="$(ProjectDir)/resources"/>
         <Directory description="Web Components" destinationDirectory="$(RootDir)/webcomponents" label="Webcomponents" sourceDirectory="$(ProjectDir)/webcomponents"/>
       </Package>
@@ -202,8 +201,9 @@
         <File filePath="resources/default.4st"/>
         <File filePath="config/fglprofile"/>
         <File filePath="config/mob_framework.json"/>
+        <File filePath="config/myMenu.json"/>
       </Library>
-      <Application binaryName="mob_framework" dependencies="159917928,212784684,362164715,455109296,-994061721,1065793016" environment="dirlist:FGLIMAGEPATH=$(ProjectDir)/images;$(FGLDIR)/lib/image2font.txt;$(ProjectDir)/webcomponents;$(FGLIMAGEPATH)" id="400358049" label="mob_framework">
+      <Application binaryName="mob_framework" dependencies="159917928,212784684,362164715,455109296,-994061721,1065793016,2061368924" environment="dirlist:FGLIMAGEPATH=$(ProjectDir)/images;$(FGLDIR)/lib/image2font.txt;$(ProjectDir)/webcomponents;$(FGLIMAGEPATH)" id="400358049" label="mob_framework">
         <VirtualFolder label="forms">
           <File filePath="src/cust_dets.per"/>
           <File filePath="src/cust_list.per"/>
@@ -222,6 +222,10 @@
         <File filePath="src/mob_lib.inc"/>
         <File filePath="src/mob_ws_lib.4gl"/>
         <File filePath="src/mob_ws_lib_sc.4gl"/>
+      </Library>
+      <Library binaryName="wc_iconMenu" id="2061368924" label="wc_iconMenu">
+        <File filePath="src/wc_iconMenu.4gl"/>
+        <File filePath="src/wc_iconMenu.per"/>
       </Library>
     </Group>
     <Group id="984214074" label="mob_ui_backend" targetDirectory="$(ProjectDir)/bin_srv_ui320">

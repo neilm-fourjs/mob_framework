@@ -42,11 +42,13 @@ FUNCTION init_mob()
 		RETURN
 	END IF
 
-	TRY
-		CALL ui.Interface.frontCall("android", "askForPermission",	["android.permission.WRITE_EXTERNAL_STORAGE"],[l_ret] )
-	CATCH
-		CALL gl_lib.gl_winMessage("Error",SFMT("Failed 'askForPermission' %1",l_ret),"exclamation")
-	END TRY
+	IF ui.Interface.getFrontEndName() = "GMA" THEN
+		TRY
+			CALL ui.Interface.frontCall("android", "askForPermission",	["android.permission.WRITE_EXTERNAL_STORAGE"],[l_ret] )
+		CATCH
+			CALL gl_lib.gl_winMessage("Error",SFMT("Failed 'askForPermission' %1",l_ret),"exclamation")
+		END TRY
+	END IF
 
 	CALL ui.form.setDefaultInitializer("init_form")
 
@@ -268,6 +270,7 @@ FUNCTION list_media1()
 
 	LET l_jobid = mob_app_lib.m_param.jobid
 
+	CALL fgl_winMessage("Info","About to get media data ...","information")
 	LET l_json = mob_ws_lib.ws_getMediaList(l_jobid)
 	IF l_json IS NULL THEN
 		CALL fgl_winMessage("Error",l_json,"exclamation")
@@ -281,7 +284,7 @@ FUNCTION list_media1()
 		LET l_path = os.path.dirname(l_imgs[x])
 		LET l_name = os.path.rootName(os.Path.basename(l_imgs[x]))
 		LET l_arr[x].img = l_name
-		LET l_arr[x].tn = l_path||"/tn_"||l_name||".gif"
+--		LET l_arr[x].tn = l_path||"/tn_"||l_name||".gif"
 --		DISPLAY "tn:",l_arr[x].tn
 	END FOR
 
